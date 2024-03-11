@@ -12,3 +12,11 @@ List of Feature
 - sort
 - post todo (Core feature)
 - Todo list 
+
+## 3/11/2024
+- Get name of application (successfully)
+- Demo Login UI (successfully)
+- Demo Authentication (successfully)
+- Find color theme (In progress)
+- Create figma board for UI design (successfully)
+- Login UI (in progress)
