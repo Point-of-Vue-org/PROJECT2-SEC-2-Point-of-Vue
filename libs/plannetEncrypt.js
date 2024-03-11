@@ -12,6 +12,7 @@ export function encrypt(str, key) {
 }
 
 export function decrypt(str, key) {
+  if (!str || !key) return null
   const aStr = atob(str)
   let decrypted = ''
   for (let i = 0; i < aStr.length; i++) {

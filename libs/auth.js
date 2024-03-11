@@ -128,7 +128,7 @@ export async function deleteTokenById(id) {
 export async function login(usernameOrEmail, password) {
   const user = await fetchUserBy(isEmail(usernameOrEmail) ? 'email' : 'username', usernameOrEmail)
 
-  if (user && hash(user.password) === password) {
+  if (user && user.password === hash(password)) {
     const token = await createOrUpdateToken(user.id)
     return token
   } else {

@@ -1,36 +1,73 @@
 <script setup>
 import Logo from '@/components/Logo.vue'
+import { ref } from 'vue'
+import { useToastStore } from '@/stores/toast'
+import { useRouter } from 'vue-router'
+import { login } from '../../libs/auth'
+import { encrypt } from '../../libs/plannetEncrypt'
+
+const toastStore = useToastStore()
+const router = useRouter()
+const errorMsg = ref('')
+const usernameOrEmail = ref('')
+const password = ref('')
+const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
+
+const handleSubmitLogin = async () => {
+  const token = await login(usernameOrEmail.value, password.value)
+  if (token) {
+    router.replace('/')
+    toastStore.msg = 'Login success'
+    localStorage.setItem('todo_token', encrypt(JSON.stringify(token), secretKey))
+  } else {
+    errorMsg.value = 'Invalid username or password'
+  }
+}
+
+const handleForgetPassword = () => {
+  alert('This feature is not available in demo (No password for you! 😜)')
+  window.open('https://www.youtube.com/watch?v=mkxer6pxQ6I', '_blank')
+}
+
 </script>
 
 <template>
   <main class="w-full h-screen grid place-items-center">
-    <div class="flex flex-col">
+    <form @submit.prevent="handleSubmitLogin" class="w-96 flex flex-col">
       <div>
         <div class="text-primary mb-4">
           <Logo size="4rem" color="currentColor" />
         </div>
         <p class="text-2xl mb-2">Login to Plannet</p>
-        <p>Welcome to a workspace that's secure, powerful, and <br>totally private.</p>
+        <p>Welcome to a workspace that's secure, powerful, and totally private.</p>
       </div>
       <div class="flex flex-col gap-5 mt-6 mb-4">
-        <div>
-        <label for="email"></label>
-        <input type="text" id="email" placeholder="Email or username" 
-        class="border border-neutral rounded-xl bg-neutral w-96 px-4 py-1">
+        <div v-show="errorMsg" class="text-error">{{ errorMsg }}</div>
+        <input
+          v-model="usernameOrEmail"
+          type="text"
+          placeholder="Username or Email"
+          title="Username or Email"
+          autocomplete="username"
+          autofocus
+          required
+          class="input bg-neutral rounded-xl w-full"
+        />
+        <input
+          v-model="password"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+          title="Password"
+          required
+          class="input bg-neutral rounded-xl w-full"
+        />
+        <button type="submit" class="btn rounded-full btn-accent text-base-100">Login</button>
       </div>
       <div>
-        <label for="password"></label>
-        <input type="text" id="password" placeholder="Password" 
-        class="border border-neutral rounded-xl bg-neutral w-96 px-4 py-1">
+        <div @click="handleForgetPassword" class="text-primary">Forgot password?</div>
+        <div>Don't have an account? <RouterLink to="/register" class="text-primary">Sign up</RouterLink></div>
       </div>
-      <div>
-        <button type="button" class="border border-accent rounded-2xl bg-accent w-96 px-4 py-1 text-base-100">Login</button>
-      </div>
-      </div>
-      <div class="">
-        <p class="text-primary"><a href="" class="text-primary">Forgot password?</a></p>
-        <p>Don't have an account? <a href="" class="text-primary">Sign up</a></p>
-      </div>
-    </div>
+    </form>
   </main>
 </template>
