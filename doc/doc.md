@@ -12,3 +12,9 @@ List of Feature
 - sort
 - post todo (Core feature)
 - Todo list 
+
+## 3/11/2024
+- Get name of application (successfully)
+- Demo Login UI (in progress)
+- Demo Authentication (successfully)
+- Find color theme (In progress)
