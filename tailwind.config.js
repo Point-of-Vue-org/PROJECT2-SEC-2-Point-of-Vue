@@ -23,5 +23,9 @@ export default {
       }
     ]
   },
+  safelist: [
+    'alert-success',
+    'alert-error'
+  ],
   plugins: [daisyui]
 }
