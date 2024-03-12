@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { fetchTokenById, fetchUserBy, logout } from '../../libs/auth'
 import { decrypt } from '../../libs/plannetEncrypt'
@@ -10,6 +10,7 @@ import Navigation from '@/components/Navigation.vue'
 import { useUserStore } from '@/stores/user';
 
 const router = useRouter()
+const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
 const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
@@ -64,5 +65,28 @@ const handleLogout = async () => {
         <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
       </template>
     </Navigation>
+    <div class="drawer lg:drawer-open">
+      <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+      <div class="drawer-content flex flex-col items-center justify-center">
+        <!-- Page content here -->
+        <label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label>
+        
+        <div v-if="route.params.category === 'profile'">
+          profile
+        </div>
+        <div v-else-if="route.params.category === 'security'">
+          security
+        </div>
+      </div> 
+      <div class="drawer-side">
+        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label> 
+        <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+          <!-- Sidebar content here -->
+          <li><RouterLink to="/account/profile">Profile</RouterLink></li>
+          <li><RouterLink to="/account/security">Security</RouterLink></li>
+        </ul>
+      
+      </div>
+    </div>
   </main>
 </template>

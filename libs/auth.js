@@ -1,8 +1,8 @@
 import { User } from '../classes/User'
 import { isEmail } from './utils'
-import { encrypt, hash } from './plannetEncrypt.js'
+import { hash } from './plannetEncrypt.js'
 const jsonServerUri = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
-const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
+
 /**
  * Fetches a user by a given key and value
  * @param {string} key - The key to search by
@@ -18,8 +18,7 @@ export async function fetchUserBy(key, value) {
 
   if (!data[0]) return null
 
-  const user = new User(data[0])
-  return user
+  return data[0]
 }
 
 /** 
@@ -161,7 +160,7 @@ export async function register(username, email, password, nickname = '') {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, email, password: hash(password), nickname }),
+    body: JSON.stringify(new User({ username, email, password: hash(password), nickname })),
   })
   const newUser = await response.json()
   return newUser
