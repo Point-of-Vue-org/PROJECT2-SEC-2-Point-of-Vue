@@ -22,8 +22,8 @@ List of Feature
 - Login UI (in progress)
 
 ## 3/12/2024
-- Pototype card UI (success)
-- Demo get image (success)
-- Pototype sidebar (success)
-- Implement function auth in frontend v1 (success)
-- Function check password is secre ? (success)
+- Prototype card UI (successfully)
+- Demo get image (successfully)
+- Prototype sidebar (successfully)
+- Implement function auth in frontend v1 (successfully)
+- Function check password is secre ? (successfully)
