@@ -18,3 +18,10 @@ List of Feature
 - Demo Login UI (in progress)
 - Demo Authentication (successfully)
 - Find color theme (In progress)
+
+## 3/12/2024
+- Pototype card UI (success)
+- Demo get image (success)
+- Pototype sidebar (success)
+- Implement function auth in frontend v1 (success)
+- Function check password is secre ? (success)
