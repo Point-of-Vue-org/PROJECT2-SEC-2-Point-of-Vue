@@ -1,18 +1,31 @@
 import { reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { User } from '../../classes/User'
+import { fetchUserBy, updateUserData } from '../../libs/auth'
 
 export const useUserStore = defineStore('user', () => {
-  const user = reactive(new User())
+  const user = reactive({
+    id: undefined,
+    username: 'guest',
+    nickname: 'Guest',
+  })
 
-  function saveUser(userData) {
-    user.id = userData.id
-    user.username = userData.username
-    user.email = userData.email
-    user.password = userData.password
-    user.setting.avatarUrl = userData.setting.avatarUrl
-    user.setting.bannerUrl = userData.setting.bannerUrl
+  async function loadUserData(id) {
+    const userData = await fetchUserBy('id', id)
+    for (const key in userData) {
+      user[key] = userData[key]
+    }
   }
 
-  return { userData: user, saveUser }
+  async function saveUserData(updateData) {
+    for (const key in updateData) {
+      if (typeof updateData[key] === 'object') {
+        user[key] = { ...user[key], ...updateData[key] }
+        continue
+      }
+      user[key] = updateData[key]
+    }
+    updateUserData(user.id, user)
+  }
+
+  return { userData: user, loadUserData, saveUserData }
 })

@@ -9,4 +9,8 @@ export class User {
             bannerUrl: userData?.bannerUrl || ''
         }
     }
+
+    setAvatar(avatarUrl) {
+        this.setting.avatarUrl = avatarUrl
+    }
 }

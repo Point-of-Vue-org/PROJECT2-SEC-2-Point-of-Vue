@@ -1,57 +1,67 @@
 <script setup>
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { fetchTokenById, fetchUserBy, logout } from '../../libs/auth'
+import { fetchTokenById, fetchUserBy, logout, validateToken } from '../../libs/auth'
 import { decrypt } from '../../libs/plannetEncrypt'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Navigation from '@/components/Navigation.vue'
 import { useUserStore } from '@/stores/user';
+import { onBeforeMount, ref, watch } from 'vue'
+import { upload } from '../../libs/imageManager'
+import AccountProfile from './account/AccountProfile.vue'
 
 const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
 
-async function validateToken(){
-  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token'), secretKey))
-  const actualToken = await fetchTokenById(decryptedLocalToken?.id)
-
-  console.log('localToken', decryptedLocalToken)
-  console.log('actualToken', actualToken)
-
-  if (!decryptedLocalToken || !actualToken) {
-    console.log('Token not found')
-    router.replace('/login')
-    toastStore.type = 'error'
-    toastStore.msg = 'You need to login first'
-    return
-  }
-
-  if (actualToken.token === decryptedLocalToken.token) {
-    if(actualToken.expired_at - Date.now() < 0) {
-      console.log('Token is expired')
+onBeforeMount(
+  async () => {
+    const { isTokenValid, userId } = await validateToken()
+    if (!isTokenValid) {
       router.replace('/login')
-      return
+      toastStore.type = 'error'
+      toastStore.msg = 'You need to login first'
+    } else {
+      userStore.loadUserData(userId)
     }
-    console.log('Token is valid')
-    userStore.saveUser(await fetchUserBy('id', actualToken.id))
-  } else {
-    console.log('Token is invalid')
-    router.replace('/login')
-    return
   }
-}
-
-validateToken()
+)
 
 const handleLogout = async () => {
   if (window.confirm('Are you sure you want to logout?') === false) return
   await logout(userStore.userData.id)
   localStorage.removeItem('todo_token')
   router.replace('/login')
+}
+
+const imageFile = ref(null)
+
+const handleImageChange = (file) => {
+  imageFile.value = file
+}
+
+const handleUploadImage = async (type) => {
+  if (!imageFile.value) return
+
+  let imageURL = ''
+  try {
+    imageURL = await upload(imageFile.value)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    imageFile.value = null
+  }
+
+  console.log(imageURL)
+  
+  await userStore.saveUserData({
+    setting: type === 'avatar'
+      ? { avatarUrl: imageURL }
+      : { bannerUrl: imageURL }
+  })
 }
 
 </script>
@@ -73,6 +83,15 @@ const handleLogout = async () => {
         
         <div v-if="route.params.category === 'profile'">
           profile
+          <!-- <input
+            id="file-input"
+            type="file"
+            @change="onFileChange"
+            class="file-input file-input-bordered w-full max-w-xs"
+          />
+          <button @click="uploadProfile" type="button" class="btn btn-warning" :disabled="!file">Upload</button>
+          <img v-if="file" :src="images" alt="preview" class="pointer-events-none w-64 h-64 object-contain" /> -->
+          <AccountProfile @changeImage="handleImageChange" @submitUpload="handleUploadImage" />
         </div>
         <div v-else-if="route.params.category === 'security'">
           security

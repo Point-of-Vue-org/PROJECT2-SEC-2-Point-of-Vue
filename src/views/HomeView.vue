@@ -1,50 +1,31 @@
 <script setup>
 import { useRouter, RouterLink } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { fetchTokenById, fetchUserBy, logout } from '../../libs/auth'
-import { decrypt } from '../../libs/plannetEncrypt'
+import { fetchUserBy, logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Navigation from '@/components/Navigation.vue'
 import { useUserStore } from '@/stores/user';
+import { onBeforeMount } from 'vue'
 
 const router = useRouter()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
 
-async function validateToken(){
-  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token'), secretKey))
-  const actualToken = await fetchTokenById(decryptedLocalToken?.id)
 
-  console.log('localToken', decryptedLocalToken)
-  console.log('actualToken', actualToken)
-
-  if (!decryptedLocalToken || !actualToken) {
-    console.log('Token not found')
-    router.replace('/login')
-    toastStore.type = 'error'
-    toastStore.msg = 'You need to login first'
-    return
-  }
-
-  if (actualToken.token === decryptedLocalToken.token) {
-    if(actualToken.expired_at - Date.now() < 0) {
-      console.log('Token is expired')
+onBeforeMount(
+  async () => {
+    const { isTokenValid, userId } = await validateToken()
+    if (!isTokenValid) {
       router.replace('/login')
-      return
+      toastStore.type = 'error'
+      toastStore.msg = 'You need to login first'
+    } else {
+      userStore.loadUserData(userId)
     }
-    console.log('Token is valid')
-    userStore.saveUser(await fetchUserBy('id', actualToken.id))
-  } else {
-    console.log('Token is invalid')
-    router.replace('/login')
-    return
   }
-}
-
-validateToken()
+)
 
 const handleLogout = async () => {
   if (window.confirm('Are you sure you want to logout?') === false) return

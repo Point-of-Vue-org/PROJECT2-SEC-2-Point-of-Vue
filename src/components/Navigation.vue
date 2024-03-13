@@ -6,7 +6,6 @@ import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
 const userData = userStore.userData
-console.log(userData.setting.avatarUrl)
 </script>
 
 <template>
@@ -27,14 +26,13 @@ console.log(userData.setting.avatarUrl)
     </div>
     <div class="flex-none dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-        <div class="w-10 rounded-xl">
-          <div v-if="userData.setting.avatarUrl">
-            <img
-              :src="userData.setting.avatarUrl"
-              alt="avatar"
-              class="w-full h-full object-cover rounded-2xl"
-            />
-          </div>
+        <div class="w-10 h-10 rounded-xl">
+          <img
+            v-if="userData.setting?.avatarUrl"
+            :src="userData.setting.avatarUrl"
+            alt="avatar"
+            class="w-full h-full object-cover rounded-2xl"
+          />
           <div v-else>
             <UserProfilePlaceholder
               color="#ff5500"
@@ -48,7 +46,7 @@ console.log(userData.setting.avatarUrl)
         <div class="w-full h-24 mb-2 relative">
           <div class="w-full h-full mb-2 absolute border-4 border-base-100 bg-neutral rounded-2xl">
             <img
-              v-if="userData.setting.bannerUrl"
+              v-if="userData.setting?.bannerUrl"
               :src="userData.setting.bannerUrl"
               alt="avatar"
               class="w-full h-full object-cover rounded-2xl"
@@ -56,13 +54,12 @@ console.log(userData.setting.avatarUrl)
           </div>
           <div class="avatar absolute">
             <div class="w-24 rounded-2xl border-4 border-base-100">
-              <div v-if="userData.setting.avatarUrl">
-                <img
-                  :src="userData.setting.avatarUrl"
-                  alt="avatar"
-                  class="w-full h-full object-cover rounded-2xl"
-                />
-              </div>
+              <img
+                v-if="userData.setting?.avatarUrl"
+                :src="userData.setting.avatarUrl"
+                alt="avatar"
+                class="w-full h-full object-cover rounded-2xl"
+              />
               <div v-else>
                 <UserProfilePlaceholder
                   color="#ff5500"
