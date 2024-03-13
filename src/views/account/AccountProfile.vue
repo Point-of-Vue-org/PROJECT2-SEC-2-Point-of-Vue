@@ -50,7 +50,7 @@ watch(file, (newFile) => {
 </script>
 
 <template>
-  <div>
+  <section class="w-full">
     <input
       type="file"
       @input="handleFileChange"
@@ -62,7 +62,7 @@ watch(file, (newFile) => {
     <label for="banner">Banner</label>
     <button @click="handleUploadImage" type="button" class="btn btn-warning" :disabled="!file">Upload</button>
     <img v-if="file" :src="image" alt="preview" class="pointer-events-none w-64 h-64 object-contain" />
-  </div>
+  </section>
 </template>
 
 <style scoped>

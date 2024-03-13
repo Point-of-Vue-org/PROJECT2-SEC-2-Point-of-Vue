@@ -1,13 +1,15 @@
 <script setup>
 import { useRouter, RouterLink } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { fetchUserBy, logout, validateToken } from '../../libs/auth'
+import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
-import Navigation from '@/components/Navigation.vue'
+import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
+import BaseSidebar from '@/components/BaseSidebar.vue'
+
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -37,13 +39,21 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <main class="w-full h-screen">
-    <Navigation>
+  <Header>
+    <template #menu>
+      <li><a class="text-lg"><div v-html="PersonIcon" class="w-4 h-4"></div>Profile</a></li>
+      <li><RouterLink to="/account/profile" class="text-lg"><div v-html="GearIcon" class="w-4 h-4"></div>Account Details</RouterLink></li>
+      <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
+    </template>
+  </Header>
+  <main class="flex">
+    <BaseSidebar>
       <template #menu>
-        <li><a class="text-lg"><div v-html="PersonIcon" class="w-4 h-4"></div>Profile</a></li>
-        <li><RouterLink to="/account/profile" class="text-lg"><div v-html="GearIcon" class="w-4 h-4"></div>Account Details</RouterLink></li>
-        <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
+        <!-- Sidbar content here -->
       </template>
-    </Navigation>
+    </BaseSidebar>
+    <section>
+      <!-- Main content here -->
+    </section>
   </main>
 </template>

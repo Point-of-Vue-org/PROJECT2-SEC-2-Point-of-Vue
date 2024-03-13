@@ -5,10 +5,11 @@ import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
-import Navigation from '@/components/Navigation.vue'
+import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
 import AccountProfile from './account/AccountProfile.vue'
+import BaseSidebar from '@/components/BaseSidebar.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -38,45 +39,28 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <main class="w-full h-screen">
-    <Navigation>
+  <Header>
+    <template #menu>
+      <li><a class="text-lg"><div v-html="PersonIcon" class="w-4 h-4"></div>Profile</a></li>
+      <li><RouterLink to="/account/profile" class="text-lg"><div v-html="GearIcon" class="w-4 h-4"></div>Account Details</RouterLink></li>
+      <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
+    </template>
+  </Header>
+  <main class="flex">
+    <BaseSidebar>
       <template #menu>
-        <li><a class="text-lg"><div v-html="PersonIcon" class="w-4 h-4"></div>Profile</a></li>
-        <li><RouterLink to="/account/profile" class="text-lg"><div v-html="GearIcon" class="w-4 h-4"></div>Account Details</RouterLink></li>
-        <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
+        <li><RouterLink to="/account/profile">Profile</RouterLink></li>
+        <li><RouterLink to="/account/security">Security</RouterLink></li>
       </template>
-    </Navigation>
-    <div class="drawer lg:drawer-open">
-      <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content flex flex-col items-center justify-center">
-        <!-- Page content here -->
-        <label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label>
-        
-        <div v-if="route.params.category === 'profile'">
-          profile
-          <!-- <input
-            id="file-input"
-            type="file"
-            @change="onFileChange"
-            class="file-input file-input-bordered w-full max-w-xs"
-          />
-          <button @click="uploadProfile" type="button" class="btn btn-warning" :disabled="!file">Upload</button>
-          <img v-if="file" :src="images" alt="preview" class="pointer-events-none w-64 h-64 object-contain" /> -->
-          <AccountProfile />
-        </div>
-        <div v-else-if="route.params.category === 'security'">
-          security
-        </div>
-      </div> 
-      <div class="drawer-side">
-        <label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label> 
-        <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-          <!-- Sidebar content here -->
-          <li><RouterLink to="/account/profile">Profile</RouterLink></li>
-          <li><RouterLink to="/account/security">Security</RouterLink></li>
-        </ul>
-      
+    </BaseSidebar>
+    <section>
+      <div v-if="route.params.category === 'profile'">
+        profile
+        <AccountProfile />
       </div>
-    </div>
+      <div v-else-if="route.params.category === 'security'">
+        security
+      </div>
+    </section>
   </main>
 </template>

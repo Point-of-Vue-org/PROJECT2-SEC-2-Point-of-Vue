@@ -9,7 +9,7 @@ const userData = userStore.userData
 </script>
 
 <template>
-  <div class="navbar bg-base-200">
+  <header class="navbar bg-base-200 sticky top-0 z-10 h-16">
     <div class="flex-none">
       <RouterLink to="/" class="btn btn-ghost text-xl">
         <span class="text-primary">
@@ -83,5 +83,5 @@ const userData = userStore.userData
         </div>
       </ul>
     </div>
-  </div>
+  </header>
 </template>
