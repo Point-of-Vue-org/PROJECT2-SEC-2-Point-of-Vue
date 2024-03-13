@@ -10,6 +10,7 @@ import SearchIcon from '@/assets/icons/search.svg?raw'
 import { decrypt } from '../../libs/plannetEncrypt'
 import Logo from '@/components/Logo.vue'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
+import Card from '../components/Card.vue'
 
 const router = useRouter()
 const toastStore = useToastStore()
@@ -117,5 +118,6 @@ const handleLogout = async () => {
         </ul>
       </div>
     </div>
+    <Card/>
   </main>
 </template>
