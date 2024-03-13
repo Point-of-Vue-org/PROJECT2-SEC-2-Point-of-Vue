@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
@@ -8,13 +8,13 @@ import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
+import AccountProfile from './account/AccountProfile.vue'
 import BaseSidebar from '@/components/BaseSidebar.vue'
 
-
 const router = useRouter()
+const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-
 
 onBeforeMount(
   async () => {
@@ -49,11 +49,18 @@ const handleLogout = async () => {
   <main class="flex">
     <BaseSidebar>
       <template #menu>
-        <!-- Sidbar content here -->
+        <li><RouterLink to="/account/profile">Profile</RouterLink></li>
+        <li><RouterLink to="/account/security">Security</RouterLink></li>
       </template>
     </BaseSidebar>
     <section>
-      <!-- Main content here -->
+      <div v-if="route.params.category === 'profile'">
+        profile
+        <AccountProfile />
+      </div>
+      <div v-else-if="route.params.category === 'security'">
+        security
+      </div>
     </section>
   </main>
 </template>
