@@ -1,15 +1,13 @@
 <script setup>
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { fetchTokenById, fetchUserBy, logout, validateToken } from '../../libs/auth'
-import { decrypt } from '../../libs/plannetEncrypt'
+import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Navigation from '@/components/Navigation.vue'
 import { useUserStore } from '@/stores/user';
-import { onBeforeMount, ref, watch } from 'vue'
-import { upload } from '../../libs/imageManager'
+import { onBeforeMount } from 'vue'
 import AccountProfile from './account/AccountProfile.vue'
 
 const router = useRouter()
@@ -35,33 +33,6 @@ const handleLogout = async () => {
   await logout(userStore.userData.id)
   localStorage.removeItem('todo_token')
   router.replace('/login')
-}
-
-const imageFile = ref(null)
-
-const handleImageChange = (file) => {
-  imageFile.value = file
-}
-
-const handleUploadImage = async (type) => {
-  if (!imageFile.value) return
-
-  let imageURL = ''
-  try {
-    imageURL = await upload(imageFile.value)
-  } catch (error) {
-    console.error(error)
-  } finally {
-    imageFile.value = null
-  }
-
-  console.log(imageURL)
-  
-  await userStore.saveUserData({
-    setting: type === 'avatar'
-      ? { avatarUrl: imageURL }
-      : { bannerUrl: imageURL }
-  })
 }
 
 </script>
@@ -91,7 +62,7 @@ const handleUploadImage = async (type) => {
           />
           <button @click="uploadProfile" type="button" class="btn btn-warning" :disabled="!file">Upload</button>
           <img v-if="file" :src="images" alt="preview" class="pointer-events-none w-64 h-64 object-contain" /> -->
-          <AccountProfile @changeImage="handleImageChange" @submitUpload="handleUploadImage" />
+          <AccountProfile />
         </div>
         <div v-else-if="route.params.category === 'security'">
           security
