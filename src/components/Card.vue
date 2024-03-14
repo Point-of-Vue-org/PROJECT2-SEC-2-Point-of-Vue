@@ -15,17 +15,23 @@
                 <p>4 day ago-8m read time</p>
             </div>
         </div>
-        <div class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem]">
-            <img src="" alt="">
+        <div class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem] overflow-hidden">
+            <img src="../assets/icons/Killua.svg" alt="">
         </div>
-        <div class="flex-none my-2 flex flex-row">
-            <div>
+        <div class="flex-none my-2 flex flex-row gap-11">
+            <div class="flex flex-row">
                 <img src="../assets/icons/🦆 icon _chevron bottom_.svg" alt="up-vote">
+                <div class="pl-2">
+                    <p>120</p>
+                </div>
             </div>
-            <div class="mt-[0.1rem]">
-                <img src="../assets/icons/🦆 icon _comment square_.svg" alt="comment">
+            <div class="flex flex-row">
+                <img src="../assets/icons/🦆 icon _comment square_.svg" alt="comment" class="mt-[0.125rem]">
+                <div class="pl-2">
+                    <p>68</p>
+                </div>
             </div>
-            <div>
+            <div class="mt-1">
                 <img src="../assets/icons/🦆 icon _paperclip_.svg" alt="copy">
             </div>
         </div>
