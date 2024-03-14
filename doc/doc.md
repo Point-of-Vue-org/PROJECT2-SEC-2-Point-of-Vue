@@ -27,3 +27,11 @@ List of Feature
 - Prototype sidebar (successfully)
 - Implement function auth in frontend v1 (successfully)
 - Function check password is secre ? (successfully)
+## 3/13/2024
+- Demo design plan list (successfully)
+## 3/14/2024
+- Demo Drag and drop (successfully)
+- Demo object post data (successfully)
+- Card component (successfully)
+- post Utils (in progress)
+
