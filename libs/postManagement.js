@@ -98,9 +98,7 @@ export async function sortByUpvote(posts) {
  * @returns {Array<Post>} - A promise that resolves to post array
  */
 export async function sortByDate(posts) {
-
     return posts.sort((a, b) => new Date(b.postDate).getTime() - new Date(a.postDate).getTime())
-
 }
 
 /**
