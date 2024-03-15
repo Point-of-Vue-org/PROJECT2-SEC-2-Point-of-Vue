@@ -5,16 +5,15 @@ import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
+import Card from '../components/Card.vue'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
 import BaseSidebar from '@/components/BaseSidebar.vue'
 
-
 const router = useRouter()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-
 
 onBeforeMount(
   async () => {

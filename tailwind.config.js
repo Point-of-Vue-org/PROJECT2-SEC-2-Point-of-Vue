@@ -4,7 +4,14 @@ import daisyui from "daisyui"
 export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
-    extend: {}
+    extend: {
+      boxShadow: {
+        'cardshadow': '4px 6px 5.5px 0px rgba(0,0,0,0.25)',
+      },
+      fontFamily: {
+        'helvetica': 'Helvetica'
+      }
+    }
   },
   daisyui: {
     themes: [
