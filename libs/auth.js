@@ -1,8 +1,9 @@
 import { User } from '../classes/User'
 import { isEmail } from './utils'
-import { encrypt, hash } from './plannetEncrypt.js'
+import { decrypt, hash } from './plannetEncrypt.js'
 const jsonServerUri = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
+
 /**
  * Fetches a user by a given key and value
  * @param {string} key - The key to search by
@@ -18,8 +19,21 @@ export async function fetchUserBy(key, value) {
 
   if (!data[0]) return null
 
-  const user = new User(data[0])
-  return user
+  return data[0]
+}
+
+export async function updateUserData(id, updateData) {
+  const response = await fetch(`${jsonServerUri}/users/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(updateData),
+  })
+
+  const data = await response.json()
+
+  return data
 }
 
 /** 
@@ -175,4 +189,35 @@ export async function register(username, email, password, nickname = '') {
 export function isPasswordSecure(password) {
   const reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
   return reg.test(password)
+}
+
+export async function validateToken(){
+  const validationStatus = {
+    isTokenValid: false,
+    userId: null
+  }
+  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token'), secretKey))
+  const actualToken = await fetchTokenById(decryptedLocalToken?.id)
+
+  console.log('localToken', decryptedLocalToken)
+  console.log('actualToken', actualToken)
+
+  if (!decryptedLocalToken || !actualToken) {
+    console.log('Token not found')
+    return validationStatus
+  }
+
+  if (actualToken.token === decryptedLocalToken.token) {
+    if(actualToken.expired_at - Date.now() < 0) {
+      console.log('Token is expired')
+      return validationStatus
+    }
+    console.log('Token is valid')
+    validationStatus.isTokenValid = true
+    validationStatus.userId = actualToken.id
+    return validationStatus
+  } else {
+    console.log('Token is invalid')
+    return validationStatus
+  }
 }
