@@ -3,7 +3,7 @@
 </script>
  
 <template>
-    <div class="w-64 h-96 bg-neutral rounded-2xl p-4 flex flex-col gap-2 text-accent shadow-cardshadow">
+    <div class="w-64 h-96 bg-neutral rounded-2xl p-4 flex flex-col gap-2 text-accent shadow-cardshadow font-bold">
         <div class="flex-none flex flex-col gap-4">
             <div class=" w-10 h-10 bg-black rounded-full">
                 <img src="" alt="">
@@ -28,7 +28,7 @@
             <div class="flex flex-row">
                 <img src="../assets/icons/🦆 icon _comment square_.svg" alt="comment" class="mt-[0.125rem]">
                 <div class="pl-2">
-                    <p>68</p>
+                    <p>100</p>
                 </div>
             </div>
             <div class="mt-1">

@@ -7,6 +7,9 @@ export default {
     extend: {
       boxShadow: {
         'cardshadow': '4px 6px 5.5px 0px rgba(0,0,0,0.25)',
+      },
+      fontFamily: {
+        'helvetica': 'Helvetica'
       }
     }
   },
