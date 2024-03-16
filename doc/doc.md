@@ -35,3 +35,10 @@ List of Feature
 - Card component (successfully)
 - post Utils (in progress)
 
+## 3/15/2024
+- Post Utils v0.2 (successfully)
+- Demo home page with card (successfully)
+- Demo card component (successfully)
+- Demo Post time (successfully)
+
+
