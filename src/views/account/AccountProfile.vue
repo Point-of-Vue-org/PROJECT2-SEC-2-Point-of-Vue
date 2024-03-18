@@ -6,7 +6,7 @@ import { useToastStore } from '@/stores/toast';
 
 const userStore = useUserStore()
 const useToast = useToastStore()
-userStore.loadUserData("2ee4")
+// userStore.loadUserData("2ee4")
 console.log(userStore.userData);
 const file = ref(null)
 const image = ref(null)
@@ -15,7 +15,6 @@ const type = ref('avatar')
 function handleSave(saveObject){
   userStore.saveUserData(saveObject)
   useToast.msg = "Save change successfully!"
-
 }
 
 const handleFileChange = (e) => {
