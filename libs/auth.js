@@ -24,7 +24,7 @@ export async function fetchUserBy(key, value) {
 
 export async function updateUserData(id, updateData) {
   const response = await fetch(`${JSON_SERVER_URI}/users/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
