@@ -1,4 +1,13 @@
+/**
+ * Check if password is Secure or not
 
+ @param {String} newPassword
+
+ * @returns { Object } return object {
+    isPasswordSecure: boolean,
+    warning: Array
+ }
+ */
 export function checkPassword(newPassword) {
     let passwdWarning = []
     let passwdLengthRequired = false
