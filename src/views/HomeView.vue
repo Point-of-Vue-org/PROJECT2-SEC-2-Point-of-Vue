@@ -1,19 +1,22 @@
 <script setup>
+import { ref, onBeforeMount, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
-import Card from '../components/Card.vue'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
-import { onBeforeMount } from 'vue'
 import BaseSidebar from '@/components/BaseSidebar.vue'
+import PostCard from '@/components/PostCard.vue'
+import PostContainer from '@/components/PostContainer.vue'
 
+const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const router = useRouter()
 const toastStore = useToastStore()
 const userStore = useUserStore()
+const posts = ref([])
 
 onBeforeMount(
   async () => {
@@ -25,6 +28,15 @@ onBeforeMount(
     } else {
       userStore.loadUserData(userId)
     }
+  }
+)
+
+onMounted(
+  async () => {
+    // Fetch posts here
+    const res = await fetch(`${JSON_SERVER_URI}/posts`)
+    posts.value = await res.json()
+    console.log(posts.value)
   }
 )
 
@@ -46,13 +58,17 @@ const handleLogout = async () => {
     </template>
   </Header>
   <main class="flex">
-    <BaseSidebar>
+    <BaseSidebar class="flex-none">
       <template #menu>
         <!-- Sidbar content here -->
       </template>
     </BaseSidebar>
-    <section>
-      <!-- Main content here -->
+    <section class="flex-auto">
+      <div class="h-16"></div>
+      <PostContainer>
+        <PostCard v-for="post in posts" :postData="post" />
+      </PostContainer>
+      <div class="h-16"></div>
     </section>
   </main>
 </template>

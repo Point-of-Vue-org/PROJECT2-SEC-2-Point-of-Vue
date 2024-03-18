@@ -1,7 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('/fonts/helvetica-255/Helvetica.ttf');
+
+@font-face {
+    font-family: 'Helvetica';
+    src: url('/fonts/helvetica-255/Helvetica.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
 html {
     @apply font-helvetica
 }

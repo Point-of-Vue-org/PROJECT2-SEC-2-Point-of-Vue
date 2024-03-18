@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "host": "vite --host",
     "backend": "json-server --watch ./data/db.json --port 5000",
-    "start": "bash run.sh"
+    "start:window": "bash run.bat",
+    "start:linux": "bash run.sh"
   },
   "dependencies": {
     "json-server": "^1.0.0-alpha.23",
