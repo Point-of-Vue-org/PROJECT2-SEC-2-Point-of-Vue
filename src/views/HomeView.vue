@@ -63,11 +63,18 @@ const handleLogout = async () => {
         <!-- Sidbar content here -->
       </template>
     </BaseSidebar>
+    
     <section class="flex-auto">
-      <div class="h-16"></div>
-      <PostContainer>
-        <PostCard v-for="post in posts" :postData="post" />
-      </PostContainer>
+      <div class="flex flex-col items-center">
+        <div class="w-fit">
+          <div class="h-24 w-full flex justify-end items-center">
+            <RouterLink to="/post/create" class="btn btn-outline">Add your plan</RouterLink>
+          </div>
+          <PostContainer>
+            <PostCard v-for="post in posts" :postData="post" />
+          </PostContainer>
+        </div>
+      </div>
       <div class="h-16"></div>
     </section>
   </main>
