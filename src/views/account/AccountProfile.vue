@@ -2,11 +2,21 @@
 import { ref, watch } from 'vue'
 import { upload } from '../../../libs/imageManager';
 import { useUserStore } from '@/stores/user';
+import { useToastStore } from '@/stores/toast';
 
 const userStore = useUserStore()
+const useToast = useToastStore()
+userStore.loadUserData("2ee4")
+console.log(userStore.userData);
 const file = ref(null)
 const image = ref(null)
 const type = ref('avatar')
+
+function handleSave(saveObject){
+  userStore.saveUserData(saveObject)
+  useToast.msg = "Save change successfully!"
+
+}
 
 const handleFileChange = (e) => {
   file.value = e.target.files[0]
@@ -63,6 +73,17 @@ watch(file, (newFile) => {
     <button @click="handleUploadImage" type="button" class="btn btn-warning" :disabled="!file">Upload</button>
     <img v-if="file" :src="image" alt="preview" class="pointer-events-none w-64 h-64 object-contain" />
   </section>
+ 
+ <form class="flex flex-col pt-5 gap-3 pl-5" @submit.prevent="handleSave(userStore.userData)">
+  
+  <label for="username">User Name</label>
+  <input type="text" id ="username" class="input input-bordered w-full max-w-xs"  v-model="userStore.userData.username">
+  <label for="nickname">Nickname</label>
+  <input type="text" id ="nickname" class="input input-bordered w-full max-w-xs"  v-model="userStore.userData.nickname">
+  <label for="bio">Bio</label>
+  <textarea class= "textarea textarea-accent" v-model="userStore.userData.bio"></textarea>
+  <input type="submit" value="Save" class="btn btn-primary w-1/5 ml-auto">
+ </form>
 </template>
 
 <style scoped>

@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', () => {
     id: undefined,
     username: 'guest',
     nickname: 'Guest',
+    bio: ''
   })
 
   async function loadUserData(id) {
