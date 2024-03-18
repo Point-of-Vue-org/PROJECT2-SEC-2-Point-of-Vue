@@ -1,7 +1,7 @@
 import { User } from '../classes/User'
 import { isEmail } from './utils'
 import { decrypt, hash } from './plannetEncrypt.js'
-const jsonServerUri = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
 
 /**
@@ -12,7 +12,7 @@ const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
  */
 export async function fetchUserBy(key, value) {
   const response = await fetch(
-    `${jsonServerUri}/users?${key}=${value}`
+    `${JSON_SERVER_URI}/users?${key}=${value}`
   )
   const data = await response.json()
   console.log(key, value, data[0])
@@ -23,7 +23,7 @@ export async function fetchUserBy(key, value) {
 }
 
 export async function updateUserData(id, updateData) {
-  const response = await fetch(`${jsonServerUri}/users/${id}`, {
+  const response = await fetch(`${JSON_SERVER_URI}/users/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export async function isEmailExist(email) {
  */
 export async function fetchTokenById(id) {
   const response = await fetch(
-    `${jsonServerUri}/tokens?id=${id}`
+    `${JSON_SERVER_URI}/tokens?id=${id}`
   )
   const data = await response.json()
   return data[0]
@@ -97,7 +97,7 @@ export async function createOrUpdateToken(userId) {
   }
 
   await fetch(
-    `${jsonServerUri}/tokens${
+    `${JSON_SERVER_URI}/tokens${
       isTokenExist ? `/${userId}` : ''
     }`,
     {
@@ -124,7 +124,7 @@ export async function createOrUpdateToken(userId) {
  * @returns {Promise<void>} A promise that resolves to void
  */
 export async function deleteTokenById(id) {
-  const response = await fetch(`${jsonServerUri}/tokens/${id}`, {
+  const response = await fetch(`${JSON_SERVER_URI}/tokens/${id}`, {
     method: 'DELETE',
   })
   return await response.json()
@@ -170,7 +170,7 @@ export async function logout(userId) {
  * console.log(user) // { id: '1', username: 'username', email: 'email', password: 'password' }
  */
 export async function register(username, email, password, nickname = '') {
-  const response = await fetch(`${jsonServerUri}/users`, {
+  const response = await fetch(`${JSON_SERVER_URI}/users`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

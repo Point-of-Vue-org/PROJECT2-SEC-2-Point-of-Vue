@@ -1,4 +1,4 @@
-import PostTemplate from '../object_template/PostTemplate.json'
+import PostTemplate from './templates/Post.json'
 
 export class Post {
     constructor(postData) {
