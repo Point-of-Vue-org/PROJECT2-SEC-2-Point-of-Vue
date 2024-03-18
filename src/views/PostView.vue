@@ -20,6 +20,8 @@ const userStore = useUserStore()
 const post = ref({})
 const author = ref({})
 
+console.log('from: PostView.vue')
+
 onBeforeMount(
   async () => {
     const { isTokenValid, userId } = await validateToken()

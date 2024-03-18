@@ -27,18 +27,25 @@ const router = createRouter({
     {
       path: '/post/:id',
       name: 'post',
-      component: () => import('../views/PostView.vue')
-    },
-    {
-      path: '/post/create',
-      name: 'create post',
-      component: () => import('../views/AddOrEditPostView.vue')
+      component: () => import('../views/PostView.vue'),
+      beforeEnter: (to, from, next) => {
+        if (to.query.edit) {
+          next({ name: 'edit-post', params: { id: to.params.id } })
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/post/edit/:id',
-      name: 'edit post',
+      name: 'edit-post',
       component: () => import('../views/AddOrEditPostView.vue')
-    }
+    },
+    {
+      path: '/post/create',
+      name: 'create-post',
+      component: () => import('../views/AddOrEditPostView.vue')
+    },
   ]
 })
 
