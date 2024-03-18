@@ -33,3 +33,5 @@ coverage
 *.tsbuildinfo
 *.env
 data/*.json
+
+*test*
