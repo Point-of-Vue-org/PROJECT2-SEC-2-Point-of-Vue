@@ -2,7 +2,7 @@
 import Icon from './Icon.vue'
 import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
 import { ref, onMounted } from 'vue'
-import { fetchUserBy } from '../../libs/auth.js'
+import { getUserBy } from '../../libs/userManagement'
 
 const props = defineProps({
 	postData: {
@@ -15,7 +15,7 @@ const author = ref({})
 
 onMounted(
 	async () => {
-		author.value = await fetchUserBy('id', props.postData.authorId)
+		author.value = await getUserBy('id', props.postData.authorId)
 	}
 )
 
@@ -91,4 +91,4 @@ function formatPostDate(postDate) {
 			<Icon iconName="paper-clip" />
 		</div>
 	</div>
-</template>
+</template>../../libs/userManagement.js

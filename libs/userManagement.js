@@ -1,26 +1,37 @@
 import { User } from '../classes/User'
 import { isEmail } from './utils'
 import { decrypt, hash } from './plannetEncrypt.js'
+
 const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
-const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
 
 /**
  * Fetches a user by a given key and value
  * @param {string} key - The key to search by
  * @param {string} value - The value to search for
- * @returns {Promise<User>} A promise that resolves to a User object
+ * @returns {Promise<User[]>} A promise that resolves to an array of User objects
  */
-export async function fetchUserBy(key, value) {
+export async function getUsersBy(key, value) {
   const response = await fetch(
     `${JSON_SERVER_URI}/users?${key}=${value}`
   )
   const data = await response.json()
   console.log(key, value, data[0])
+  if (!data) return null
+  return data
+}
 
+/**
+ * Fetches a first user that match by a given key and value
+ * @param {string} key - The key to search by
+ * @param {string} value - The value to search for
+ * @returns {Promise<User>} A promise that resolves to a User object
+ */
+export async function getUserBy(key, value) {
+  const data = await getUsersBy(key, value)
   if (!data[0]) return null
-
   return data[0]
 }
+
 
 export async function updateUserData(id, updateData) {
   const response = await fetch(`${JSON_SERVER_URI}/users/${id}`, {
@@ -42,7 +53,7 @@ export async function updateUserData(id, updateData) {
  * @returns {Promise<boolean>} A promise that resolves to a boolean
  */
 export async function isUsernameExist(username) {
-  const user = await fetchUserBy('username', username)
+  const user = await getUserBy('username', username)
   console.log(user)
   return user ? true : false
 }
@@ -53,7 +64,7 @@ export async function isUsernameExist(username) {
  * @returns {Promise<boolean>} A promise that resolves to a boolean
  */
 export async function isEmailExist(email) {
-  const user = await fetchUserBy('email', email)
+  const user = await getUserBy('email', email)
   return user ? true : false
 }
 
@@ -140,7 +151,7 @@ export async function deleteTokenById(id) {
  * console.log(token) // { id: '1', token: 'randomString' }
  */
 export async function login(usernameOrEmail, password) {
-  const user = await fetchUserBy(isEmail(usernameOrEmail) ? 'email' : 'username', usernameOrEmail)
+  const user = await getUserBy(isEmail(usernameOrEmail) ? 'email' : 'username', usernameOrEmail)
 
   if (user && user.password === hash(password)) {
     const token = await createOrUpdateToken(user.id)
@@ -196,7 +207,7 @@ export async function validateToken(){
     isTokenValid: false,
     userId: null
   }
-  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token'), secretKey))
+  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token')))
   const actualToken = await fetchTokenById(decryptedLocalToken?.id)
 
   console.log('localToken', decryptedLocalToken)

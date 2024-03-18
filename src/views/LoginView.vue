@@ -3,7 +3,7 @@ import Logo from '@/components/Logo.vue'
 import { ref } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { useRouter } from 'vue-router'
-import { login } from '../../libs/auth'
+import { login } from '../../libs/userManagement'
 import { encrypt } from '../../libs/plannetEncrypt'
 
 const toastStore = useToastStore()
@@ -18,7 +18,7 @@ const handleSubmitLogin = async () => {
   if (token) {
     router.replace('/')
     toastStore.msg = 'Login success'
-    localStorage.setItem('todo_token', encrypt(JSON.stringify(token), secretKey))
+    localStorage.setItem('todo_token', encrypt(JSON.stringify(token)))
   } else {
     errorMsg.value = 'Invalid username or password'
   }
@@ -71,3 +71,4 @@ const handleForgetPassword = () => {
     </form>
   </main>
 </template>
+../../libs/userManagement

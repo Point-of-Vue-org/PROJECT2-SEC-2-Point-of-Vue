@@ -2,10 +2,7 @@
 import { ref, onBeforeMount, onMounted } from 'vue'
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { logout, validateToken } from '../../libs/auth'
-import PersonIcon from '@/assets/icons/personFill.svg?raw'
-import GearIcon from '@/assets/icons/gearFill.svg?raw'
-import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
+import { logout, validateToken } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import BaseSidebar from '@/components/BaseSidebar.vue'
@@ -62,9 +59,9 @@ const handleLogout = async () => {
 <template>
   <Header>
     <template #menu>
-      <li><a class="text-lg"><div v-html="PersonIcon" class="w-4 h-4"></div>Profile</a></li>
-      <li><RouterLink to="/account/profile" class="text-lg"><div v-html="GearIcon" class="w-4 h-4"></div>Account Details</RouterLink></li>
-      <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
+      <li><a class="text-lg"><Icon iconName="person-fill" />Profile</a></li>
+      <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>
+      <li><a class="text-lg" @click="handleLogout"><Icon iconName="box-arrow-left" />Logout</a></li>
     </template>
   </Header>
   <main class="flex">
@@ -80,4 +77,4 @@ const handleLogout = async () => {
         
     </section>
   </main>
-</template>
+</template>../../libs/userManagement

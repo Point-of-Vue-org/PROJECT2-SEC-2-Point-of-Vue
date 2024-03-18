@@ -1,4 +1,4 @@
-import { createPostOrUpdatePost } from '../libs/postManagement'
+import { createOrUpdatePost } from '../libs/postManagement'
 import PostTemplate from './templates/Post.json'
 
 export class Post {
@@ -12,11 +12,11 @@ export class Post {
     publish() {
         if (this.postDate === '') this.postDate = Date.now()
         this.published = true
-        createPostOrUpdatePost(this)
+        createOrUpdatePost(this)
     }
 
     archive() {
         this.published = false
-        createPostOrUpdatePost(this)
+        createOrUpdatePost(this)
     }
 }

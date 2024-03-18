@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import { defineStore } from 'pinia'
-import { fetchUserBy, updateUserData } from '../../libs/auth'
+import { getUserBy, updateUserData } from '../../libs/userManagement'
 
 export const useUserStore = defineStore('user', () => {
   const user = reactive({
@@ -11,7 +11,7 @@ export const useUserStore = defineStore('user', () => {
   })
 
   async function loadUserData(id) {
-    const userData = await fetchUserBy('id', id)
+    const userData = await getUserBy('id', id)
     for (const key in userData) {
       user[key] = userData[key]
     }

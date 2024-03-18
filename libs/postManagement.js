@@ -4,7 +4,6 @@ const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:500
 
 /**
  * Get all posts
- 
  * @returns { Array<Post> } return array of posts
  */
 export async function getPosts(start, amount) {
@@ -54,7 +53,7 @@ export async function deletePost(id) {
  * @param {String} postData - Data from post
  * @returns {Promise<Post>} - A promise that resolves to Post object
  */
-export async function createPostOrUpdatePost(postData) {
+export async function createOrUpdatePost(postData) {
     const isPostExist = await isPostExist(postData.id)
 
     const response = await fetch(`${JSON_SERVER_URI}/posts` + isPostExist ? `/${postData.id}` : '', {

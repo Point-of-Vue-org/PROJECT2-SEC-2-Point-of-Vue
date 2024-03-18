@@ -1,8 +1,10 @@
-export function encrypt(str, key) {
+const SECRET_KEY = import.meta.env.VITE_SECRET_KEY || 'secret'
+
+export function encrypt(str) {
   let encrypted = ''
   for (let i = 0; i < str.length; i++) {
     const char = str[i]
-    const keyChar = key[i % key.length]
+    const keyChar = SECRET_KEY[i % SECRET_KEY.length]
     const encryptedChar = String.fromCharCode(
       char.charCodeAt(0) + keyChar.charCodeAt(0)
     )
@@ -11,13 +13,13 @@ export function encrypt(str, key) {
   return btoa(encrypted)
 }
 
-export function decrypt(str, key) {
-  if (!str || !key) return null
+export function decrypt(str) {
+  if (!str) return null
   const aStr = atob(str)
   let decrypted = ''
   for (let i = 0; i < aStr.length; i++) {
     const char = aStr[i]
-    const keyChar = key[i % key.length]
+    const keyChar = SECRET_KEY[i % SECRET_KEY.length]
     const decryptedChar = String.fromCharCode(
       char.charCodeAt(0) - keyChar.charCodeAt(0)
     )

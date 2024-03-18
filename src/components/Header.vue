@@ -1,8 +1,8 @@
 <script setup>
-import SearchIcon from '@/assets/icons/search.svg?raw'
 import Logo from '@/components/Logo.vue'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
 import { useUserStore } from '@/stores/user'
+import Icon from './Icon.vue';
 
 const userStore = useUserStore()
 const userData = userStore.userData
@@ -20,7 +20,7 @@ const userData = userStore.userData
     </div>
     <div class="flex-1 gap-2 flex justify-center">
       <div class="form-control">
-        <div v-html="SearchIcon" class="w-4 h-4 absolute translate-x-5 translate-y-4 pointer-events-none"></div>
+        <Icon iconName="search" class="absolute translate-x-5 translate-y-4 pointer-events-none" />
         <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
       </div>
     </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { upload } from '../../../libs/imageManager';
+import { upload } from '../../../libs/imageManagement';
 import { useUserStore } from '@/stores/user';
 import { useToastStore } from '@/stores/toast';
 

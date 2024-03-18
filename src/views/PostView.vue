@@ -2,7 +2,7 @@
 import { ref, onBeforeMount, onMounted, reactive} from 'vue'
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { fetchUserBy, logout, validateToken } from '../../libs/auth'
+import { getUserBy, logout, validateToken } from '../../libs/userManagement'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
@@ -40,7 +40,7 @@ onMounted(
     // Fetch posts here
     post.value = await getPostBy('id', route.params.id)
     console.log(post.value);
-    author.value = await fetchUserBy('id', post.value.authorId)
+    author.value = await getUserBy('id', post.value.authorId)
     console.log('author: ', author.value);
   }
 )
@@ -89,4 +89,4 @@ const handleLogout = async () => {
         </div>
     </section>
   </main>
-</template>
+</template>../../libs/userManagement

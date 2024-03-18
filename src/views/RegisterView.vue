@@ -2,7 +2,7 @@
 import Logo from '@/components/Logo.vue'
 import { reactive, ref, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
-import { isEmailExist, isUsernameExist, register } from '../../libs/auth';
+import { isEmailExist, isUsernameExist, register } from '../../libs/userManagement';
 import { useRouter } from 'vue-router'
 
 const toastStore = useToastStore()
@@ -132,4 +132,4 @@ watch( password, (newPassword) => {
       </div>
     </form>
   </main>
-</template>
+</template>../../libs/userManagement

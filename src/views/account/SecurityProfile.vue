@@ -1,12 +1,12 @@
 <script setup>
 import { computed } from 'vue';
-import { checkPassword } from '../../../libs/checkPassword';
+import { checkPassword } from '../../../libs/passwordValidation';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { hash } from '../../../libs/plannetEncrypt';
 import { useToastStore } from '@/stores/toast';
-import { updateUserData } from '../../../libs/auth';
-// const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
+import { updateUserData } from '../../../libs/userManagement';
+
 const userStore = useUserStore()
 const password = ref('')
 const toast = useToastStore()
@@ -45,4 +45,4 @@ function handleSave(){
  
 <style scoped>
 
-</style>
+</style>../../../libs/userManagement
