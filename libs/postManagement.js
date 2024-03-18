@@ -70,20 +70,24 @@ export async function createPostOrUpdatePost(postData) {
 
 /**
  * Sorting by upvote count
- * @param {String} posts - Message from post
- * @returns {Array<Post>} - A promise that resolves to post array
+ * @param {Array<Post>} posts - Message from post
+ * @param {String} order - The order to sort by (asc or desc)
+ * @returns {void} - A promise that resolves to post array
  */
-export async function sortByUpvote(posts) {
-    return posts.sort((a, b) => b.upVote - a.upVote)
+export async function sortByUpvote(posts,order) {
+    if(!['asc', 'desc'].includes(order)) throw new Error('Order must be \"asc\" or \"desc\"')
+    return posts.sort((a, b) => (a.upVote - b.upVote) * order === 'asc' ? 1 : -1)
 }
 
 /**
  * Sorting by postdate
- * @param {string} posts - Message from post
- * @returns {Array<Post>} - A promise that resolves to post array
+ * @param {Array<Post>} posts - Message from post
+ * @param {String} order - The order to sort by (asc or desc)
+ * @returns {void} - A promise that resolves to post array
  */
-export async function sortByDate(posts) {
-    return posts.sort((a, b) => new Date(b.postDate).getTime() - new Date(a.postDate).getTime())
+export async function sortByDate(posts, order) {
+    if(!['asc', 'desc'].includes(order)) throw new Error('Order must be \"asc\" or \"desc\"')
+    posts.sort((a, b) => (new Date(a.postDate).getTime() - new Date(b.postDate).getTime()) * order === 'asc' ? 1 : -1)
 }
 
 /**
