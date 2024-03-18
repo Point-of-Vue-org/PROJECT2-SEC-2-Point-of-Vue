@@ -7,5 +7,6 @@
     "upVote": 0,
     "downVote": 0,
     "comments": [],
-    "days": []
+    "days": [],
+    "published": false
 }

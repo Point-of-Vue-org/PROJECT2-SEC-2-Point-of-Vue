@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onBeforeMount, onMounted } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
@@ -9,15 +9,18 @@ import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import BaseSidebar from '@/components/BaseSidebar.vue'
-import PostCard from '@/components/PostCard.vue'
-import PostContainer from '@/components/PostContainer.vue'
-import { getPosts } from '../../libs/postManagement'
+import { Post } from '../../classes/Post'
+import { getPostBy } from '../../libs/postManagement'
 
-// const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const router = useRouter()
+const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-const posts = ref([])
+const post = ref(new Post())
+
+const existingPostId = route.params.id
+const isEditMode = Boolean(existingPostId)
 
 onBeforeMount(
   async () => {
@@ -35,8 +38,12 @@ onBeforeMount(
 onMounted(
   async () => {
     // Fetch posts here
-    posts.value = await getPosts()
-    console.log(posts.value)
+    // post.value = await getPostBy('id', route.params.id)
+    if (isEditMode) {
+      post.value = await getPostBy('id', existingPostId)
+      console.log(post.value.authorId, userStore.userData.id)
+      // if (post.value.authorId !== userStore.userData.id) router.replace('/')
+    }
   }
 )
 
@@ -63,12 +70,11 @@ const handleLogout = async () => {
         <!-- Sidbar content here -->
       </template>
     </BaseSidebar>
-    <section class="flex-auto">
-      <div class="h-16"></div>
-      <PostContainer>
-        <PostCard v-for="post in posts" :postData="post" />
-      </PostContainer>
-      <div class="h-16"></div>
+    <section class="flex-auto flex justify-center">
+        <!-- Author: {{ author }}
+        <br />
+        Post: {{ post }} -->
+        
     </section>
   </main>
 </template>

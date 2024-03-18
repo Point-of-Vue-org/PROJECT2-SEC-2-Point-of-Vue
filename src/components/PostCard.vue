@@ -54,9 +54,12 @@ function formatPostDate(postDate) {
 		<div class="flex-none flex flex-col gap-4">
 			<div class="flex gap-4 items-center tracking-wider">
 				<div class=" w-10 h-10 bg-black rounded-full overflow-hidden">
-					<div v-if="author?.setting?.avatarUrl">
-						<img :src="author?.setting?.avatarUrl" alt="Author profile image" />
-					</div>
+					<img 
+						v-if="author?.setting?.avatarUrl" 
+						:src="author?.setting?.avatarUrl" 
+						alt="Author profile image" 
+						class="w-full h-full object-cover"
+					/>
 					<div v-else>
 						<UserProfilePlaceholder
 							color="white"
@@ -67,7 +70,7 @@ function formatPostDate(postDate) {
 				</div>
 				<div class="text-sm">{{ author?.username || 'Username' }}</div>
 			</div>
-			<div class="text-xl font-bold">{{ postData.title || 'Title' }}</div>
+			<RouterLink :to="`/post/${postData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ postData.title || 'Title' }}</RouterLink>
 			<div class="text-[0.6rem] font-bold">{{ formatPostDate(postData.postDate) }}</div>
 		</div>
 		<div class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem] overflow-hidden">

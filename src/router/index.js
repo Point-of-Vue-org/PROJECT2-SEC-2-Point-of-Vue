@@ -23,6 +23,21 @@ const router = createRouter({
       path: '/account/:category',
       name: 'account',
       component: () => import('../views/AccountView.vue')
+    },
+    {
+      path: '/post/:id',
+      name: 'post',
+      component: () => import('../views/PostView.vue')
+    },
+    {
+      path: '/post/create',
+      name: 'create post',
+      component: () => import('../views/AddOrEditPostView.vue')
+    },
+    {
+      path: '/post/edit/:id',
+      name: 'edit post',
+      component: () => import('../views/AddOrEditPostView.vue')
     }
   ]
 })
