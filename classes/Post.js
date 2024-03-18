@@ -1,3 +1,4 @@
+import { createPostOrUpdatePost } from '../libs/postManagement'
 import PostTemplate from './templates/Post.json'
 
 export class Post {
@@ -6,5 +7,16 @@ export class Post {
         for (let key in post) {
             this[key] = post[key]
         }
+    }
+
+    publish() {
+        if (this.postDate === '') this.postDate = Date.now()
+        this.published = true
+        createPostOrUpdatePost(this)
+    }
+
+    archive() {
+        this.published = false
+        createPostOrUpdatePost(this)
     }
 }

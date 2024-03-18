@@ -1,23 +1,26 @@
 <script setup>
-import { ref, onBeforeMount, onMounted } from 'vue'
-import { useRouter, RouterLink } from 'vue-router'
+import { ref, onBeforeMount, onMounted, reactive} from 'vue'
+import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { logout, validateToken } from '../../libs/auth'
+import { fetchUserBy, logout, validateToken } from '../../libs/auth'
 import PersonIcon from '@/assets/icons/personFill.svg?raw'
 import GearIcon from '@/assets/icons/gearFill.svg?raw'
 import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import BaseSidebar from '@/components/BaseSidebar.vue'
-import PostCard from '@/components/PostCard.vue'
-import PostContainer from '@/components/PostContainer.vue'
-import { getPosts } from '../../libs/postManagement'
+import { getPostBy } from '../../libs/postManagement.js'
+import ListContainer from '@/components/ListContainer.vue'
 
-// const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const router = useRouter()
+const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-const posts = ref([])
+const post = ref({})
+const author = ref({})
+
+console.log('from: PostView.vue')
 
 onBeforeMount(
   async () => {
@@ -35,8 +38,10 @@ onBeforeMount(
 onMounted(
   async () => {
     // Fetch posts here
-    posts.value = await getPosts()
-    console.log(posts.value)
+    post.value = await getPostBy('id', route.params.id)
+    console.log(post.value);
+    author.value = await fetchUserBy('id', post.value.authorId)
+    console.log('author: ', author.value);
   }
 )
 
@@ -63,19 +68,25 @@ const handleLogout = async () => {
         <!-- Sidbar content here -->
       </template>
     </BaseSidebar>
-    
-    <section class="flex-auto">
-      <div class="flex flex-col items-center">
-        <div class="w-fit">
-          <div class="h-24 w-full flex justify-end items-center">
-            <RouterLink to="/post/create" class="btn btn-outline">Add your plan</RouterLink>
-          </div>
-          <PostContainer>
-            <PostCard v-for="post in posts" :postData="post" />
-          </PostContainer>
+    <section class="flex-auto flex justify-center">
+        <!-- Author: {{ author }}
+        <br />
+        Post: {{ post }} -->
+        <div class="w-[85%]">
+            <div class="flex gap-4 items-center">
+              <img
+                :src="author?.setting?.avatarUrl"
+                alt="author image"
+                class="w-8 h-8 rounded-full object-cover"
+              />
+              <div class="font-helvetica font-semibold opacity-60">{{ author?.username }}</div>
+            </div>
+            <div class="text-3xl font-bold font-helvetica">
+                {{ post.title }}
+            </div>
+            <div class="font-helvetica">{{ post?.description }}</div>
+            <ListContainer :items="post?.days" />
         </div>
-      </div>
-      <div class="h-16"></div>
     </section>
   </main>
 </template>

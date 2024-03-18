@@ -34,7 +34,7 @@ export async function isPostExist(id) {
 export async function getPostBy(key, value) {
     let response = await fetch(`${JSON_SERVER_URI}/posts?${key}=${value}`)
     const data = await response.json()
-    return data
+    return data[0]
 }
 
 /**
