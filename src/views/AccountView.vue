@@ -10,6 +10,7 @@ import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
 import AccountProfile from './account/AccountProfile.vue'
 import BaseSidebar from '@/components/BaseSidebar.vue'
+import SecurityProfile from './account/SecurityProfile.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -60,6 +61,7 @@ const handleLogout = async () => {
       </div>
       <div v-else-if="route.params.category === 'security'">
         security
+        <SecurityProfile/>
       </div>
     </section>
   </main>
