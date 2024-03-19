@@ -3,16 +3,14 @@ import { ref, onBeforeMount, onMounted, reactive} from 'vue'
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy, logout, validateToken } from '../../libs/userManagement'
-import PersonIcon from '@/assets/icons/personFill.svg?raw'
-import GearIcon from '@/assets/icons/gearFill.svg?raw'
-import BoxArrowLeftIcon from '@/assets/icons/boxArrowLeft.svg?raw'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import BaseSidebar from '@/components/BaseSidebar.vue'
 import { getPostBy } from '../../libs/postManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
+import Icon from '@/components/Icon.vue'
 
-const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+// const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
@@ -57,9 +55,9 @@ const handleLogout = async () => {
 <template>
   <Header>
     <template #menu>
-      <li><a class="text-lg"><div v-html="PersonIcon" class="w-4 h-4"></div>Profile</a></li>
-      <li><RouterLink to="/account/profile" class="text-lg"><div v-html="GearIcon" class="w-4 h-4"></div>Account Details</RouterLink></li>
-      <li><a class="text-lg" @click="handleLogout"><div v-html="BoxArrowLeftIcon" class="w-4 h-4"></div>Logout</a></li>
+      <li><a class="text-lg"><Icon iconName="person-fill" />Profile</a></li>
+      <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>
+      <li><a class="text-lg" @click="handleLogout"><Icon iconName="box-arrow-left" />Logout</a></li>
     </template>
   </Header>
   <main class="flex">
