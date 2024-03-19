@@ -19,8 +19,6 @@ const post = ref(new Post())
 const existingPostId = route.params.id
 const isEditMode = route.query.edit === 'true'
 
-console.log('from: AddOrEditPostView.vue')
-
 onBeforeMount(
   async () => {
     const { isTokenValid, userId } = await validateToken()
@@ -39,9 +37,7 @@ onMounted(
     // Fetch posts here
     // post.value = await getPostBy('id', route.params.id)
     if (isEditMode) {
-      console.log('Edit mode yayyy!')
       post.value = await getPostBy('id', existingPostId)
-      console.log(post.value.authorId, userStore.userData.id)
       // if (post.value.authorId !== userStore.userData.id) router.replace('/')
     }
   }

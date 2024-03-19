@@ -2,7 +2,9 @@
 import Icon from './Icon.vue'
 import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
 import { ref, onMounted } from 'vue'
-import { getUserBy } from '../../libs/userManagement'
+import { getUserBy, updateUserData } from '../../libs/userManagement'
+import { useUserStore } from '@/stores/user';
+import { updatePostData } from '../../libs/postManagement';
 
 const props = defineProps({
 	postData: {
@@ -11,11 +13,14 @@ const props = defineProps({
 	}
 })
 
+const userStore = useUserStore()
 const author = ref({})
+const upVoted = ref(false)
 
 onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.postData.authorId)
+		upVoted.value = userStore.userData.upVotedPosts.includes(props.postData.id)
 	}
 )
 
@@ -45,6 +50,22 @@ function formatPostDate(postDate) {
 		hour: 'numeric',
 		minute: 'numeric'
 	})
+}
+
+const toggleUpVote = () => {
+	if (userStore.userData.upVotedPosts.includes(props.postData.id)) {
+		props.postData.upVote--
+		updatePostData(props.postData.id, { upVote: props.postData.upVote })
+		userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.postData.id), 1)
+		updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
+		upVoted.value = false
+		return
+	}
+	props.postData.upVote++
+	updatePostData(props.postData.id, { upVote: props.postData.upVote })
+	userStore.userData.upVotedPosts.push(props.postData.id)
+	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
+	upVoted.value = true
 }
 
 </script>
@@ -79,16 +100,17 @@ function formatPostDate(postDate) {
 				I am Mock-up image
 			</div>
 		</div>
-		<div class="flex-none mt-2 flex items-center justify-between">
-			<div class="flex items-center gap-3">
-				<Icon iconName="up-vote" />
+		<div class="flex-none mt-2 flex items-center justify-between select-none">
+			<div @click="toggleUpVote" class="flex items-center gap-3">
+				<Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
+				<Icon v-show="!upVoted" iconName="up-vote" />
 				<div class="font-bold">{{ postData.upVote || '0' }}</div>
 			</div>
 			<div class="flex items-center gap-3">
-				<Icon iconName="comment" />
+				<Icon iconName="chat-right-dots" />
 				<div class="font-bold">{{ postData.comments.length || '0' }}</div>
 			</div>
 			<Icon iconName="paper-clip" />
 		</div>
 	</div>
-</template>../../libs/userManagement.js
+</template>

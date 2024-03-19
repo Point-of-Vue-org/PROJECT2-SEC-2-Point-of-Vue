@@ -41,7 +41,7 @@ const openState = ref(false)
     @drop="$emit('drop', $event)"
   >
     <div class="w-full h-14">
-      <div class="bg-base-200 rounded-2xl h-full text-2xl font-medium flex items-center justify-between gap-4 z-10 relative">
+      <div class="bg-base-200 rounded-2xl h-full text-2xl font-medium flex items-center justify-between gap-4 z-[5] relative">
         <div
           @mouseover="dragUnlock = true"
           @mouseleave="dragUnlock = false"
@@ -55,7 +55,7 @@ const openState = ref(false)
           </slot>
         </div>
         <div @click="openState = !openState" class="w-10 h-14 flex justify-center items-center cursor-pointer">
-          <Icon iconName="chevronDown" :class="openState ? 'rotate-180' : 'rotate-0'" class="transition-transform" />
+          <Icon iconName="chevron-down" :class="openState ? 'rotate-180' : 'rotate-0'" class="transition-transform" />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import ListItem from './ListItem.vue';
 
 const props = defineProps({
@@ -9,15 +9,22 @@ const props = defineProps({
   }
 })
 
+
 // const dragging = ref(false)
 const dragItem = ref(null)
 const dragOverElement = ref(null)
 const dragOverIndex = ref(null)
 const sortableItems = ref(props.items)
+// const text = reactive([...props.items])
 
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+// onMounted(async () => {
+//   // await sleep(200)
+//   sortableItems.value.push(...props.items)
+// })
+
+// async function sleep(ms) {
+//   return new Promise(resolve => setTimeout(resolve, ms))
+// }
 
 const handleDragStart = (e) => {
   if (e.target.dataset?.itemId === undefined) return
@@ -49,16 +56,22 @@ const handleDrop = (e) => {
   e.preventDefault()
 }
 
+// watch(sortableItems, (newVal) => {
+//   console.log('sortableItems', newVal)
+// })
 </script>
 
 <template>
   <ul class="flex flex-col gap-1">
+    <!-- {{ [...items] }} -->
+    <!-- {{ sortableItems }} -->
+    <!-- <div v-for="i in sortableItems" class="w-4 h-4 bg-white"></div> -->
     <ListItem
       v-for="(item, index) in sortableItems"
       :key="index"
       :id="item.id"
       :draggingItemId="dragItem?.id"
-      width="40rem"
+      width="100%"
       contentHeight="10rem"
       @dragstart="handleDragStart"
       @dragend="handleDragEnd"
@@ -66,10 +79,13 @@ const handleDrop = (e) => {
       @drop="handleDrop"
     >
       <template #title>
-        {{ item.header }}
+        {{ 'Day ' + (index + 1) + ' - ' + item.title}}
       </template>
       <template #content>
-        {{ item.content }}
+        <div v-for="(plan, index) in item.plans" :key="index">
+          {{ plan.header }}<br />
+          {{ plan.description }}
+        </div>
       </template>
     </ListItem>
   </ul>

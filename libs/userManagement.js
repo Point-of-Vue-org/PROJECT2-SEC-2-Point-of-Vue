@@ -15,7 +15,6 @@ export async function getUsersBy(key, value) {
     `${JSON_SERVER_URI}/users?${key}=${value}`
   )
   const data = await response.json()
-  console.log(key, value, data[0])
   if (!data) return null
   return data
 }
@@ -54,7 +53,6 @@ export async function updateUserData(id, updateData) {
  */
 export async function isUsernameExist(username) {
   const user = await getUserBy('username', username)
-  console.log(user)
   return user ? true : false
 }
 
@@ -101,7 +99,6 @@ export async function isTokenIdExist(id) {
  */ 
 export async function createOrUpdateToken(userId) {
   const isTokenExist = await isTokenIdExist(userId)
-  console.log(isTokenExist)
   const tokenObj = {
     id: userId,
     token: Math.random().toString(36).split('.')[1],
@@ -186,7 +183,7 @@ export async function register(username, email, password, nickname = '') {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, email, password: hash(password), nickname }),
+    body: JSON.stringify({ username, email, password: hash(password), nickname, upVotedPosts: [], downVotedPosts: [], upVotedComments: [], downVotedComments: []}),
   })
   const newUser = await response.json()
   return newUser
@@ -210,25 +207,18 @@ export async function validateToken(){
   const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token')))
   const actualToken = await fetchTokenById(decryptedLocalToken?.id)
 
-  console.log('localToken', decryptedLocalToken)
-  console.log('actualToken', actualToken)
-
   if (!decryptedLocalToken || !actualToken) {
-    console.log('Token not found')
     return validationStatus
   }
 
   if (actualToken.token === decryptedLocalToken.token) {
     if(actualToken.expired_at - Date.now() < 0) {
-      console.log('Token is expired')
       return validationStatus
     }
-    console.log('Token is valid')
     validationStatus.isTokenValid = true
     validationStatus.userId = actualToken.id
     return validationStatus
   } else {
-    console.log('Token is invalid')
     return validationStatus
   }
 }

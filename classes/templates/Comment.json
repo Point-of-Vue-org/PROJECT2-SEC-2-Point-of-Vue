@@ -1,5 +1,6 @@
 {
     "userId":"",
-    "description":"",
-    "upvote":0
+    "content":"",
+    "upVote": 0,
+    "date": ""
 }
