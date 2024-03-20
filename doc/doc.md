@@ -41,4 +41,8 @@ List of Feature
 - Demo card component (successfully)
 - Demo Post time (successfully)
 
-
+## 3/18/2024
+- Can change password and change preference (successfully)
+## 3/19/2024
+- Refactor code in fetchPostUtil
+- Demo post: can click post to read (successfully)
