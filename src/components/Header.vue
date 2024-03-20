@@ -24,7 +24,7 @@ const userData = userStore.userData
         <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
       </div>
     </div>
-    <div class="flex-none dropdown dropdown-end">
+    <div v-if="userStore.userData.id" class="flex-none dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 h-10 rounded-xl">
           <img
@@ -82,6 +82,9 @@ const userData = userStore.userData
           </slot>
         </div>
       </ul>
+    </div>
+    <div v-else>
+      <RouterLink to="/login" class="btn btn-ghost">Login</RouterLink>
     </div>
   </header>
 </template>

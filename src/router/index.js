@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useToastStore } from '@/stores/toast'
+
+// const toastStore = useToastStore()
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,8 +47,22 @@ const router = createRouter({
     {
       path: '/post/create',
       name: 'create-post',
-      component: () => import('../views/AddOrEditPostView.vue')
+      component: () => import('../views/AddOrEditPostView.vue'),
+      beforeEnter: (to, from, next) => {
+        if (!localStorage.getItem('token')) {
+          const toastStore = useToastStore()
+          toastStore.addToast('You must be logged in to create a post', 'error')
+          next(false)
+        } else {
+          next()
+        }
+      }
     },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue')
+    }
   ]
 })
 

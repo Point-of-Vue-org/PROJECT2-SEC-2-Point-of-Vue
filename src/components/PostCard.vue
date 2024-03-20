@@ -5,22 +5,25 @@ import { ref, onMounted } from 'vue'
 import { getUserBy, updateUserData } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
 import { updatePostData } from '../../libs/postManagement';
+import { Post } from '../../classes/Post';
+import { useToastStore } from '@/stores/toast';
 
 const props = defineProps({
 	postData: {
-		type: Object,
+		type: Post,
 		required: true
 	}
 })
 
 const userStore = useUserStore()
+const toastStore = useToastStore()
 const author = ref({})
 const upVoted = ref(false)
 
 onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.postData.authorId)
-		upVoted.value = userStore.userData.upVotedPosts.includes(props.postData.id)
+		upVoted.value = userStore.userData.upVotedPosts?.includes(props.postData.id) || false
 	}
 )
 
@@ -28,7 +31,7 @@ function formatPostDate(postDate) {
 
 	const date = new Date(postDate)
 
-	if (date.getDate() === new Date().getDate()) {
+	if (date.getDate() === new Date().getDate() && date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()) {
 		if (date.getHours() === new Date().getHours()) {
 			if (date.getMinutes() === new Date().getMinutes()) {
 				return 'Just now'
@@ -36,7 +39,6 @@ function formatPostDate(postDate) {
 
 			return new Date().getMinutes() - date.getMinutes()  + ' minutes ago'
 		}
-
 		return 'Today at ' + date.toLocaleTimeString('en-US', {
 			hour: 'numeric',
 			minute: 'numeric'
@@ -53,19 +55,19 @@ function formatPostDate(postDate) {
 }
 
 const toggleUpVote = () => {
-	if (userStore.userData.upVotedPosts.includes(props.postData.id)) {
-		props.postData.upVote--
-		updatePostData(props.postData.id, { upVote: props.postData.upVote })
-		userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.postData.id), 1)
-		updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
-		upVoted.value = false
+	if (!userStore.userData.id) {
+		toastStore.addToast('You must be logged in to upvote', 'error')
 		return
 	}
-	props.postData.upVote++
-	updatePostData(props.postData.id, { upVote: props.postData.upVote })
-	userStore.userData.upVotedPosts.push(props.postData.id)
+	const isUsedToUpVoted = userStore.userData.upVotedPosts.includes(props.postData.id)
+
+	updatePostData(props.postData.id, { upVote: props.postData.upVote + (isUsedToUpVoted ? -1 : 1) })
+	props.postData.upVote += isUsedToUpVoted ? -1 : 1
+
+	if (!isUsedToUpVoted) userStore.userData.upVotedPosts.push(props.postData.id)
+	else userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.postData.id), 1)
 	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
-	upVoted.value = true
+	upVoted.value = !isUsedToUpVoted
 }
 
 </script>
@@ -113,7 +115,7 @@ const toggleUpVote = () => {
 				<Icon iconName="chat-right-dots" />
 				<div class="font-bold">{{ postData.comments.length || '0' }}</div>
 			</div>
-			<Icon iconName="paper-clip" />
+			<!-- <Icon iconName="paper-clip" /> -->
 		</div>
 	</div>
 </template>

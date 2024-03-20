@@ -26,13 +26,8 @@ onBeforeMount(
     isLoading.value = true
     try {
       const { isTokenValid, userId } = await validateToken()
-      if (!isTokenValid) {
-        router.replace('/login')
-        toastStore.type = 'error'
-        toastStore.msg = 'You need to login first'
-      } else {
-        userStore.loadUserData(userId)
-      }
+      if (isTokenValid) userStore.loadUserData(userId)
+
     } catch (error) {
       console.error('error', error)
       toastStore.type = 'error'
@@ -103,28 +98,40 @@ watch(() => post.value, (newVal, oldVal) => {
         <div class="w-[85%] mt-12">
           <div class="flex gap-4 items-center my-4">
             <img
-              v-if="author?.setting?.avatarUrl"
+              v-if="!isLoading && author?.setting?.avatarUrl"
               :src="author.setting.avatarUrl"
               alt="author image"
-              class="w-8 h-8 rounded-full object-cover"
+              class="w-10 h-10 rounded-full object-cover"
             />
-            <div v-else class="skeleton w-8 h-8"></div>
-            <div>
-              <div v-if="author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
+            <div v-else class="skeleton w-10 h-10"></div>
+            <div class="flex flex-col gap-0.5">
+              <div v-if="!isLoading && author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
               <div v-else class="skeleton h-6 w-20"></div>
-              <div v-if="author.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
+              <div v-if="!isLoading && author.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
               <div v-else class="skeleton h-4 w-20"></div>
             </div>
           </div>
           <div class="flex flex-col gap-3 mb-10">
-            <div class="text-3xl font-bold font-helvetica">{{ post.title }}</div>
-            <div class="font-helvetica opacity-70">{{ post?.description }}</div>
+            <div v-if="!isLoading" class="text-3xl font-bold font-helvetica">{{ post.title }}</div>
+            <div v-else class="skeleton h-10 w-[32rem] max-w-full"></div>
+            <div v-if="!isLoading" class="font-helvetica opacity-70">{{ post?.description }}</div>
+            <div v-else class="skeleton h-6 w-[20rem] max-w-full"></div>
           </div>
-          <ListContainer v-if="post.days.length > 0" :items="post.getDailyPlan()" />
+          <ListContainer v-if="!isLoading && post.days.length > 0" :items="post.getDailyPlan()" />
+          <div v-else class="flex flex-col gap-2 mb-16">
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+          </div>
           <div class="divider"></div>
           <div class="my-4">Comments</div>
-          <div class="flex flex-col gap-2 mb-16">
+          <div v-if="!isLoading" class="flex flex-col gap-2 mb-16">
             <CommentCard v-for="(comment, index) in post.getComments()" :key="index" :comment="comment" />
+          </div>
+          <div v-else class="flex flex-col gap-2 mb-16">
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
           </div>
         </div>
     </section>

@@ -11,7 +11,6 @@ const router = useRouter()
 const errorMsg = ref('')
 const usernameOrEmail = ref('')
 const password = ref('')
-const secretKey = import.meta.env.VITE_SECRET_KEY || 'secret'
 
 const handleSubmitLogin = async () => {
   const token = await login(usernameOrEmail.value, password.value)

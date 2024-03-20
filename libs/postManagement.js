@@ -4,7 +4,7 @@ const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:500
 
 /**
  * Get all posts
- * @returns { Array<Post> } return array of posts
+ * @returns { Promise<Array<Post>> } - A promise that resolves to an array of Post objects
  */
 export async function getPosts(start, amount) {
     const res = await fetch(`${JSON_SERVER_URI}/posts`)
