@@ -15,6 +15,10 @@ defineProps({
     type: String,
     default: '20rem'
   },
+  draggable: {
+    type: Boolean,
+    default: false
+  },
   draggingItemId: {
     type: String,
     default: null
@@ -29,7 +33,7 @@ const openState = ref(false)
 <template>
   <li
     :data-item-id="id"
-    :draggable="dragUnlock"
+    :draggable="dragUnlock && draggable"
     :style="{ width: width }"
     :class="{
       'opacity-50': draggingItemId === id
@@ -42,12 +46,15 @@ const openState = ref(false)
   >
     <div class="w-full h-14">
       <div class="bg-base-200 rounded-2xl h-full text-2xl font-medium flex items-center justify-between gap-4 z-[5] relative">
-        <div
-          @mouseover="dragUnlock = true"
-          @mouseleave="dragUnlock = false"
-          class="cursor-grab w-10 h-14 flex justify-center items-center"
-        >
-          <Icon iconName="drag" />
+        <div class="w-10 h-14">
+          <div
+            v-if="draggable"
+            @mouseover="dragUnlock = true"
+            @mouseleave="dragUnlock = false"
+            class="cursor-grab w-full h-full flex justify-center items-center"
+          >
+            <Icon iconName="drag" />
+          </div>
         </div>
         <div>
           <slot name="title">

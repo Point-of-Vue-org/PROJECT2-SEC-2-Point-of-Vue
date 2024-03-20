@@ -109,8 +109,12 @@ watch(() => post.value, (newVal, oldVal) => {
               class="w-8 h-8 rounded-full object-cover"
             />
             <div v-else class="skeleton w-8 h-8"></div>
-            <div v-if="author.username" class="font-helvetica font-semibold opacity-60">{{ author.username }}</div>
-            <div v-else class="skeleton h-6 w-20"></div>
+            <div>
+              <div v-if="author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
+              <div v-else class="skeleton h-6 w-20"></div>
+              <div v-if="author.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
+              <div v-else class="skeleton h-4 w-20"></div>
+            </div>
           </div>
           <div class="flex flex-col gap-3 mb-10">
             <div class="text-3xl font-bold font-helvetica">{{ post.title }}</div>

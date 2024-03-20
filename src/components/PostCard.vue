@@ -89,7 +89,10 @@ const toggleUpVote = () => {
 						/>
 					</div>
 				</div>
-				<div class="text-sm">{{ author?.username || 'Username' }}</div>
+				<div>
+					<div class="text-sm font-bold">{{ author?.nickname || 'Nickname' }}</div>
+					<div class="text-xs opacity-70">{{ '@' + author?.username || 'Username' }}</div>
+				</div>
 			</div>
 			<RouterLink :to="`/post/${postData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ postData.title || 'Title' }}</RouterLink>
 			<div class="text-[0.6rem] font-bold">{{ formatPostDate(postData.postDate) }}</div>
