@@ -7,7 +7,6 @@ import { useToastStore } from '@/stores/toast';
 const userStore = useUserStore()
 const useToast = useToastStore()
 // userStore.loadUserData("2ee4")
-console.log(userStore.userData);
 const file = ref(null)
 const image = ref(null)
 const type = ref('avatar')
@@ -33,8 +32,6 @@ const handleUploadImage = async () => {
     file.value = null
   }
 
-  console.log(imageURL)
-  
   await userStore.saveUserData({
     setting: type.value === 'avatar'
       ? { avatarUrl: imageURL }

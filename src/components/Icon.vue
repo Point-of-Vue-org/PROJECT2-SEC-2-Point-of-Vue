@@ -6,7 +6,8 @@ const props = defineProps({
   iconName: {
     type: String,
     required: true
-  }
+  },
+  color: String
 })
 
 const icon = ref('')
@@ -18,5 +19,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-html="icon"></div>
+  <div v-html="icon" :style="{ color }"></div>
 </template>

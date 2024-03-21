@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, reactive} from 'vue'
+import { ref, onBeforeMount, onMounted, watch} from 'vue'
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy, logout, validateToken } from '../../libs/userManagement'
@@ -9,39 +9,62 @@ import BaseSidebar from '@/components/BaseSidebar.vue'
 import { getPostBy } from '../../libs/postManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
+import { Post } from '../../classes/Post'
+import CommentCard from '@/components/CommentCard.vue'
 
-// const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+const isLoading = ref(false)
 const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-const post = ref({})
+const post = ref(new Post())
 const author = ref({})
-
-console.log('from: PostView.vue')
+// const comments = ref([])
 
 onBeforeMount(
   async () => {
-    const { isTokenValid, userId } = await validateToken()
-    if (!isTokenValid) {
-      router.replace('/login')
+    isLoading.value = true
+    try {
+      const { isTokenValid, userId } = await validateToken()
+      if (isTokenValid) userStore.loadUserData(userId)
+
+    } catch (error) {
+      console.error('error', error)
       toastStore.type = 'error'
-      toastStore.msg = 'You need to login first'
-    } else {
-      userStore.loadUserData(userId)
+      toastStore.msg = 'An error occured'
+    } finally {
+      isLoading.value = false
     }
   }
 )
 
-onMounted(
-  async () => {
-    // Fetch posts here
+async function fetchData() {
+  isLoading.value = true
+  try {
     post.value = await getPostBy('id', route.params.id)
-    console.log(post.value);
     author.value = await getUserBy('id', post.value.authorId)
-    console.log('author: ', author.value);
+    // comments.value.push(
+    //   ...post.value.comments.map(
+    //     async (comment) => {
+    //       const user = await getUserBy('id', comment.userId)
+    //       console.log(user)
+    //       return {
+    //         ...comment,
+    //         user
+    //       }
+    //     }
+    //   )
+    // )
+  } catch (error) {
+    console.error('error', error)
+    toastStore.type = 'error'
+    toastStore.msg = 'An error occured'
+  } finally {
+    isLoading.value = false
   }
-)
+}
+
+onMounted(fetchData)
 
 const handleLogout = async () => {
   if (window.confirm('Are you sure you want to logout?') === false) return
@@ -49,6 +72,11 @@ const handleLogout = async () => {
   localStorage.removeItem('todo_token')
   router.replace('/login')
 }
+
+watch(() => post.value, (newVal, oldVal) => {
+  console.log('newVal', newVal)
+  console.log('oldVal', oldVal)
+})
 
 </script>
 
@@ -67,24 +95,45 @@ const handleLogout = async () => {
       </template>
     </BaseSidebar>
     <section class="flex-auto flex justify-center">
-        <!-- Author: {{ author }}
-        <br />
-        Post: {{ post }} -->
-        <div class="w-[85%]">
-            <div class="flex gap-4 items-center">
-              <img
-                :src="author?.setting?.avatarUrl"
-                alt="author image"
-                class="w-8 h-8 rounded-full object-cover"
-              />
-              <div class="font-helvetica font-semibold opacity-60">{{ author?.username }}</div>
+        <div class="w-[85%] mt-12">
+          <div class="flex gap-4 items-center my-4">
+            <img
+              v-if="!isLoading && author?.setting?.avatarUrl"
+              :src="author.setting.avatarUrl"
+              alt="author image"
+              class="w-10 h-10 rounded-full object-cover"
+            />
+            <div v-else class="skeleton w-10 h-10"></div>
+            <div class="flex flex-col gap-0.5">
+              <div v-if="!isLoading && author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
+              <div v-else class="skeleton h-6 w-20"></div>
+              <div v-if="!isLoading && author.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
+              <div v-else class="skeleton h-4 w-20"></div>
             </div>
-            <div class="text-3xl font-bold font-helvetica">
-                {{ post.title }}
-            </div>
-            <div class="font-helvetica">{{ post?.description }}</div>
-            <ListContainer :items="post?.days" />
+          </div>
+          <div class="flex flex-col gap-3 mb-10">
+            <div v-if="!isLoading" class="text-3xl font-bold font-helvetica">{{ post.title }}</div>
+            <div v-else class="skeleton h-10 w-[32rem] max-w-full"></div>
+            <div v-if="!isLoading" class="font-helvetica opacity-70">{{ post?.description }}</div>
+            <div v-else class="skeleton h-6 w-[20rem] max-w-full"></div>
+          </div>
+          <ListContainer v-if="!isLoading && post.days.length > 0" :items="post.getDailyPlan()" />
+          <div v-else class="flex flex-col gap-2 mb-16">
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+          </div>
+          <div class="divider"></div>
+          <div class="my-4">Comments</div>
+          <div v-if="!isLoading" class="flex flex-col gap-2 mb-16">
+            <CommentCard v-for="(comment, index) in post.getComments()" :key="index" :comment="comment" />
+          </div>
+          <div v-else class="flex flex-col gap-2 mb-16">
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+            <div class="skeleton h-16 w-full"></div>
+          </div>
         </div>
     </section>
   </main>
-</template>../../libs/userManagement
+</template>

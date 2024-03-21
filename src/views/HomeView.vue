@@ -20,13 +20,7 @@ const posts = ref([])
 onBeforeMount(
   async () => {
     const { isTokenValid, userId } = await validateToken()
-    if (!isTokenValid) {
-      router.replace('/login')
-      toastStore.type = 'error'
-      toastStore.msg = 'You need to login first'
-    } else {
-      userStore.loadUserData(userId)
-    }
+    if (isTokenValid) userStore.loadUserData(userId)
   }
 )
 
@@ -76,4 +70,4 @@ const handleLogout = async () => {
       <div class="h-16"></div>
     </section>
   </main>
-</template>../../libs/userManagement
+</template>

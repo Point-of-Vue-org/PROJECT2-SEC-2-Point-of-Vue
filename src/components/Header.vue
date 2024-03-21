@@ -24,14 +24,14 @@ const userData = userStore.userData
         <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
       </div>
     </div>
-    <div class="flex-none dropdown dropdown-end">
+    <div v-if="userStore.userData.id" class="flex-none dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 h-10 rounded-xl">
           <img
             v-if="userData.setting?.avatarUrl"
             :src="userData.setting.avatarUrl"
             alt="avatar"
-            class="w-full h-full object-cover rounded-2xl"
+            class="w-full h-full object-cover rounded-xl"
           />
           <div v-else>
             <UserProfilePlaceholder
@@ -42,7 +42,7 @@ const userData = userStore.userData
           </div>
         </div>
       </div>
-      <ul tabindex="0" class="mt-3 z-[1] shadow menu menu-sm p-0 overflow-hidden dropdown-content bg-base-100 border-2 dark:border-neutral rounded-box w-72">
+      <ul tabindex="0" class="mt-3 z-20 shadow menu menu-sm p-0 overflow-hidden dropdown-content bg-base-100 border-2 dark:border-neutral rounded-box w-72">
         <div class="w-full h-24 mb-2 relative">
           <div class="w-full h-full mb-2 absolute border-4 border-base-100 bg-neutral rounded-2xl">
             <img
@@ -58,7 +58,7 @@ const userData = userStore.userData
                 v-if="userData.setting?.avatarUrl"
                 :src="userData.setting.avatarUrl"
                 alt="avatar"
-                class="w-full h-full object-cover rounded-2xl"
+                class="w-full h-full object-cover"
               />
               <div v-else>
                 <UserProfilePlaceholder
@@ -82,6 +82,9 @@ const userData = userStore.userData
           </slot>
         </div>
       </ul>
+    </div>
+    <div v-else>
+      <RouterLink to="/login" class="btn btn-ghost">Login</RouterLink>
     </div>
   </header>
 </template>

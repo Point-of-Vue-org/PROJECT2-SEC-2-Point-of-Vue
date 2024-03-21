@@ -1,53 +1,58 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import ListItem from './ListItem.vue';
 
 const props = defineProps({
   items: {
     type: Array,
     required: true
+  },
+  draggable: {
+    type: Boolean,
+    default: false
   }
 })
 
-// const dragging = ref(false)
 const dragItem = ref(null)
 const dragOverElement = ref(null)
 const dragOverIndex = ref(null)
-const sortableItems = ref(props.items)
+const sortableItems = ref([...props.items])
 
-async function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
+console.log(sortableItems.value);
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const handleDragStart = (e) => {
   if (e.target.dataset?.itemId === undefined) return
-  // dragging.value = true
   dragItem.value = sortableItems.value.find((item) => item.id === e.target.dataset.itemId)
 }
 
 const handleDragOver = async (e) => {
   await sleep(50)
-  // if (dragging.value === false) return
   e.preventDefault()
-
+  
   dragOverElement.value = e.target.closest('li')
   dragOverIndex.value = sortableItems.value.findIndex((item) => item.id === dragOverElement.value.dataset.itemId)
   
-  if (dragOverIndex.value === sortableItems.value.indexOf(dragItem.value)) return
-  ; [sortableItems.value[sortableItems.value.indexOf(dragItem.value)], sortableItems.value[dragOverIndex.value]] = [sortableItems.value[dragOverIndex.value], sortableItems.value[sortableItems.value.indexOf(dragItem.value)]]
+  const draggingIndex = sortableItems.value.indexOf(dragItem.value)
+  if (dragOverIndex.value === draggingIndex) return
+
+  console.log(dragOverIndex.value, draggingIndex)
+  ; [sortableItems.value[draggingIndex], sortableItems.value[dragOverIndex.value]] = [sortableItems.value[dragOverIndex.value], sortableItems.value[draggingIndex]]
 }
 
 const handleDragEnd = async () => {
-  // if (dragging.value === false) return
   await sleep(50)
-  
-  // dragging.value = false
   dragItem.value = null 
 }
 
 const handleDrop = (e) => {
   e.preventDefault()
 }
+
+watch(sortableItems, (newVal) => {
+  console.log(newVal)
+}, { immediate: true })
 
 </script>
 
@@ -57,8 +62,9 @@ const handleDrop = (e) => {
       v-for="(item, index) in sortableItems"
       :key="index"
       :id="item.id"
+      :draggable="draggable"
       :draggingItemId="dragItem?.id"
-      width="40rem"
+      width="100%"
       contentHeight="10rem"
       @dragstart="handleDragStart"
       @dragend="handleDragEnd"
@@ -66,15 +72,14 @@ const handleDrop = (e) => {
       @drop="handleDrop"
     >
       <template #title>
-        {{ item.header }}
+        {{ 'Day ' + (index + 1) + ' - ' + item.title}}
       </template>
       <template #content>
-        {{ item.content }}
+        <div v-for="(plan, index) in item.plans" :key="index">
+          {{ plan.header }}<br />
+          {{ plan.description }}
+        </div>
       </template>
     </ListItem>
   </ul>
 </template>
-
-<style scoped>
-
-</style>

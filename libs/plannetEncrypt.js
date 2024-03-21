@@ -32,12 +32,8 @@ export function hash(password) {
   let hash = 0
   for (let i = 0; i < password.length; i++) {
     let char = password.charCodeAt(i)
-    console.log(char, hash)
     hash = (hash << 5) - hash + char
-    console.log(hash)
     hash = hash & hash
-    console.log(hash)
-    console.log(hash.toString())
   }
   return btoa(hash.toString())
 }

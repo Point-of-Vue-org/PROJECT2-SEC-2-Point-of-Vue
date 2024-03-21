@@ -90,11 +90,7 @@ watch( password, (newPassword) => {
     } else {
       specialCharChecked.value = false
     }
-
-    // console.log(newPassword);
-}
-
-)
+})
 
 </script>
 

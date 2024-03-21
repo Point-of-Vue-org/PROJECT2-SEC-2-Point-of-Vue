@@ -11,7 +11,6 @@ const userStore = useUserStore()
 const password = ref('')
 const toast = useToastStore()
 const isPasswdValid = computed(()=>{
-    console.log(checkPassword(password.value));
     return checkPassword(password.value)
 })
 function handleSave(){

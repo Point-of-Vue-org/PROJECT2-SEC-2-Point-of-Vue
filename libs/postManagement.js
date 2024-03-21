@@ -4,11 +4,13 @@ const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:500
 
 /**
  * Get all posts
- * @returns { Array<Post> } return array of posts
+ * @returns { Promise<Array<Post>> } - A promise that resolves to an array of Post objects
  */
 export async function getPosts(start, amount) {
     const res = await fetch(`${JSON_SERVER_URI}/posts`)
-    const posts = await res.json()
+    const data = await res.json()
+
+    const posts = data.map(post => new Post(post))
 
     if (start && amount) return posts.slice(start, amount)
     return posts
@@ -33,7 +35,7 @@ export async function isPostExist(id) {
 export async function getPostBy(key, value) {
     let response = await fetch(`${JSON_SERVER_URI}/posts?${key}=${value}`)
     const data = await response.json()
-    return data[0]
+    return new Post(data[0])
 }
 
 /**
@@ -62,6 +64,18 @@ export async function createOrUpdatePost(postData) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(postData),
+    })
+
+    return await response.json()
+}
+
+export async function updatePostData(id, updateData) {
+    const response = await fetch(`${JSON_SERVER_URI}/posts/${id}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
     })
 
     return await response.json()

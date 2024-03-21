@@ -2,20 +2,28 @@
 import Icon from './Icon.vue'
 import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
 import { ref, onMounted } from 'vue'
-import { getUserBy } from '../../libs/userManagement'
+import { getUserBy, updateUserData } from '../../libs/userManagement'
+import { useUserStore } from '@/stores/user';
+import { updatePostData } from '../../libs/postManagement';
+import { Post } from '../../classes/Post';
+import { useToastStore } from '@/stores/toast';
 
 const props = defineProps({
 	postData: {
-		type: Object,
+		type: Post,
 		required: true
 	}
 })
 
+const userStore = useUserStore()
+const toastStore = useToastStore()
 const author = ref({})
+const upVoted = ref(false)
 
 onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.postData.authorId)
+		upVoted.value = userStore.userData.upVotedPosts?.includes(props.postData.id) || false
 	}
 )
 
@@ -23,7 +31,7 @@ function formatPostDate(postDate) {
 
 	const date = new Date(postDate)
 
-	if (date.getDate() === new Date().getDate()) {
+	if (date.getDate() === new Date().getDate() && date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()) {
 		if (date.getHours() === new Date().getHours()) {
 			if (date.getMinutes() === new Date().getMinutes()) {
 				return 'Just now'
@@ -31,7 +39,6 @@ function formatPostDate(postDate) {
 
 			return new Date().getMinutes() - date.getMinutes()  + ' minutes ago'
 		}
-
 		return 'Today at ' + date.toLocaleTimeString('en-US', {
 			hour: 'numeric',
 			minute: 'numeric'
@@ -45,6 +52,22 @@ function formatPostDate(postDate) {
 		hour: 'numeric',
 		minute: 'numeric'
 	})
+}
+
+const toggleUpVote = () => {
+	if (!userStore.userData.id) {
+		toastStore.addToast('You must be logged in to upvote', 'error')
+		return
+	}
+	const isUsedToUpVoted = userStore.userData.upVotedPosts.includes(props.postData.id)
+
+	updatePostData(props.postData.id, { upVote: props.postData.upVote + (isUsedToUpVoted ? -1 : 1) })
+	props.postData.upVote += isUsedToUpVoted ? -1 : 1
+
+	if (!isUsedToUpVoted) userStore.userData.upVotedPosts.push(props.postData.id)
+	else userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.postData.id), 1)
+	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
+	upVoted.value = !isUsedToUpVoted
 }
 
 </script>
@@ -68,7 +91,10 @@ function formatPostDate(postDate) {
 						/>
 					</div>
 				</div>
-				<div class="text-sm">{{ author?.username || 'Username' }}</div>
+				<div>
+					<div class="text-sm font-bold">{{ author?.nickname || 'Nickname' }}</div>
+					<div class="text-xs opacity-70">{{ '@' + author?.username || 'Username' }}</div>
+				</div>
 			</div>
 			<RouterLink :to="`/post/${postData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ postData.title || 'Title' }}</RouterLink>
 			<div class="text-[0.6rem] font-bold">{{ formatPostDate(postData.postDate) }}</div>
@@ -79,16 +105,17 @@ function formatPostDate(postDate) {
 				I am Mock-up image
 			</div>
 		</div>
-		<div class="flex-none mt-2 flex items-center justify-between">
-			<div class="flex items-center gap-3">
-				<Icon iconName="up-vote" />
+		<div class="flex-none mt-2 flex items-center justify-between select-none">
+			<div @click="toggleUpVote" class="flex items-center gap-3">
+				<Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
+				<Icon v-show="!upVoted" iconName="up-vote" />
 				<div class="font-bold">{{ postData.upVote || '0' }}</div>
 			</div>
 			<div class="flex items-center gap-3">
-				<Icon iconName="comment" />
+				<Icon iconName="chat-right-dots" />
 				<div class="font-bold">{{ postData.comments.length || '0' }}</div>
 			</div>
-			<Icon iconName="paper-clip" />
+			<!-- <Icon iconName="paper-clip" /> -->
 		</div>
 	</div>
-</template>../../libs/userManagement.js
+</template>
