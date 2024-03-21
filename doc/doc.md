@@ -46,3 +46,6 @@ List of Feature
 ## 3/19/2024
 - Refactor code in fetchPostUtil
 - Demo post: can click post to read (successfully)
+
+## 3/21/2024
+- Refactor code base  (in progress)
