@@ -3,17 +3,19 @@ import { ref, watch } from 'vue'
 import { upload } from '../../../libs/imageManagement';
 import { useUserStore } from '@/stores/user';
 import { useToastStore } from '@/stores/toast';
+import { updateUserData } from '../../../libs/userManagement';
 
 const userStore = useUserStore()
-const useToast = useToastStore()
+const toastStore = useToastStore()
 // userStore.loadUserData("2ee4")
 const file = ref(null)
 const image = ref(null)
 const type = ref('avatar')
 
-function handleSave(saveObject){
-  userStore.saveUserData(saveObject)
-  useToast.msg = "Save change successfully!"
+const handleSave = async ({ id, ...updatedData }) => {
+  const res = await updateUserData(id, updatedData)
+  if (res) toastStore.addToast('Profile updated successfully!', 'success')
+  else toastStore.addToast('Failed to update profile!', 'error')
 }
 
 const handleFileChange = (e) => {
@@ -32,11 +34,23 @@ const handleUploadImage = async () => {
     file.value = null
   }
 
-  await userStore.saveUserData({
+  const res = await updateUserData(userStore.userData.id, {
     setting: type.value === 'avatar'
       ? { avatarUrl: imageURL }
       : { bannerUrl: imageURL }
   })
+
+  if (res) {
+    toastStore.addToast(`Change ${type.value === 'avatar' ? 'avatar' : 'cover'} image successfully!`, 'success')
+    userStore.userData.setting[`${type.value}Url`] = imageURL
+  }
+  else toastStore.addToast(`Failed to change ${type.value === 'avatar' ? 'avatar' : 'cover'} image!`, 'error')
+
+  // await userStore.saveUserData({
+  //   setting: type.value === 'avatar'
+  //     ? { avatarUrl: imageURL }
+  //     : { bannerUrl: imageURL }
+  // })
 }
 
 watch(file, (newFile) => {
@@ -69,8 +83,8 @@ watch(file, (newFile) => {
     <button @click="handleUploadImage" type="button" class="btn btn-warning" :disabled="!file">Upload</button>
     <img v-if="file" :src="image" alt="preview" class="pointer-events-none w-64 h-64 object-contain" />
   </section>
- 
- <form class="flex flex-col pt-5 gap-3 pl-5" @submit.prevent="handleSave(userStore.userData)">
+
+  <form class="flex flex-col pt-5 gap-3 pl-5" @submit.prevent="handleSave">
   
   <label for="username">User Name</label>
   <input type="text" id ="username" class="input input-bordered w-full max-w-xs"  v-model="userStore.userData.username">
