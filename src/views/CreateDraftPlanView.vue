@@ -10,6 +10,7 @@ import BasePlan from "../../classes/plan/BasePlan";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
 import { getPlans } from "../../libs/planManagement";
+import ListContainer from "@/components/ListContainer.vue";
 
 // const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const router = useRouter();
@@ -17,20 +18,9 @@ const route = useRoute();
 const toastStore = useToastStore();
 const userStore = useUserStore();
 const draftPlan = ref(new BasePlan());
-const dailyTask = ref(new DailyTask())
-const renderDaily = computed(() => {
-  return draftPlan.value?.dailyTasks
-});
-watch(renderDaily, (newValue) => {
-  console.log(newValue)
-})
+// const dailyTasks = ref([new DailyTask()]);
 function handleAddDraftPlan() {
-  draftPlan.value.addDailyTask(dailyTask.value)
-  console.log(dailyTask.value);
-  dailyTask.value = new DailyTask();
-  
- 
-
+  draftPlan.value.dailyTasks.push(new DailyTask())
 }
 onBeforeMount(async () => {
   const { isTokenValid, userId } = await validateToken();
@@ -52,14 +42,12 @@ const handleLogout = async () => {
         <a class="text-lg"><Icon iconName="person-fill" />Profile</a>
       </li>
       <li>
-        <RouterLink to="/account/profile" class="text-lg"
-          ><Icon iconName="gear-fill" />Account Details</RouterLink
-        >
+        <RouterLink to="/account/profile" class="text-lg">
+        <Icon iconName="gear-fill" />Account Details</RouterLink>
       </li>
       <li>
-        <a class="text-lg" @click="handleLogout"
-          ><Icon iconName="box-arrow-left" />Logout</a
-        >
+        <a class="text-lg" @click="handleLogout">
+        <Icon iconName="box-arrow-left" />Logout</a>
       </li>
     </template>
   </Header>
@@ -83,15 +71,12 @@ const handleLogout = async () => {
           class="text-2xl bg-transparent focus:outline-none w-full p-2 placeholder:opacity-50"
         ></textarea>
         <div class="flex items-end justify-end flex-col w-full">
-          <button class="btn" @click="handleAddDraftPlan(dailyTask)">Add plan</button>
+          <button class="btn" @click="handleAddDraftPlan">Add Daily Task</button>
         </div>
         <div class="w-full  pt-3 justify-center flex flex-col gap-4 items-center">
-          
-          <input v-for="(item,index) in renderDaily" class="input input-bordered w-1/2 " :key="index" :value="item.title" v-model="item.title"/>
-        
-          
-          
-          
+          <div v-for="(dailyTask, index) in draftPlan.dailyTasks" :key="index">
+            <input class="input input-bordered w-1/2" v-model="dailyTask.title" />
+          </div>
         </div>
       </div>
     </section>
