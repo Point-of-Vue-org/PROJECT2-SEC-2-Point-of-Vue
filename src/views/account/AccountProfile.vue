@@ -11,10 +11,17 @@ const toastStore = useToastStore()
 const file = ref(null)
 const image = ref(null)
 const type = ref('avatar')
+console.log(userStore.userData.username, userStore.userData.nickname);
+const username = ref(userStore.userData.username)
+const nickname = ref(userStore.userData.nickname)
 
-const handleSave = async ({ id, ...updatedData }) => {
-  const res = await updateUserData(id, updatedData)
-  if (res) toastStore.addToast('Profile updated successfully!', 'success')
+const handleSave = async () => {
+  const res = await updateUserData(userStore.userData.id, { username: username.value, nickname: nickname.value })
+  if (res) {
+    toastStore.addToast('Profile updated successfully!', 'success')
+    userStore.userData.username = username.value
+    userStore.userData.nickname = nickname.value
+  }
   else toastStore.addToast('Failed to update profile!', 'error')
 }
 
@@ -87,9 +94,9 @@ watch(file, (newFile) => {
   <form class="flex flex-col pt-5 gap-3 pl-5" @submit.prevent="handleSave">
   
   <label for="username">User Name</label>
-  <input type="text" id ="username" class="input input-bordered w-full max-w-xs"  v-model="userStore.userData.username">
+  <input type="text" id ="username" class="input input-bordered w-full max-w-xs"  v-model="username">
   <label for="nickname">Nickname</label>
-  <input type="text" id ="nickname" class="input input-bordered w-full max-w-xs"  v-model="userStore.userData.nickname">
+  <input type="text" id ="nickname" class="input input-bordered w-full max-w-xs"  v-model="nickname">
   <label for="bio">Bio</label>
   <textarea class= "textarea textarea-accent" v-model="userStore.userData.bio"></textarea>
   <input type="submit" value="Save" class="btn btn-primary w-1/5 ml-auto">
