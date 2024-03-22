@@ -1,21 +1,18 @@
 <script setup>
 import { ref, onBeforeMount, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { useToastStore } from '@/stores/toast'
 import { logout, validateToken } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
 import BaseSidebar from '@/components/BaseSidebar.vue'
-import PostCard from '@/components/PostCard.vue'
-import PostContainer from '@/components/PostContainer.vue'
-import { getPosts } from '../../libs/postManagement'
+import { getPlans } from '../../libs/planManagement'
 import Icon from '@/components/Icon.vue'
+import PlanContainer from '@/components/PlanContainer.vue'
+import PlanCard from '@/components/PlanCard.vue'
 
-// const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 const router = useRouter()
-const toastStore = useToastStore()
 const userStore = useUserStore()
-const posts = ref([])
+const postPlans = ref([])
 
 onBeforeMount(
   async () => {
@@ -27,8 +24,8 @@ onBeforeMount(
 onMounted(
   async () => {
     // Fetch posts here
-    posts.value = await getPosts()
-    console.log(posts.value)
+    postPlans.value = await getPlans('post')
+    console.log(postPlans.value)
   }
 )
 
@@ -62,9 +59,9 @@ const handleLogout = async () => {
           <div class="h-24 w-full flex justify-end items-center">
             <RouterLink to="/post/create" class="btn btn-outline">Add your plan</RouterLink>
           </div>
-          <PostContainer>
-            <PostCard v-for="post in posts" :postData="post" />
-          </PostContainer>
+          <PlanContainer>
+            <PlanCard v-for="plan in postPlans" :planData="plan" />
+          </PlanContainer>
         </div>
       </div>
       <div class="h-16"></div>

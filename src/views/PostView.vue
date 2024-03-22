@@ -6,10 +6,10 @@ import { getUserBy, logout, validateToken } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
 import BaseSidebar from '@/components/BaseSidebar.vue'
-import { getPostBy } from '../../libs/postManagement.js'
+import { getPlanBy } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
-import { Post } from '../../classes/Post'
+import PostPlan from '../../classes/plan/PostPlan'
 import CommentCard from '@/components/CommentCard.vue'
 
 const isLoading = ref(false)
@@ -17,7 +17,7 @@ const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
-const post = ref(new Post())
+const postPlan = ref(new PostPlan())
 const author = ref({})
 // const comments = ref([])
 
@@ -41,10 +41,12 @@ onBeforeMount(
 async function fetchData() {
   isLoading.value = true
   try {
-    post.value = await getPostBy('id', route.params.id)
-    author.value = await getUserBy('id', post.value.authorId)
+    postPlan.value = await getPlanBy('id', route.params.id, 'post')
+    console.log(postPlan.value);
+    author.value = await getUserBy('id', postPlan.value.authorId)
+    // comments.value = await postPlan.value.getComments()
     // comments.value.push(
-    //   ...post.value.comments.map(
+    //   ...postPlan.value.comments.map(
     //     async (comment) => {
     //       const user = await getUserBy('id', comment.userId)
     //       console.log(user)
@@ -73,7 +75,7 @@ const handleLogout = async () => {
   router.replace('/login')
 }
 
-watch(() => post.value, (newVal, oldVal) => {
+watch(() => postPlan.value, (newVal, oldVal) => {
   console.log('newVal', newVal)
   console.log('oldVal', oldVal)
 })
@@ -112,12 +114,12 @@ watch(() => post.value, (newVal, oldVal) => {
             </div>
           </div>
           <div class="flex flex-col gap-3 mb-10">
-            <div v-if="!isLoading" class="text-3xl font-bold font-helvetica">{{ post.title }}</div>
+            <div v-if="!isLoading" class="text-3xl font-bold font-helvetica">{{ postPlan.title }}</div>
             <div v-else class="skeleton h-10 w-[32rem] max-w-full"></div>
-            <div v-if="!isLoading" class="font-helvetica opacity-70">{{ post?.description }}</div>
+            <div v-if="!isLoading" class="font-helvetica opacity-70">{{ postPlan?.description }}</div>
             <div v-else class="skeleton h-6 w-[20rem] max-w-full"></div>
           </div>
-          <ListContainer v-if="!isLoading && post.days.length > 0" :items="post.getDailyPlan()" />
+          <ListContainer v-if="!isLoading && postPlan.getDailyTasks().length > 0" :items="postPlan.getDailyTasks()" />
           <div v-else class="flex flex-col gap-2 mb-16">
             <div class="skeleton h-16 w-full"></div>
             <div class="skeleton h-16 w-full"></div>
@@ -126,7 +128,7 @@ watch(() => post.value, (newVal, oldVal) => {
           <div class="divider"></div>
           <div class="my-4">Comments</div>
           <div v-if="!isLoading" class="flex flex-col gap-2 mb-16">
-            <CommentCard v-for="(comment, index) in post.getComments()" :key="index" :comment="comment" />
+            <CommentCard v-for="(comment, index) in postPlan.comments" :key="index" :comment="comment" />
           </div>
           <div v-else class="flex flex-col gap-2 mb-16">
             <div class="skeleton h-16 w-full"></div>

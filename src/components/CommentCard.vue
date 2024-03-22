@@ -2,10 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { getUserBy } from '../../libs/userManagement';
 import Icon from './Icon.vue';
+import { Comment } from '../../classes/Comment';
+import UserProfilePlaceholder from './UserProfilePlaceholder.vue';
 
 const props = defineProps({
   comment: {
-    type: Object,
+    type: Comment,
     required: true
   }
 })
@@ -14,7 +16,7 @@ const author = ref({})
 const upVoted = ref(false)
 
 onMounted(async () => {
-  author.value = await getUserBy('id', props.comment.userId)
+  author.value = await getUserBy('id', props.comment.authorId)
   // console.log(author.value)
 })
 
@@ -40,7 +42,8 @@ const toggleUpVote = () => {
 <template>
   <div class="rounded-2xl p-4 bg-neutral">
     <div class="flex gap-3 items-center">
-      <img :src="author?.setting?.avatarUrl" class="rounded-full w-8 h-8 object-cover" />
+      <img v-if="author?.setting?.avatarUrl" :src="author?.setting?.avatarUrl" class="rounded-full w-8 h-8 object-cover" />
+      <UserProfilePlaceholder v-else size="2rem" color="white" bgcolor="black" class="rounded-full" />
       <div class="flex flex-col">
         <div class="font-semibold">{{ author.nickname }}</div>
         <div class="text-xs opacity-70">{{ '@' + author.username }}</div>

@@ -1,10 +1,19 @@
-import CommentTemplate from './templates/Comment.json'
+const defaultCommentData = {
+    id: undefined,
+    authorId: '',
+    postId: '',
+    content: '',
+    upVote: 0,
+    downVote: 0,
+    date: null,
+    repliedTo: '',
+}
 
 export class Comment {
-    constructor(commentData) {
-        const comment = commentData || CommentTemplate
-        for (let key in comment) {
-            this[key] = comment[key]
+    constructor(commentData = {}) {
+        for (let key in defaultCommentData) {
+            if (defaultCommentData[key] === undefined) continue
+            this[key] = commentData[key] || defaultCommentData[key]
         }
     }
 }

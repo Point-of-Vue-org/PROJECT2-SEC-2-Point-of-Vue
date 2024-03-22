@@ -71,7 +71,7 @@ const userData = userStore.userData
           </div>
         </div>
         <div class="mx-2 p-3 border-b-2 border-neutral">
-          <div class="font-bold text-xl text-neutral dark:text-white">{{ userData.username || "Guest" }}</div>
+          <div class="font-bold text-xl text-neutral dark:text-white">{{ userData.nickname || "Guest" }}</div>
           <div class="text-sm">@{{ userData.username || "guest" }}</div>
         </div>
         <div class="m-2">

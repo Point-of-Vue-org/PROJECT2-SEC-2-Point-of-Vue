@@ -3,10 +3,6 @@ import { ref } from 'vue'
 import Icon from './Icon.vue';
 
 defineProps({
-  id: {
-    type: String,
-    required: true
-  },
   width: {
     type: String,
     default: '40rem'
@@ -14,47 +10,29 @@ defineProps({
   contentHeight: {
     type: String,
     default: '20rem'
-  },
-  draggable: {
-    type: Boolean,
-    default: false
-  },
-  draggingItemId: {
-    type: String,
-    default: null
   }
 })
 
-const dragUnlock = ref(false)
 const openState = ref(false)
 
 </script>
 
 <template>
   <li
-    :data-item-id="id"
-    :draggable="dragUnlock && draggable"
     :style="{ width: width }"
-    :class="{
-      'opacity-50': draggingItemId === id
-    }"
     class="flex flex-col items-center"
-    @dragstart="$emit('dragstart', $event)"
-    @dragover="$emit('dragover', $event)"
-    @dragend="$emit('dragend', $event)"
-    @drop="$emit('drop', $event)"
   >
     <div class="w-full h-14">
       <div class="bg-base-200 rounded-2xl h-full text-2xl font-medium flex items-center justify-between gap-4 z-[5] relative">
         <div class="w-10 h-14">
-          <div
+          <!-- <div
             v-if="draggable"
             @mouseover="dragUnlock = true"
             @mouseleave="dragUnlock = false"
             class="cursor-grab w-full h-full flex justify-center items-center"
           >
             <Icon iconName="drag" />
-          </div>
+          </div> -->
         </div>
         <div>
           <slot name="title">
