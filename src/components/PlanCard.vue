@@ -4,13 +4,13 @@ import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
 import { ref, onMounted } from 'vue'
 import { getUserBy, updateUserData } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
-import { updatePostData } from '../../libs/postManagement';
-import { Post } from '../../classes/Post';
+import { updatePlanData } from '../../libs/planManagement';
 import { useToastStore } from '@/stores/toast';
+import BasePlan from '../../classes/plan/BasePlan';
 
 const props = defineProps({
-	postData: {
-		type: Post,
+	planData: {
+		type: BasePlan,
 		required: true
 	}
 })
@@ -22,14 +22,14 @@ const upVoted = ref(false)
 
 onMounted(
 	async () => {
-		author.value = await getUserBy('id', props.postData.authorId)
-		upVoted.value = userStore.userData.upVotedPosts?.includes(props.postData.id) || false
+		author.value = await getUserBy('id', props.planData.authorId)
+		upVoted.value = userStore.userData.upVotedPosts?.includes(props.planData.id) || false
 	}
 )
 
-function formatPostDate(postDate) {
+function formatPostDate(planDate) {
 
-	const date = new Date(postDate)
+	const date = new Date(planDate)
 
 	if (date.getDate() === new Date().getDate() && date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()) {
 		if (date.getHours() === new Date().getHours()) {
@@ -59,13 +59,13 @@ const toggleUpVote = () => {
 		toastStore.addToast('You must be logged in to upvote', 'error')
 		return
 	}
-	const isUsedToUpVoted = userStore.userData.upVotedPosts.includes(props.postData.id)
+	const isUsedToUpVoted = userStore.userData.upVotedPosts.includes(props.planData.id)
 
-	updatePostData(props.postData.id, { upVote: props.postData.upVote + (isUsedToUpVoted ? -1 : 1) })
-	props.postData.upVote += isUsedToUpVoted ? -1 : 1
+	updatePlanData(props.planData.id, { upVote: props.planData.upVote + (isUsedToUpVoted ? -1 : 1) }, 'post')
+	props.planData.upVote += isUsedToUpVoted ? -1 : 1
 
-	if (!isUsedToUpVoted) userStore.userData.upVotedPosts.push(props.postData.id)
-	else userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.postData.id), 1)
+	if (!isUsedToUpVoted) userStore.userData.upVotedPosts.push(props.planData.id)
+	else userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.planData.id), 1)
 	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
 	upVoted.value = !isUsedToUpVoted
 }
@@ -96,11 +96,11 @@ const toggleUpVote = () => {
 					<div class="text-xs opacity-70">{{ '@' + author?.username || 'Username' }}</div>
 				</div>
 			</div>
-			<RouterLink :to="`/post/${postData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ postData.title || 'Title' }}</RouterLink>
-			<div class="text-[0.6rem] font-bold">{{ formatPostDate(postData.postDate) }}</div>
+			<RouterLink :to="`/post/${planData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ planData.title || 'Title' }}</RouterLink>
+			<div class="text-[0.6rem] font-bold">{{ formatPostDate(planData.postDate) }}</div>
 		</div>
 		<div class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem] overflow-hidden">
-			<img v-if="postData.imageURL" :src="postData.imageURL" alt="Post image" class="w-full h-full object-cover" />
+			<img v-if="planData.imageUrl" :src="planData.imageUrl" alt="Post image" class="w-full h-full object-cover" />
 			<div v-else class="w-full h-full grid place-items-center font-bold">
 				I am Mock-up image
 			</div>
@@ -109,11 +109,11 @@ const toggleUpVote = () => {
 			<div @click="toggleUpVote" class="flex items-center gap-3">
 				<Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
 				<Icon v-show="!upVoted" iconName="up-vote" />
-				<div class="font-bold">{{ postData.upVote || '0' }}</div>
+				<div class="font-bold">{{ planData.upVote || '0' }}</div>
 			</div>
 			<div class="flex items-center gap-3">
 				<Icon iconName="chat-right-dots" />
-				<div class="font-bold">{{ postData.comments.length || '0' }}</div>
+				<div class="font-bold">{{ planData.comments.length || '0' }}</div>
 			</div>
 			<!-- <Icon iconName="paper-clip" /> -->
 		</div>
