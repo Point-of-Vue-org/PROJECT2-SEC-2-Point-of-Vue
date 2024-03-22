@@ -12,7 +12,7 @@ const defaultPlanData = {
 
 export default class BasePlan {
 
-    constructor(planData) {
+    constructor(planData = {}) {
         for (let key in defaultPlanData) {
             // if (!Object.keys(defaultPlanData).includes(key)) continue
             this[key] = planData[key] || defaultPlanData[key]

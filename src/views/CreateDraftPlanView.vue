@@ -1,0 +1,99 @@
+<script setup>
+import { ref, onBeforeMount, onMounted, computed, watch } from "vue";
+import { useRouter, RouterLink, useRoute } from "vue-router";
+import { useToastStore } from "@/stores/toast";
+import { logout, validateToken } from "../../libs/userManagement";
+import Header from "@/components/Header.vue";
+import { useUserStore } from "@/stores/user";
+import BaseSidebar from "@/components/BaseSidebar.vue";
+import BasePlan from "../../classes/plan/BasePlan";
+import Icon from "@/components/Icon.vue";
+import { DailyTask } from "../../classes/DailyTask";
+import { getPlans } from "../../libs/planManagement";
+
+// const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+const router = useRouter();
+const route = useRoute();
+const toastStore = useToastStore();
+const userStore = useUserStore();
+const draftPlan = ref(new BasePlan());
+const dailyTask = ref(new DailyTask())
+const renderDaily = computed(() => {
+  return draftPlan.value?.dailyTasks
+});
+watch(renderDaily, (newValue) => {
+  console.log(newValue)
+})
+function handleAddDraftPlan() {
+  draftPlan.value.addDailyTask(dailyTask.value)
+  console.log(dailyTask.value);
+  dailyTask.value = new DailyTask();
+  
+ 
+
+}
+onBeforeMount(async () => {
+  const { isTokenValid, userId } = await validateToken();
+  if (isTokenValid) userStore.loadUserData(userId);
+});
+
+const handleLogout = async () => {
+  if (window.confirm("Are you sure you want to logout?") === false) return;
+  await logout(userStore.userData.id);
+  localStorage.removeItem("todo_token");
+  router.replace("/login");
+};
+</script>
+
+<template>
+  <Header>
+    <template #menu>
+      <li>
+        <a class="text-lg"><Icon iconName="person-fill" />Profile</a>
+      </li>
+      <li>
+        <RouterLink to="/account/profile" class="text-lg"
+          ><Icon iconName="gear-fill" />Account Details</RouterLink
+        >
+      </li>
+      <li>
+        <a class="text-lg" @click="handleLogout"
+          ><Icon iconName="box-arrow-left" />Logout</a
+        >
+      </li>
+    </template>
+  </Header>
+  <main class="flex">
+    <BaseSidebar class="flex-none">
+      <template #menu>
+        <!-- Sidbar content here -->
+      </template>
+    </BaseSidebar>
+    <section class="flex-auto flex justify-center">
+      <div class="w-[85%]">
+        <input
+          v-model="draftPlan.title"
+          type="text"
+          placeholder="Title here"
+          class="text-7xl bg-transparent focus:outline-none w-full p-2 placeholder:opacity-50"
+        />
+        <textarea
+          v-model="draftPlan.description"
+          placeholder="Description here"
+          class="text-2xl bg-transparent focus:outline-none w-full p-2 placeholder:opacity-50"
+        ></textarea>
+        <div class="flex items-end justify-end flex-col w-full">
+          <button class="btn" @click="handleAddDraftPlan(dailyTask)">Add plan</button>
+        </div>
+        <div class="w-full  pt-3 justify-center flex flex-col gap-4 items-center">
+          
+          <input v-for="(item,index) in renderDaily" class="input input-bordered w-1/2 " :key="index" :value="item.title" v-model="item.title"/>
+        
+          
+          
+          
+        </div>
+      </div>
+    </section>
+  </main>
+</template>
