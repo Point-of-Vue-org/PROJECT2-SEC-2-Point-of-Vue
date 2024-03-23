@@ -48,8 +48,8 @@ const handleLogout = async () => {
   <main class="flex">
     <BaseSidebar>
       <template #menu>
-        <li><RouterLink to="/account/profile">Profile</RouterLink></li>
-        <li><RouterLink to="/account/security">Security</RouterLink></li>
+        <li><RouterLink to="/account/profile" exactActiveClass="bg-neutral" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
+        <li><RouterLink to="/account/security" exactActiveClass="bg-neutral" class="text-lg"><Icon iconName="lock-fill" />Security</RouterLink></li>
       </template>
     </BaseSidebar>
     <section class="w-full">

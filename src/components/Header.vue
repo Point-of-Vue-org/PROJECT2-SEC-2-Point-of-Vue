@@ -44,12 +44,12 @@ const userData = userStore.userData
       </div>
       <ul tabindex="0" class="mt-3 z-20 shadow menu menu-sm p-0 overflow-hidden dropdown-content bg-base-100 border-2 dark:border-neutral rounded-box w-72">
         <div class="w-full h-24 mb-2 relative">
-          <div class="w-full h-full mb-2 absolute border-4 border-base-100 bg-neutral rounded-2xl">
+          <div class="w-full h-full mb-2 absolute border-4 border-base-100 bg-neutral rounded-2xl overflow-hidden">
             <img
               v-if="userData.setting?.bannerUrl"
               :src="userData.setting.bannerUrl"
               alt="avatar"
-              class="w-full h-full object-cover rounded-2xl"
+              class="w-full h-full object-cover"
             />
           </div>
           <div class="avatar absolute">

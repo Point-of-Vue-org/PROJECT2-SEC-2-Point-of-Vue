@@ -36,6 +36,18 @@ const disabledSave = computed(() => {
 
 const handleImageFileChange = (e, imageType) => {
   if (!e.target.files.length) return
+
+  const supportedTypes = ['image/jpeg', 'image/png']
+
+  if (e.target.files[0].size > 1024 * 1024 * 5) {
+    toastStore.addToast('Image size must be less than 5MB!', 'error')
+    return
+  }
+  if (!supportedTypes.includes(e.target.files[0].type)) {
+    toastStore.addToast('Invalid image type! Only JPEG and PNG are allowed.', 'error')
+    return
+  }
+
   if (imageType === 'avatar') currentAvatarFile.value = e.target.files[0]
   else currentBannerFile.value = e.target.files[0]
 }
@@ -103,7 +115,7 @@ const handleSave = async () => {
       <div class="w-full h-full mb-2 absolute border-4 border-base-100 bg-neutral rounded-2xl overflow-hidden">
         <label
           for="banner-input"
-          class="absolute select-none w-full h-full flex justify-center items-center bg-[#0008] opacity-0 hover:opacity-100 transition-opacity"
+          class="absolute select-none w-full h-full flex justify-center items-center bg-[#0008] opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
         >
           <div>Change Cover</div>
         </label>
@@ -111,14 +123,14 @@ const handleSave = async () => {
           v-if="currentBanner"
           :src="currentBanner"
           alt="avatar"
-          class="w-full h-full object-cover rounded-2xl"
+          class="w-full h-full object-cover"
         />
       </div>
       <div class="avatar absolute">
         <div class="w-24 rounded-2xl border-4 border-base-100 relative">
           <label
             for="avatar-input"
-            class="absolute select-none text-sm w-full h-full flex flex-col justify-center items-center bg-[#0008] opacity-0 hover:opacity-100 transition-opacity"
+            class="absolute select-none text-sm w-full h-full flex flex-col justify-center items-center bg-[#0008] opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
           >
             <div>Change</div>
             <div>Avatar</div>
