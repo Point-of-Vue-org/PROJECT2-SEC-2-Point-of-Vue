@@ -25,7 +25,7 @@ export function checkPassword(password) {
     if (!haveSymbol) warningMsg.push("Password must contain at least one special character")
     if (!isMaxLengthValid) warningMsg.push("Password must be less than 30 characters long")
     return {
-        isPasswordSecure: isLengthValid && haveLowerCase && haveUpperCase && haveDigit && haveSymbol && isCharacterValid && isMaxLengthValid,
+        isPasswordValid: isLengthValid && haveLowerCase && haveUpperCase && haveDigit && haveSymbol && isCharacterValid && isMaxLengthValid,
         warning: warningMsg,
         status: {
             isLengthValid,

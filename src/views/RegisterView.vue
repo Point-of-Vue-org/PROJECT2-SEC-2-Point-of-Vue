@@ -32,6 +32,11 @@ const handleSubmitRegister = async () => {
     return
   }
 
+  if(!result.value.isPasswordValid){
+    toastStore.addToast('Password is invalid', 'error')
+    return
+  }
+
   if (password.value !== confirmPassword.value) return
 
   errorMsg.value = ''
@@ -40,7 +45,7 @@ const handleSubmitRegister = async () => {
   if (res) {
     isLoading.value = false
     router.replace('/login')
-    toastStore.msg = 'Register success'
+    toastStore.addToast('Register success', 'success')
   }
 }
 
