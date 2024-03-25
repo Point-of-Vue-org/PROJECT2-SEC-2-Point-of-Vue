@@ -51,7 +51,7 @@ watch([password, confirmPassword], () => {
 
         <input v-model="confirmPassword" type="password" autocomplete="new-password"
               title="Confirm password" required class="input input-bordered w-80" />
-        <div class="text-xs flex justify-center text-orange-400">{{ errorMsg }}</div>
+        <div class="text-xs text-orange-400">{{ errorMsg }}</div>
     </div>
     <ul class="text-xs flex cursor-defaul">
           <div class="flex flex-col gap-2 ml-12">
