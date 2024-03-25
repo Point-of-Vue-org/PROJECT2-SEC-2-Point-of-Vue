@@ -1,25 +1,24 @@
 <script setup>
 import Logo from '@/components/Logo.vue'
-import { reactive, ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { isEmailExist, isUsernameExist, register } from '../../libs/userManagement';
 import { useRouter } from 'vue-router'
+import { checkPassword } from '../../libs/passwordValidation';
+import Icon from '@/components/Icon.vue';
 
 const toastStore = useToastStore()
 const router = useRouter()
-
 const errorMsg = ref('')
+const isLoading = ref(false)
+const result = computed(()=>{
+  return checkPassword(password.value)
+})
 const username = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
-const isLoading = ref(false)
-const digitChecked = ref(false)
-const letterChecked = ref(false)
-const capLetterChecked = ref(false)
-const specialCharChecked = ref(false)
-const passwdWarning = ref('')
-const passwdChecked = ref(false)
+
 
 
 const handleSubmitRegister = async () => {
@@ -33,6 +32,11 @@ const handleSubmitRegister = async () => {
     return
   }
 
+  if(!result.value.isPasswordValid){
+    toastStore.addToast('Password is invalid', 'error')
+    return
+  }
+
   if (password.value !== confirmPassword.value) return
 
   errorMsg.value = ''
@@ -41,7 +45,7 @@ const handleSubmitRegister = async () => {
   if (res) {
     isLoading.value = false
     router.replace('/login')
-    toastStore.msg = 'Register success'
+    toastStore.addToast('Register success', 'success')
   }
 }
 
@@ -53,44 +57,6 @@ watch([password, confirmPassword], () => {
   }
 })
 
-watch( password, (newPassword) => {
-  
-    if (newPassword.length < 8) {
-      passwdWarning.value = "Password must be at least 8 characters long"
-    } else {
-      passwdWarning.value = ''
-    }
-
-    if (/^[\x20-\x7E]+$/.test(newPassword) && newPassword !== '') {
-      passwdChecked.value = true
-    } else {
-      passwdChecked.value = false
-    }
-    
-    if (/[\x61-\x7A]/.test(newPassword)) {
-      letterChecked.value = true
-    } else {
-      letterChecked.value = false
-    }
-
-    if (/[\x41-\x5A]/.test(newPassword)) {
-      capLetterChecked.value = true
-    } else {
-      capLetterChecked.value = false
-    }
-
-    if (/[\x30-\x39]/.test(newPassword)) {
-      digitChecked.value = true
-    } else {
-      digitChecked.value = false
-    }
-
-    if (/[\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]/.test(newPassword)) {
-      specialCharChecked.value = true
-    } else {
-      specialCharChecked.value = false
-    }
-})
 
 </script>
 
@@ -104,22 +70,61 @@ watch( password, (newPassword) => {
         <p class="text-2xl mb-2">Sign up for Plannet</p>
         <p>Welcome to a workspace that's secure, powerful, and totally private.</p>
       </div>
-      <div class="flex flex-col gap-5 mt-6 mb-4">
-        <div v-show="errorMsg" class="text-error">{{ errorMsg }}</div>
+      <div class="flex flex-col gap-3 mt-1 mb-4">
+        <div v-show="!result.value?.isPasswordSecure" class="text-error">{{ result.value?.warning }}</div>
         <input v-model="username" type="text" placeholder="Username" autocomplete="username" title="Username" autofocus
           required class="input bg-neutral rounded-xl w-96" />
         <input v-model="email" type="email" placeholder="Email" autocomplete="email" title="Email" required
           class="input bg-neutral rounded-xl w-96">
         <input v-model="password" type="password" placeholder="Password" autocomplete="new-password" title="Password"
           required class="input bg-neutral rounded-xl w-full" />
-          <div v-show="passwdWarning" class="text-error">Warning: {{ passwdWarning }}</div>
-          <div>passwdChecked: {{ passwdChecked }}</div>
-          <div>Letters: {{ letterChecked }}</div>
-          <div>Capital Letters: {{ capLetterChecked }}</div>
-          <div>Digits: {{ digitChecked }}</div>
-          <div>Special Cahracter: {{ specialCharChecked }}</div>
         <input v-model="confirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password"
           title="Confirm password" required class="input bg-neutral rounded-xl w-full" />
+        <ul class="text-xs flex cursor-default">
+          <div class="flex-1 flex flex-col gap-2">
+            <li :class="result.status.isLengthValid && result.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.isLengthValid && result.status.isMaxLengthValid" />
+              <Icon iconName="x" v-show="!result.status.isLengthValid || !result.status.isMaxLengthValid" />
+              Must have 8-30 characters
+            </li>
+            <li :class="result.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveLowerCase" />
+              <Icon iconName="x" v-show="!result.status.haveLowerCase" />
+              At least one lower case
+            </li>
+            <li :class="result.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveUpperCase" />
+              <Icon iconName="x" v-show="!result.status.haveUpperCase" />
+              At least one upper case
+            </li>
+          </div>
+          <div class="divider divider-horizontal"></div>
+          <div class="flex-1 flex flex-col gap-2">
+            <li :class="result.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveDigit" />
+              <Icon iconName="x" v-show="!result.status.haveDigit" />
+              At least one digit
+            </li>
+            <li :class="result.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveSymbol" />
+              <Icon iconName="x" v-show="!result.status.haveSymbol" />
+              At least one symbol
+            </li>
+            <li :class="result.status.isCharacterValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center" title="Alphabet must have only A-Z and a-z">
+              <Icon iconName="check" v-show="result.status.isCharacterValid" />
+              <Icon iconName="x" v-show="!result.status.isCharacterValid" />
+              Only valid character
+            </li>
+          </div>
+          <!-- <li :class="{'text-green-300' : result.isLengthValid, 'text-red-400' : !result.isLengthValid}">At least 8 characters long</li>
+          <li :class="{'text-green-300' : result.isCharacterValid, 'text-red-400' : !result.isCharacterValid}">Contain upper case, lower case, digits and special characters</li>
+          <li :class="{'text-green-300' : result.haveLowerCase, 'text-red-400' : !result.haveLowerCase}">At least one lower case character</li>
+          <li :class="{'text-green-300' : result.haveUpperCase, 'text-red-400' : !result.haveUpperCase}">At least one upper case character</li>
+          <li :class="{'text-green-300' : result.haveDigit, 'text-red-400' : !result.haveDigit}">At least one digit</li>
+          <li :class="{'text-green-300' : result.haveSymbol, 'text-red-400' : !result.haveSymbol}">At least one special character</li>
+          <li :class="{'text-green-300' : result.isMaxLengthValid, 'text-red-400' : !result.isMaxLengthValid}">Password must be less than 30 characters long</li> -->
+        </ul>
+        <!-- <div class="text-orange-400 text-sm">{{ errorMsg }}</div> -->
         <button type="submit" class="btn rounded-full btn-accent text-base-100">Sign up</button>
       </div>
       <div>
@@ -128,4 +133,4 @@ watch( password, (newPassword) => {
       </div>
     </form>
   </main>
-</template>../../libs/userManagement
+</template>
