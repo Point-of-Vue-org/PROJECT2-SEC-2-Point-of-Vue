@@ -39,17 +39,17 @@ const router = createRouter({
         }
       }
     },
-    {
-      path: '/post/edit/:id',
-      name: 'edit-post',
-      component: () => import('../views/AddOrEditPostView.vue')
-    },
+    // {
+    //   path: '/post/edit/:id',
+    //   name: 'edit-post',
+    //   component: () => import('../views/CreateDraftPlanView.vue')
+    // },
     {
       path: '/post/create',
       name: 'create-post',
-      component: () => import('../views/AddOrEditPostView.vue'),
+      component: () => import('../views/CreateDraftPlanView.vue'),
       beforeEnter: (to, from, next) => {
-        if (!localStorage.getItem('token')) {
+        if (!localStorage.getItem('todo_token')) {
           const toastStore = useToastStore()
           toastStore.addToast('You must be logged in to create a post', 'error')
           next(false)
