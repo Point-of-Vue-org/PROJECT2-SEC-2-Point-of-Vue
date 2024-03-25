@@ -33,6 +33,7 @@ export async function getUserBy(key, value) {
 
 
 export async function updateUserData(id, updateData) {
+  console.log(updateData);
   const response = await fetch(`${JSON_SERVER_URI}/users/${id}`, {
     method: 'PATCH',
     headers: {

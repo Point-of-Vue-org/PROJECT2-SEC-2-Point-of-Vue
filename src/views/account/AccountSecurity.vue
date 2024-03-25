@@ -29,7 +29,7 @@ function handleSave(){
 
 
 </script>
- 
+
 <template>
 <div class="flex flex-col pt-5 gap-3 pl-5 w-screen max-w-sm">
     <input type="text" class="input input-bordered w-100" @input="checkPassword(password)" placeholder="Enter new password" v-model="password">

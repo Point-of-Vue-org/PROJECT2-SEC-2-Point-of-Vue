@@ -7,8 +7,8 @@ import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
 import AccountProfile from './account/AccountProfile.vue'
 import BaseSidebar from '@/components/BaseSidebar.vue'
-import SecurityProfile from './account/SecurityProfile.vue'
 import Icon from '@/components/Icon.vue'
+import AccountSecurity from './account/AccountSecurity.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -48,20 +48,13 @@ const handleLogout = async () => {
   <main class="flex">
     <BaseSidebar>
       <template #menu>
-        <li><RouterLink to="/account/profile">Profile</RouterLink></li>
-        <li><RouterLink to="/account/security">Security</RouterLink></li>
+        <li><RouterLink to="/account/profile" exactActiveClass="bg-neutral" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
+        <li><RouterLink to="/account/security" exactActiveClass="bg-neutral" class="text-lg"><Icon iconName="lock-fill" />Security</RouterLink></li>
       </template>
     </BaseSidebar>
-    <section>
-      <div v-if="route.params.category === 'profile'">
-        profile
-        <AccountProfile />
-      </div>
-      <div v-else-if="route.params.category === 'security'">
-        security
-        <SecurityProfile/>
-      </div>
+    <section class="w-full">
+      <AccountProfile v-if="route.params.category === 'profile'" />
+      <AccountSecurity v-else-if="route.params.category === 'security'"/>
     </section>
   </main>
 </template>
-../../libs/userManagement

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useToastStore } from '@/stores/toast'
+import { validateToken } from '../../libs/userManagement'
+import { useUserStore } from '@/stores/user'
 
 // const toastStore = useToastStore()
 
@@ -64,6 +66,12 @@ const router = createRouter({
       component: () => import('../views/NotFoundView.vue')
     }
   ]
+})
+
+router.beforeEach(async (to, from) => {
+  const { isTokenValid, userId } = await validateToken()
+  const userStore = useUserStore()
+  if (isTokenValid) userStore.loadUserData(userId)
 })
 
 export default router
