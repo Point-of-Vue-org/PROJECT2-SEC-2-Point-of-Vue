@@ -70,7 +70,7 @@ watch([password, confirmPassword], () => {
         <p class="text-2xl mb-2">Sign up for Plannet</p>
         <p>Welcome to a workspace that's secure, powerful, and totally private.</p>
       </div>
-      <div class="flex flex-col gap-3 mt-1  mb-4">
+      <div class="flex flex-col gap-3 mt-1 mb-4">
         <div v-show="!result.value?.isPasswordSecure" class="text-error">{{ result.value?.warning }}</div>
         <input v-model="username" type="text" placeholder="Username" autocomplete="username" title="Username" autofocus
           required class="input bg-neutral rounded-xl w-96" />
@@ -80,41 +80,51 @@ watch([password, confirmPassword], () => {
           required class="input bg-neutral rounded-xl w-full" />
         <input v-model="confirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password"
           title="Confirm password" required class="input bg-neutral rounded-xl w-full" />
-          <ul class="text-sm flex flex-col gap-3">
-              <li :class="result.status.isLengthValid && result.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
-                <Icon iconName="check" v-show="result.status.isLengthValid && result.status.isMaxLengthValid" />
-                <Icon iconName="x" v-show="!result.status.isLengthValid || !result.status.isMaxLengthValid" />
-                Must have 8-30 characters
-              </li>
-              <li :class="result.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
-                <Icon iconName="check" v-show="result.status.haveLowerCase" />
-                <Icon iconName="x" v-show="!result.status.haveLowerCase" />
-                At least one lower case character
-              </li>
-              <li :class="result.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
-                <Icon iconName="check" v-show="result.status.haveUpperCase" />
-                <Icon iconName="x" v-show="!result.status.haveUpperCase" />
-                At least one upper case character
-              </li>
-              <li :class="result.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
-                <Icon iconName="check" v-show="result.status.haveDigit" />
-                <Icon iconName="x" v-show="!result.status.haveDigit" />
-                At least one digit
-              </li>
-              <li :class="result.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
-                <Icon iconName="check" v-show="result.status.haveSymbol" />
-                <Icon iconName="x" v-show="!result.status.haveSymbol" />
-                At least one special character
-              </li>
-              <!-- <li :class="{'text-green-300' : result.isLengthValid, 'text-red-400' : !result.isLengthValid}">At least 8 characters long</li>
-              <li :class="{'text-green-300' : result.isCharacterValid, 'text-red-400' : !result.isCharacterValid}">Contain upper case, lower case, digits and special characters</li>
-              <li :class="{'text-green-300' : result.haveLowerCase, 'text-red-400' : !result.haveLowerCase}">At least one lower case character</li>
-              <li :class="{'text-green-300' : result.haveUpperCase, 'text-red-400' : !result.haveUpperCase}">At least one upper case character</li>
-              <li :class="{'text-green-300' : result.haveDigit, 'text-red-400' : !result.haveDigit}">At least one digit</li>
-              <li :class="{'text-green-300' : result.haveSymbol, 'text-red-400' : !result.haveSymbol}">At least one special character</li>
-              <li :class="{'text-green-300' : result.isMaxLengthValid, 'text-red-400' : !result.isMaxLengthValid}">Password must be less than 30 characters long</li> -->
-            </ul>
-          <div class="text-orange-400 text-sm">{{ errorMsg }}</div>
+        <ul class="text-xs flex cursor-default">
+          <div class="flex-1 flex flex-col gap-2">
+            <li :class="result.status.isLengthValid && result.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.isLengthValid && result.status.isMaxLengthValid" />
+              <Icon iconName="x" v-show="!result.status.isLengthValid || !result.status.isMaxLengthValid" />
+              Must have 8-30 characters
+            </li>
+            <li :class="result.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveLowerCase" />
+              <Icon iconName="x" v-show="!result.status.haveLowerCase" />
+              At least one lower case
+            </li>
+            <li :class="result.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveUpperCase" />
+              <Icon iconName="x" v-show="!result.status.haveUpperCase" />
+              At least one upper case
+            </li>
+          </div>
+          <div class="divider divider-horizontal"></div>
+          <div class="flex-1 flex flex-col gap-2">
+            <li :class="result.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveDigit" />
+              <Icon iconName="x" v-show="!result.status.haveDigit" />
+              At least one digit
+            </li>
+            <li :class="result.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+              <Icon iconName="check" v-show="result.status.haveSymbol" />
+              <Icon iconName="x" v-show="!result.status.haveSymbol" />
+              At least one symbol
+            </li>
+            <li :class="result.status.isCharacterValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center" title="Alphabet must have only A-Z and a-z">
+              <Icon iconName="check" v-show="result.status.isCharacterValid" />
+              <Icon iconName="x" v-show="!result.status.isCharacterValid" />
+              Only valid character
+            </li>
+          </div>
+          <!-- <li :class="{'text-green-300' : result.isLengthValid, 'text-red-400' : !result.isLengthValid}">At least 8 characters long</li>
+          <li :class="{'text-green-300' : result.isCharacterValid, 'text-red-400' : !result.isCharacterValid}">Contain upper case, lower case, digits and special characters</li>
+          <li :class="{'text-green-300' : result.haveLowerCase, 'text-red-400' : !result.haveLowerCase}">At least one lower case character</li>
+          <li :class="{'text-green-300' : result.haveUpperCase, 'text-red-400' : !result.haveUpperCase}">At least one upper case character</li>
+          <li :class="{'text-green-300' : result.haveDigit, 'text-red-400' : !result.haveDigit}">At least one digit</li>
+          <li :class="{'text-green-300' : result.haveSymbol, 'text-red-400' : !result.haveSymbol}">At least one special character</li>
+          <li :class="{'text-green-300' : result.isMaxLengthValid, 'text-red-400' : !result.isMaxLengthValid}">Password must be less than 30 characters long</li> -->
+        </ul>
+        <!-- <div class="text-orange-400 text-sm">{{ errorMsg }}</div> -->
         <button type="submit" class="btn rounded-full btn-accent text-base-100">Sign up</button>
       </div>
       <div>
