@@ -11,6 +11,7 @@ import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
 import PostPlan from '../../classes/plan/PostPlan'
 import CommentCard from '@/components/CommentCard.vue'
+import ListItem from '@/components/ListItem.vue'
 
 const isLoading = ref(false)
 const router = useRouter()
@@ -85,7 +86,7 @@ watch(() => postPlan.value, (newVal, oldVal) => {
 <template>
   <Header>
     <template #menu>
-      <li><a class="text-lg"><Icon iconName="person-fill" />Profile</a></li>
+      <li><RouterLink :to="`/profile/${userStore.userData.id}`" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
       <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>
       <li><a class="text-lg" @click="handleLogout"><Icon iconName="box-arrow-left" />Logout</a></li>
     </template>
@@ -119,7 +120,61 @@ watch(() => postPlan.value, (newVal, oldVal) => {
             <div v-if="!isLoading" class="font-helvetica opacity-70">{{ postPlan?.description }}</div>
             <div v-else class="skeleton h-6 w-[20rem] max-w-full"></div>
           </div>
-          <ListContainer v-if="!isLoading && postPlan.getDailyTasks().length > 0" :items="postPlan.getDailyTasks()" />
+          <ListContainer
+            v-if="!isLoading && postPlan.getDailyTasks().length > 0"
+            :items="postPlan.getDailyTasks()"
+            v-slot="{ items }"
+          >
+            <ListItem
+              v-for="(item, index) in items" 
+              :key="index"
+              width="100%"
+              contentHeight="auto"
+              type="list"
+            >
+              <template #title>
+                <div class="flex items-center gap-4">
+                  <input type="checkbox" class="checkbox" disabled />
+                  <div class="text-base">Day {{ index + 1 }}</div>
+                  <div>{{ item.title }}</div>
+                </div>
+              </template>
+              <template #content>
+                <ListContainer :items="item.getHourlyTasks()" v-slot="{ items }">
+                  <ListItem
+                    v-for="(hourlyTask, index) in items"
+                    :key="index"
+                    width="100%"
+                    contentHeight="10rem"
+                    type="sublist"
+                  >
+                    <template #title>
+                      <div class="grid grid-cols-[1fr_2fr_14fr] w-full place-items-center">
+                        <input type="checkbox" class="checkbox" disabled />
+                        <div class="place-self-start">{{ hourlyTask.start }} - {{ hourlyTask.end }}</div>
+                        <div class="place-self-start">{{ hourlyTask.header }}</div>
+                      </div>
+                    </template>
+                    <template #content>
+                      <div class="flex h-full">
+                        <div class="flex-1">{{ hourlyTask.description }}</div>
+                        <div class="divider divider-horizontal divider-neutral"></div>
+                        <div v-if="hourlyTask.todos.length > 0" class="flex-1 flex flex-col gap-2">
+                          <div class="font-bold">To-do</div>
+                          <ul class="flex flex-col gap-2">
+                            <li v-for="(todo, index) in hourlyTask.todos" :key="index" class="flex items-center gap-2">
+                              <input type="checkbox" class="checkbox" disabled />
+                              <span>{{ todo.description }}</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </template>
+                  </ListItem>
+                </ListContainer>
+              </template>
+            </ListItem>
+          </ListContainer>
           <div v-else class="flex flex-col gap-2 mb-16">
             <div class="skeleton h-16 w-full"></div>
             <div class="skeleton h-16 w-full"></div>

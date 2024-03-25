@@ -1,3 +1,5 @@
+import { HourlyTask } from "./HourlyTask"
+
 const defaultDailyTaskData = {
     title: '',
     hourlyTasks: [],
