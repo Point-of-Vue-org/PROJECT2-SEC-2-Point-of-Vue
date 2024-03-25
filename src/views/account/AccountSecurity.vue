@@ -39,30 +39,33 @@ watch([password, confirmPassword], () => {
 </script>
 
 <template>
-<div class="w-full flex flex-col items-center mt-32 gap-4">
-    <div class="flex flex-col items-center gap-3">
+<div class="w-full flex flex-col gap-4">
+    <div class="flex flex-col ml-12 mt-12">
         <div class="text-2xl font-helvetica font-bold">Password Reset</div>
-        <div class="text-xs">Enter your new password for your Slack account.</div>
+        <div class="divider divider-primary w-3/4"></div>
     </div>
-    <div class="flex flex-col mt-3 gap-3">
-        <input v-model="password" type="text" class="input input-bordered w-80" @input="checkPassword(password)" placeholder="Enter new password">
-        <input v-model="confirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password"
+    <div class="flex flex-col gap-2 ml-12">
+        <div>New password</div>
+        <input v-model="password" type="text" class="input input-bordered w-80" @input="checkPassword(password)">
+        <div>Confirm new password</div>
+
+        <input v-model="confirmPassword" type="password" autocomplete="new-password"
               title="Confirm password" required class="input input-bordered w-80" />
         <div class="text-xs flex justify-center text-orange-400">{{ errorMsg }}</div>
     </div>
     <ul class="text-xs flex cursor-defaul">
-          <div class="flex-1 flex flex-col gap-2">
+          <div class="flex flex-col gap-2 ml-12">
             <li :class="isPasswdValid.status.isLengthValid && isPasswdValid.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
               <Icon iconName="check" v-show="isPasswdValid.status.isLengthValid && isPasswdValid.status.isMaxLengthValid" />
               <Icon iconName="x" v-show="!isPasswdValid.status.isLengthValid || !isPasswdValid.status.isMaxLengthValid" />
               Must have 8-30 characters
             </li>
-            <li :class="isPasswdValid.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+            <li :class="isPasswdValid.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 ">
               <Icon iconName="check" v-show="isPasswdValid.status.haveLowerCase" />
               <Icon iconName="x" v-show="!isPasswdValid.status.haveLowerCase" />
               At least one lower case
             </li>
-            <li :class="isPasswdValid.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+            <li :class="isPasswdValid.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
               <Icon iconName="check" v-show="isPasswdValid.status.haveUpperCase" />
               <Icon iconName="x" v-show="!isPasswdValid.status.haveUpperCase" />
               At least one upper case
@@ -70,24 +73,24 @@ watch([password, confirmPassword], () => {
           </div>
           <div class="divider divider-horizontal"></div>
           <div class="flex-1 flex flex-col gap-2">
-            <li :class="isPasswdValid.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+            <li :class="isPasswdValid.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
               <Icon iconName="check" v-show="isPasswdValid.status.haveDigit" />
               <Icon iconName="x" v-show="!isPasswdValid.status.haveDigit" />
               At least one digit
             </li>
-            <li :class="isPasswdValid.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
+            <li :class="isPasswdValid.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
               <Icon iconName="check" v-show="isPasswdValid.status.haveSymbol" />
               <Icon iconName="x" v-show="!isPasswdValid.status.haveSymbol" />
               At least one symbol
             </li>
-            <li :class="isPasswdValid.status.isCharacterValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center" title="Alphabet must have only A-Z and a-z">
+            <li :class="isPasswdValid.status.isCharacterValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2" title="Alphabet must have only A-Z and a-z">
               <Icon iconName="check" v-show="isPasswdValid.status.isCharacterValid" />
               <Icon iconName="x" v-show="!isPasswdValid.status.isCharacterValid" />
               Only valid character
             </li>
           </div>
         </ul>
-        <button class="btn btn-primary w-80" @click="handleSave">Change Password</button>
+        <button class="btn btn-primary w-40 ml-12" @click="handleSave">Change Password</button>
 </div>
 </template>
  
