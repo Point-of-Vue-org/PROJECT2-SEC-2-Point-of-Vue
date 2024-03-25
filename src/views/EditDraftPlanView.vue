@@ -9,7 +9,7 @@ import BaseSidebar from "@/components/BaseSidebar.vue";
 import BasePlan from "../../classes/plan/BasePlan";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { getPlans, createOrUpdatePlan } from "../../libs/planManagement";
+import { getPlans, createOrUpdatePlan,getPlanBy } from "../../libs/planManagement";
 import ListContainer from "@/components/ListContainer.vue";
 
 // const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
@@ -18,16 +18,20 @@ const route = useRoute();
 const toastStore = useToastStore();
 const userStore = useUserStore();
 const draftPlan = ref(new BasePlan());
-
+const newDraftPlan = ref('')
 // const dailyTasks = ref([new DailyTask()]);
 onMounted(async () => {
+  let id = route.params.id;
+  newDraftPlan = await getPlanBy('id',id,'draft')
+  console.log(newDraftPlan);
+
   // let id = await userStore.userData.id
 
   // let planSaved =  await createOrUpdatePlan(draftPlan.value, 'draft')
-  console.log(route.params.id);
+  
 });
 function handleAddDraftPlan() {
-  draftPlan.value.dailyTasks.push(new DailyTask());
+  draftPlan.value.dailyTasks.push(new BasePlan());
 }
 onBeforeMount(async () => {
   const { isTokenValid, userId } = await validateToken();
@@ -87,45 +91,15 @@ const handleLogout = async () => {
         <div
           class="w-full pt-3 justify-center flex flex-col gap-4 items-center"
         >
-          <div v-for="(dailyTask, index) in draftPlan.dailyTasks" :key="index">
-            <div class="flex gap-3 bg-slate-400 rounded p-5">
-              <input type="time" class="rounded p-3 bg-blue-100 text-black" />
-              <input
-                type="time"
-                class="rounded p-3 bg-red-300-100 text-black"
-              />
-              <input
-                class="input input-bordered w-1/2"
-                v-model="dailyTask.title"
-                placeholder="please type your daily task"
-              />
-              <Icon iconName="trash3-fill" class="flex items-center" />
+          <div v-for="(dailyTask, index) in draftPlan.dailyTasks" :key="index" class="w-full">
+          <div alt = "Daily task" class="flex flex-col">
+            <div class="flex flex-row">
+              <p class="w-1/6 flex items-center">Day {{ index + 1 }}</p>
+              <input type="text" placeholder="Task title" class="input input-bordered w-full" v-model="dailyTask.title"/>
             </div>
-            <div class="mt-5 w-full flex flex-row gap-4">
-              <textarea
-                class="textarea-bordered rounded w-1/2 max-h-40"
-                placeholder="description"
-              ></textarea>
-
-              <div class="w-1/2 border-l-2 border-indigo-400 p-4">
-                <div class="flex flex-row justify-between">
-                  <p>Task</p>
-                  <button class="btn">Add</button>
-                </div>
-                <div class="flex flex-col pt-2">
-                  <div class="flex flex-col gap-3">
-                    <div class="flex flex-row gap-4">
-                      <input
-                        type="text"
-                        class="input input-bordered w-full"
-                        placeholder="Subtask"
-                      />
-                      <Icon iconName="trash3-fill" class="flex items-center" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          
+            
+          </div>
           </div>
         </div>
       </div>
