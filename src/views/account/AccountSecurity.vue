@@ -39,12 +39,12 @@ watch([password, confirmPassword], () => {
 </script>
 
 <template>
-<div class="w-full flex flex-col gap-4">
-    <div class="flex flex-col ml-12 mt-12">
+<div class="w-full flex flex-col gap-4 ml-16 mt-12">
+    <div class="flex flex-col">
         <div class="text-2xl font-helvetica font-bold">Password Reset</div>
         <div class="divider divider-primary w-3/4"></div>
     </div>
-    <div class="flex flex-col gap-2 ml-12">
+    <div class="flex flex-col gap-2">
         <div>New password</div>
         <input v-model="password" type="text" class="input input-bordered w-80" @input="checkPassword(password)">
         <div>Confirm new password</div>
@@ -54,7 +54,7 @@ watch([password, confirmPassword], () => {
         <div class="text-xs text-orange-400">{{ errorMsg }}</div>
     </div>
     <ul class="text-xs flex cursor-defaul">
-          <div class="flex flex-col gap-2 ml-12">
+          <div class="flex flex-col gap-2">
             <li :class="isPasswdValid.status.isLengthValid && isPasswdValid.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
               <Icon iconName="check" v-show="isPasswdValid.status.isLengthValid && isPasswdValid.status.isMaxLengthValid" />
               <Icon iconName="x" v-show="!isPasswdValid.status.isLengthValid || !isPasswdValid.status.isMaxLengthValid" />
@@ -90,7 +90,7 @@ watch([password, confirmPassword], () => {
             </li>
           </div>
         </ul>
-        <button class="btn btn-primary w-40 ml-12" @click="handleSave">Change Password</button>
+        <button class="btn btn-primary w-40" @click="handleSave">Change Password</button>
 </div>
 </template>
  
