@@ -71,7 +71,7 @@ watch([password, confirmPassword], () => {
           required class="input bg-neutral rounded-xl w-96" />
         <input v-model="email" type="email" placeholder="Email" autocomplete="email" title="Email" required
           class="input bg-neutral rounded-xl w-96">
-        <input v-model="password" type="text" placeholder="Password" autocomplete="new-password" title="Password"
+        <input v-model="password" type="password" placeholder="Password" autocomplete="new-password" title="Password"
           required class="input bg-neutral rounded-xl w-full" />
         <input v-model="confirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password"
           title="Confirm password" required class="input bg-neutral rounded-xl w-full" />
