@@ -30,7 +30,9 @@ export async function getPlans(type, start, amount) {
 }
 
 export async function isPlanExist(id, type) {
-
+    if(id=== undefined){
+        return false
+    }
     if (!['post', 'active', 'draft'].includes(type)) throw new Error('Type must be "post", "active", or "draft"');
 
     const url = `${JSON_SERVER_URI}/${type}Plans/${id}`
@@ -60,7 +62,7 @@ export async function deletePlan(id, type) {
 }
 
 export async function createOrUpdatePlan(planObj, type) {
-    const isPostExist = await isPostExist(planObj.id, type)
+    const isPostExist = await isPlanExist(planObj.id, type)
     if (!type) type = planObj.type
     const url = `${JSON_SERVER_URI}/${type}Plans${isPostExist ? `/${planObj.id}` : ''}`
     const response = await fetch(url, {

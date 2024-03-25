@@ -9,7 +9,7 @@ import BaseSidebar from "@/components/BaseSidebar.vue";
 import BasePlan from "../../classes/plan/BasePlan";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { getPlans } from "../../libs/planManagement";
+import { getPlans,createOrUpdatePlan } from "../../libs/planManagement";
 import ListContainer from "@/components/ListContainer.vue";
 
 // const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
@@ -19,6 +19,14 @@ const toastStore = useToastStore();
 const userStore = useUserStore();
 const draftPlan = ref(new BasePlan());
 // const dailyTasks = ref([new DailyTask()]);
+
+onMounted(async ()=>{
+  // let id = await userStore.userData.id
+  
+  let planSaved =  await createOrUpdatePlan(draftPlan.value, 'draft')
+  
+  
+})
 function handleAddDraftPlan() {
   draftPlan.value.dailyTasks.push(new DailyTask())
 }
