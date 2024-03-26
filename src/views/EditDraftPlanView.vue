@@ -33,20 +33,20 @@ let newDraftPlan = ref('')
 //handle Auto saving
 watch(newDraftPlan, async(newValue) => {
   saveState.saving = true
-  console.log("Saving");
+  console.log(newValue);
   
   try{
     await createOrUpdatePlan(newValue, 'draft')
     saveState.saving = false
     saveState.saveFail = false
     saveState.saved = true
-    console.log('Saved');
+    
   }
   catch(e){
     saveState.saving = false
     saveState.saved = false
     saveState.saveFail = true
-    console.log('Save fail');
+    
     
   }
  
@@ -62,7 +62,7 @@ onMounted(async () => {
   // let planSaved =  await createOrUpdatePlan(draftPlan.value, 'draft')
   
 });
-function handleAddDraftPlan() {
+function handleAddDailyTask() {
   const newDailyTask = new BasePlan();
   newDailyTask.dailyTasks = []; // Initialize dailyTasks as an empty array
   newDraftPlan.value.dailyTasks.push(newDailyTask);
@@ -150,27 +150,27 @@ const handleLogout = async () => {
         ></textarea>
         <div class="flex items-end justify-end flex-col w-full">
           
-          <button class="btn" @click="handleAddDraftPlan">
+          <button class="btn" @click="handleAddDailyTask">
             Add Daily Task
           </button>
         </div>
         <div
           class="w-full pt-3 justify-center flex flex-col gap-4 items-center"
         >
-          <div v-for="(dailyTask, dailyindex) in newDraftPlan.dailyTasks" :key="dailyindex" class="w-full">
+          <div v-for="(dailyTask, dailyIndex) in newDraftPlan.dailyTasks" :key="dailyIndex" class="w-full">
           <div alt = "Daily task" class="flex flex-col">
             <div class="flex flex-row gap-3">
-              <button class="btn bg-error" @click="handledeleteDailyTask(dailyindex)">Delete</button>
-              <p class="w-1/6 flex items-center">Day {{ dailyindex + 1 }}</p>
+              <button class="btn bg-error" @click="handledeleteDailyTask(dailyIndex)">Delete</button>
+              <p class="w-1/6 flex items-center">Day {{ dailyIndex + 1 }}</p>
               
               
               <input type="text" placeholder="Task title" class="input input-bordered w-full" v-model="dailyTask.title"/>
             </div>
             <div>
               <div class="flex justify-end mt-4">
-                <button class="btn " @click="addHourlyTask(dailyindex)">Add holytask</button>
+                <button class="btn " @click="addHourlyTask(dailyIndex)">Add holytask</button>
               </div>
-          <div class="bg-stone-600 p-6 rounded mt-6" alt = "hourly task" v-for="(hourlyTask,hourlyindex) in newDraftPlan.dailyTasks[dailyindex].dailyTasks" :key="hourlyindex">
+          <div class="bg-stone-600 p-6 rounded mt-6" alt = "hourly task" v-for="(hourlyTask,hourlyIndex) in newDraftPlan.dailyTasks[dailyIndex].dailyTasks" :key="hourlyIndex">
 
             
             <div class="flex gap-3 bg-slate-400 rounded p-5 mt-6">
@@ -189,7 +189,7 @@ const handleLogout = async () => {
                 v-model="hourlyTask.title"
                 placeholder="please type your daily task"
               />
-              <button class="ml-auto btn  bg-error" alt = "Delete holy task" @click="handleDelteHolyTask(dailyindex,hourlyindex)">
+              <button class="ml-auto btn  bg-error" alt = "Delete holy task" @click="handleDelteHolyTask(dailyIndex,hourlyIndex)">
                 <!-- <Icon iconName="trash3-fill" class="flex items-center  " /> -->
                 Delete
               </button>
@@ -205,12 +205,12 @@ const handleLogout = async () => {
               <div class="w-1/2 border-l-2 border-indigo-400 p-4">
                 <div class="flex flex-row justify-between">
                   <p>Task</p>
-                  <button class="btn bg-info ml-auto" @click = addTodo(dailyindex,hourlyindex)>Add</button>
+                  <button class="btn bg-info ml-auto" @click = addTodo(dailyIndex,hourlyIndex)>Add</button>
                 </div>
                 <div class="flex flex-col pt-2">
                   <div class="flex flex-col gap-3">
                    
-                      <div v-for="(todo,todoIndex) in newDraftPlan.dailyTasks[dailyindex].dailyTasks[hourlyindex].todos" :key="todo.id" class="flex flex-row gap-4">
+                      <div v-for="(todo,todoIndex) in newDraftPlan.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos" :key="todo.id" class="flex flex-row gap-4">
                         <input 
                         type="text"
                         class="input input-bordered w-full"
@@ -219,7 +219,7 @@ const handleLogout = async () => {
                        
                        
                       />
-                      <button class="btn" @click="handleDeleteTodo(dailyindex,hourlyindex,todo.id)">
+                      <button class="btn" @click="handleDeleteTodo(dailyIndex,hourlyIndex,todo.id)">
                         <Icon iconName="trash3-fill" class="flex items-center" />
 
                       </button>
