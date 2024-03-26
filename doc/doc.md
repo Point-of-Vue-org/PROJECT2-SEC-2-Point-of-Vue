@@ -49,3 +49,13 @@ List of Feature
 
 ## 3/21/2024
 - Refactor code base  (in progress)
+
+## 3/25/2024
+- Demo Add daily plan page (successfully)
+- User Landing page  (successfully)
+- Password change validation (successfully)
+
+## 3/26/2024
+- Password change validation V2 (successfully)
+- Page for Welcome new User (successfully)
+
