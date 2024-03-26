@@ -44,7 +44,7 @@ export async function getPlansBy(key, value, type) {
     const url = `${JSON_SERVER_URI}/${type}Plans?${key}=${value}`
     const res = await fetch(url)
     const data = await res.json()
-    return data.map((planData) => mapPlanObject(planData, type))
+    return  data.map((planData) => mapPlanObject(planData, type))
 }
 
 export async function getPlanBy(key, value, type) {

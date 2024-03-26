@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import { useToastStore } from '@/stores/toast'
 import { validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user'
+import { createOrUpdatePlan } from '../../libs/planManagement'
+import BasePlan from '../../classes/plan/BasePlan'
 
 // const toastStore = useToastStore()
 
@@ -41,22 +43,26 @@ const router = createRouter({
         }
       }
     },
-    // {
-    //   path: '/post/edit/:id',
-    //   name: 'edit-post',
-    //   component: () => import('../views/CreateDraftPlanView.vue')
-    // },
     {
-      path: '/post/create',
+      path: '/plan/edit/:id',
+      name: 'edit-post',
+      component: () => import('../views/EditDraftPlanView.vue')
+    },
+    {
+      path: '/plan/create',
       name: 'create-post',
-      component: () => import('../views/CreateDraftPlanView.vue'),
-      beforeEnter: (to, from, next) => {
-        if (!localStorage.getItem('todo_token')) {
-          const toastStore = useToastStore()
+      // component: () => import('../views/CreateDraftPlanView.vue'),
+      beforeEnter: async (to, from, next) => {
+        const userStore = useUserStore()
+        const toastStore = useToastStore()
+        if (!userStore.userData.id) {
           toastStore.addToast('You must be logged in to create a post', 'error')
           next(false)
         } else {
-          next()
+          const draftPlan = new BasePlan()
+          draftPlan.authorId = await userStore.userData.id
+          const { id: planId } = await createOrUpdatePlan(draftPlan, 'draft')
+          next(`/plan/edit/${planId}`)
         }
       }
     },

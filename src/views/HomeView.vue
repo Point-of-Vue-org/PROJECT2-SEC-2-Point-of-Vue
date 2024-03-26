@@ -57,10 +57,10 @@ const handleLogout = async () => {
       <div class="flex flex-col items-center">
         <div class="w-fit">
           <div class="h-24 w-full flex justify-end items-center">
-            <RouterLink to="/post/create" class="btn btn-outline">Add your plan</RouterLink>
+            <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink>
           </div>
           <PlanContainer>
-            <PlanCard v-for="plan in postPlans" :planData="plan" />
+            <PlanCard v-for="plan in postPlans" :key="plan.id" :planData="plan" />
           </PlanContainer>
         </div>
       </div>
