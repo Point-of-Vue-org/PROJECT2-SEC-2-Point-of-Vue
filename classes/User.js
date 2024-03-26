@@ -1,4 +1,5 @@
 const defaultUserData = {
+    hasSetup: false,
     username: '',
     nickname: '',
     email: '',
