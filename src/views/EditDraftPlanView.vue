@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, computed, watch } from "vue";
+import { ref, onBeforeMount, onMounted, computed, watch, reactive } from "vue";
 import { useRouter, RouterLink, useRoute } from "vue-router";
 import { useToastStore } from "@/stores/toast";
 import { logout, validateToken } from "../../libs/userManagement";
@@ -21,14 +21,34 @@ const toastStore = useToastStore();
 const userStore = useUserStore();
 const draftPlan = ref(new BasePlan());
 const hourlyTask = ref(new HourlyTask())
+const saveState = reactive({
+  saving:false,
+  saved:false,
+  saveFail:false
+
+})
 let newDraftPlan = ref('')
 // let {  dailyTasks } = newDraftPlan.value.dailyTask
 
 //handle Auto saving
 watch(newDraftPlan, async(newValue) => {
+  saveState.saving = true
+  console.log("Saving");
   
-  createOrUpdatePlan(newValue, 'draft')
-  toastStore.addToast('saved','success')
+  try{
+    await createOrUpdatePlan(newValue, 'draft')
+    saveState.saving = false
+    saveState.saveFail = false
+    saveState.saved = true
+    console.log('Saved');
+  }
+  catch(e){
+    saveState.saving = false
+    saveState.saved = false
+    saveState.saveFail = true
+    console.log('Save fail');
+    
+  }
  
 },{deep:true})
 // const dailyTasks = ref([new DailyTask()]);
@@ -129,6 +149,7 @@ const handleLogout = async () => {
           class="text-2xl bg-transparent focus:outline-none w-full p-2 placeholder:opacity-50"
         ></textarea>
         <div class="flex items-end justify-end flex-col w-full">
+          
           <button class="btn" @click="handleAddDraftPlan">
             Add Daily Task
           </button>
@@ -222,5 +243,24 @@ const handleLogout = async () => {
         </div>
       </div>
     </section>
+    <div>
+      <div class="flex gap-3 p-5" v-show="saveState.saving">
+        <div class="loading ">
+        
+         </div>
+         Saving
+
+      </div>
+      <div class="flex gap-3 p-5 items-center" v-show="saveState.saved">
+        <Icon iconName="cloud-check" class="w-10 h-10"/>
+        Saved
+      </div>
+      <div class="flex gap-3 p-5 items-center" v-show="saveState.saveFail">
+        <Icon iconName="caution" class="w-10 h-10 flex items-center"/>
+        Your change not saved !
+      </div>
+      
+      
+    </div>
   </main>
 </template>
