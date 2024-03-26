@@ -13,20 +13,32 @@ const userStore = useUserStore()
 const password = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')
-console.log(await checkOldPassword(userStore.userData.id,'Title20306@'));
+const oldPasswd = ref('')
+
+
 const isPasswdValid = computed(() => {
   return checkPassword(password.value)
 })
-function handleSave() {
+async function handleSave() {
+  let isOldPasswdValid = await checkOldPassword(userStore.userData.id,oldPasswd.value)
   if (!isPasswdValid.value.isPasswordValid) {
     toastStore.addToast('Password is invalid', 'error')
     return
     // userStore.userData.password = encrypt(password.value)
     // user.saveUserData(user.userData)
-  } else {
-    updateUserData(userStore.userData.id, { password: hash(password.value) })
+  }
+ 
+  if(!isOldPasswdValid){
+    toastStore.addToast('Old password is invalid', 'error')
+    return
+  }
+   
+  if(isOldPasswdValid && isPasswdValid.value.isPasswordValid && password.value === confirmPassword.value){
+
+    await updateUserData(userStore.userData.id, { password: hash(password.value) })
+    console.log("save success");
     toastStore.addToast('Save password successfully', 'success')
-    userStore.loadUserData()
+    await userStore.loadUserData()
   }
 }
 watch([password, confirmPassword], () => {
@@ -47,6 +59,8 @@ watch([password, confirmPassword], () => {
       <div class="divider divider-primary w-[60rem]"></div>
     </div>
     <div class="flex flex-col gap-2 w-fit">
+      <div>Your Old password</div>
+      <input v-model="oldPasswd" type="password" class="input input-bordered">
       <div>New password</div>
       <input v-model="password" type="password" class="input input-bordered" @input="checkPassword(password)">
       <div>Confirm new password</div>
