@@ -1,6 +1,6 @@
 <script setup>
 import { computed, watch } from 'vue';
-import { checkPassword } from '../../../libs/validationUtils';
+import { checkOldPassword, checkPassword } from '../../../libs/validationUtils';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { hash } from '../../../libs/plannetEncrypt';
@@ -13,6 +13,7 @@ const userStore = useUserStore()
 const password = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')
+console.log(await checkOldPassword(userStore.userData.id,'Title20306@'));
 const isPasswdValid = computed(() => {
   return checkPassword(password.value)
 })
