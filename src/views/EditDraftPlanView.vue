@@ -45,7 +45,7 @@ function handleAddDraftPlan() {
   newDailyTask.dailyTasks = []; // Initialize dailyTasks as an empty array
   newDraftPlan.value.dailyTasks.push(newDailyTask);
 }
-function addHourlyTask(index, task) {
+function addHourlyTask(index) {
   const newHourlyTask = new HourlyTask();  
   newDraftPlan.value.dailyTasks[index].dailyTasks.push(newHourlyTask);
   
@@ -54,15 +54,15 @@ function addHourlyTask(index, task) {
 function addTodo(dailyIndex, hourlyIndex) {
   const newTodo = {...new Todo()}
   const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos] 
-todos.push(newTodo)
-newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos = todos
-  
-  
-  
-  console.log(dailyIndex);
-  console.log(hourlyIndex);
-  
+  todos.push(newTodo)
+  newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos = todos
+}
+function handledeleteDailyTask(dailyIndex){
+  newDraftPlan.value.dailyTasks.splice(dailyIndex,1)
 
+}
+function handleDelteHolyTask(dailyIndex,hourlyIndex){
+  newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks.splice(hourlyIndex,1)
 }
 onBeforeMount(async () => {
   const { isTokenValid, userId } = await validateToken();
@@ -124,8 +124,10 @@ const handleLogout = async () => {
         >
           <div v-for="(dailyTask, dailyindex) in newDraftPlan.dailyTasks" :key="dailyindex" class="w-full">
           <div alt = "Daily task" class="flex flex-col">
-            <div class="flex flex-row">
+            <div class="flex flex-row gap-3">
+              <button class="btn bg-error" @click="handledeleteDailyTask(dailyindex)">Delete</button>
               <p class="w-1/6 flex items-center">Day {{ dailyindex + 1 }}</p>
+              
               
               <input type="text" placeholder="Task title" class="input input-bordered w-full" v-model="dailyTask.title"/>
             </div>
@@ -152,7 +154,11 @@ const handleLogout = async () => {
                 v-model="hourlyTask.title"
                 placeholder="please type your daily task"
               />
-              <Icon iconName="trash3-fill" class="flex items-center" />
+              <button class="ml-auto btn  bg-error" alt = "Delete holy task" @click="handleDelteHolyTask(dailyindex,hourlyindex)">
+                <!-- <Icon iconName="trash3-fill" class="flex items-center  " /> -->
+                Delete
+              </button>
+             
             </div>
             <div class="mt-5 w-full flex flex-row gap-4">
               <textarea
@@ -164,7 +170,7 @@ const handleLogout = async () => {
               <div class="w-1/2 border-l-2 border-indigo-400 p-4">
                 <div class="flex flex-row justify-between">
                   <p>Task</p>
-                  <button class="btn  ml-auto" @click = addTodo(dailyindex,hourlyindex)>Add</button>
+                  <button class="btn bg-info ml-auto" @click = addTodo(dailyindex,hourlyindex)>Add</button>
                 </div>
                 <div class="flex flex-col pt-2">
                   <div class="flex flex-col gap-3">
@@ -178,8 +184,12 @@ const handleLogout = async () => {
                         :key="todoIndex"
                        
                       />
-                      <Icon iconName="trash3-fill" class="flex items-center" />
-{{ console.log(newDraftPlan.dailyTasks[dailyindex]) }}
+                      <button>
+                        <Icon iconName="trash3-fill" class="flex items-center" />
+
+                      </button>
+                      
+
                       </div>
                       
                    
