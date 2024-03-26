@@ -24,9 +24,11 @@ const hourlyTask = ref(new HourlyTask())
 let newDraftPlan = ref('')
 // let {  dailyTasks } = newDraftPlan.value.dailyTask
 
+//handle Auto saving
 watch(newDraftPlan, async(newValue) => {
-  console.log(newDraftPlan.value);
-  console.log(newValue);
+  
+  createOrUpdatePlan(newValue, 'draft')
+  toastStore.addToast('saved','success')
  
 },{deep:true})
 // const dailyTasks = ref([new DailyTask()]);
@@ -52,7 +54,8 @@ function addHourlyTask(index) {
 
 }
 function addTodo(dailyIndex, hourlyIndex) {
-  const newTodo = {...new Todo()}
+  const newTodo = new Todo()
+  newTodo.id = (Math.random() + 1).toString(36).substring(7);
   const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos] 
   todos.push(newTodo)
   newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos = todos
@@ -64,6 +67,17 @@ function handledeleteDailyTask(dailyIndex){
 function handleDelteHolyTask(dailyIndex,hourlyIndex){
   newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks.splice(hourlyIndex,1)
 }
+function handleDeleteTodo(dailyIndex,hourlyIndex,todoId){
+ 
+  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos] 
+  
+  const index = todos.findIndex(t => t.id === todoId)
+
+  todos.splice(index, 1)
+  newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos = todos
+
+}
+
 onBeforeMount(async () => {
   const { isTokenValid, userId } = await validateToken();
   if (isTokenValid) userStore.loadUserData(userId);
@@ -175,16 +189,16 @@ const handleLogout = async () => {
                 <div class="flex flex-col pt-2">
                   <div class="flex flex-col gap-3">
                    
-                      <div v-for="(todo,todoIndex) in newDraftPlan.dailyTasks[dailyindex].dailyTasks[hourlyindex].todos" :key="todoIndex" class="flex flex-row gap-4">
+                      <div v-for="(todo,todoIndex) in newDraftPlan.dailyTasks[dailyindex].dailyTasks[hourlyindex].todos" :key="todo.id" class="flex flex-row gap-4">
                         <input 
                         type="text"
                         class="input input-bordered w-full"
-                        placeholder="Subtask"
+                        :placeholder= '`subtask ${todoIndex}`'
                         v-model="todo.description"
-                        :key="todoIndex"
+                       
                        
                       />
-                      <button>
+                      <button class="btn" @click="handleDeleteTodo(dailyindex,hourlyindex,todo.id)">
                         <Icon iconName="trash3-fill" class="flex items-center" />
 
                       </button>
