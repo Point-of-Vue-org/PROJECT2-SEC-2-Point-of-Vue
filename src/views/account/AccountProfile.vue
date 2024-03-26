@@ -6,6 +6,7 @@ import { useToastStore } from '@/stores/toast';
 import { updateUserData } from '../../../libs/userManagement';
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
 import Modal from '@/components/Modal.vue';
+import { validateNickname } from '../../../libs/validationUtils';
 
 const isLoading = ref(false)
 const userStore = useUserStore()
@@ -43,6 +44,7 @@ const handleImageFileChange = (e, imageType) => {
     toastStore.addToast('Image size must be less than 5MB!', 'error')
     return
   }
+
   if (!supportedTypes.includes(e.target.files[0].type)) {
     toastStore.addToast('Invalid image type! Only JPEG and PNG are allowed.', 'error')
     return
@@ -64,6 +66,19 @@ const handleSave = async () => {
     }
   }
 
+  if (username.value === userStore.userData.username || username.value === '') delete updatedData.username
+
+  if (nickname.value === userStore.userData.nickname || nickname.value === '') delete updatedData.nickname
+
+  if (bio.value === userStore.userData.bio) delete updatedData.bio
+
+  const nicknameStatus = validateNickname(nickname.value)
+  if (!nicknameStatus.isNicknameValid) {
+    isLoading.value = false
+    toastStore.addToast(nicknameStatus.warning, 'error')
+    return
+  }
+
   if (currentAvatarFile.value) {
     const newAvatarUrl = await upload(currentAvatarFile.value)
     updatedData.setting.avatarUrl = newAvatarUrl
@@ -78,8 +93,8 @@ const handleSave = async () => {
   isLoading.value = false
   if (res) {
     toastStore.addToast('Profile updated successfully!', 'success')
-    userStore.userData.username = updatedData.username
-    userStore.userData.nickname = updatedData.nickname
+    if (updatedData.username) userStore.userData.username = updatedData.username
+    if (updatedData.nickname) userStore.userData.nickname = updatedData.nickname
     userStore.userData.bio = updatedData.bio
     userStore.userData.setting.avatarUrl = updatedData.setting.avatarUrl
     userStore.userData.setting.bannerUrl = updatedData.setting.bannerUrl
