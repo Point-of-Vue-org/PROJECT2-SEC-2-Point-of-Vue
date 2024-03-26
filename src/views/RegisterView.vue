@@ -4,7 +4,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { isEmailExist, isUsernameExist, register } from '../../libs/userManagement';
 import { useRouter } from 'vue-router'
-import { checkPassword } from '../../libs/passwordValidation';
+import { checkPassword } from '../../libs/validationUtils';
 import Icon from '@/components/Icon.vue';
 
 const toastStore = useToastStore()

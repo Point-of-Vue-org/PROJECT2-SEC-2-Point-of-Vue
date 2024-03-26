@@ -14,6 +14,7 @@ const password = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')
 const oldPasswd = ref('')
+const email = ref('')
 
 
 const isPasswdValid = computed(() => {
@@ -48,6 +49,23 @@ watch([password, confirmPassword], () => {
     errorMsg.value = ''
   }
 })
+
+function handleEmailChange() {
+  userStore.userData.email = email.value
+  try{
+    updateUserData(userStore.userData.id,userStore.userData)
+    toastStore.addToast('Save email successfully', 'success')
+
+  }
+  catch(e){
+    console.log(e)
+    toastStore.addToast('Email is invalid', 'error')
+  }
+  
+
+
+}
+  
 
 
 </script>
@@ -112,6 +130,24 @@ watch([password, confirmPassword], () => {
     </div>
     <button class="btn btn-primary w-40" @click="handleSave">Change Password</button>
   </div>
+  
+  <div class="w-full p-10 flex flex-col gap-4">
+    <div class="flex flex-col">
+      <div class="text-2xl font-helvetica font-bold">Change Account Email</div>
+      <div class="divider divider-primary w-[60rem]"></div>
+    </div>
+    <div class="flex flex-col gap-2 w-1/3">
+      <div>Change Email</div>
+      <input v-model="email" placeholder="Type your new email" type="email" class="input input-bordered"/>
+      <button class="btn bg-primary text-black" @click="handleEmailChange">Confirm Change</button>
+    </div>
+    <div class="flex flex-col">
+      <div class="text-2xl font-helvetica font-bold text-red-600">Danger Zone</div>
+      <div class="divider divider-primary w-[60rem]"></div>
+      <button class="btn bg-error w-1/2">Delete Account</button>
+    </div>
+    
+    </div>
 </template>
 
 <style scoped></style>
