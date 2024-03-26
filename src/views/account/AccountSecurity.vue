@@ -1,6 +1,7 @@
 <script setup>
-import { computed, watch, ref} from 'vue';
-import { checkPassword } from '../../../libs/passwordValidation';
+import { computed } from 'vue';
+import { checkPassword } from '../../../libs/validationUtils';
+import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { hash } from '../../../libs/plannetEncrypt';
 import { useToastStore } from '@/stores/toast';
@@ -93,7 +94,7 @@ watch([password, confirmPassword], () => {
         <button class="btn btn-primary w-40" @click="handleSave">Change Password</button>
 </div>
 </template>
- 
+
 <style scoped>
 
 </style>

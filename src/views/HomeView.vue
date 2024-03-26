@@ -41,7 +41,7 @@ const handleLogout = async () => {
 <template>
   <Header>
     <template #menu>
-      <li><a class="text-lg"><Icon iconName="person-fill" />Profile</a></li>
+      <li><RouterLink :to="`/profile/${userStore.userData.id}`" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
       <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>
       <li><a class="text-lg" @click="handleLogout"><Icon iconName="box-arrow-left" />Logout</a></li>
     </template>
