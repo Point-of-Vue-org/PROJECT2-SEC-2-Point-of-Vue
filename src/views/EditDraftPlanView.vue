@@ -63,38 +63,40 @@ onMounted(async () => {
   
 });
 function handleAddDailyTask() {
-  const newDailyTask = new BasePlan();
-  newDailyTask.dailyTasks = []; // Initialize dailyTasks as an empty array
+  const newDailyTask = new DailyTask();
+  newDailyTask.hourlyTasks = []; // Initialize dailyTasks as an empty array
   newDraftPlan.value.dailyTasks.push(newDailyTask);
 }
 function addHourlyTask(index) {
   const newHourlyTask = new HourlyTask();  
-  newDraftPlan.value.dailyTasks[index].dailyTasks.push(newHourlyTask);
+  newDraftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask);
   
 
 }
 function addTodo(dailyIndex, hourlyIndex) {
   const newTodo = new Todo()
   newTodo.id = (Math.random() + 1).toString(36).substring(7);
-  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos] 
+  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos] 
   todos.push(newTodo)
-  newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos = todos
+  newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 function handledeleteDailyTask(dailyIndex){
-  newDraftPlan.value.dailyTasks.splice(dailyIndex,1)
+  let dailyTasks = [...newDraftPlan.value.dailyTasks]
+dailyTasks.splice(dailyIndex, 1)
+newDraftPlan.value.dailyTasks = dailyTasks
 
 }
 function handleDelteHolyTask(dailyIndex,hourlyIndex){
-  newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks.splice(hourlyIndex,1)
+  newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks.splice(hourlyIndex,1)
 }
 function handleDeleteTodo(dailyIndex,hourlyIndex,todoId){
  
-  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos] 
+  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos] 
   
   const index = todos.findIndex(t => t.id === todoId)
 
   todos.splice(index, 1)
-  newDraftPlan.value.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos = todos
+  newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 
 }
 
@@ -170,7 +172,7 @@ const handleLogout = async () => {
               <div class="flex justify-end mt-4">
                 <button class="btn " @click="addHourlyTask(dailyIndex)">Add holytask</button>
               </div>
-          <div class="bg-stone-600 p-6 rounded mt-6" alt = "hourly task" v-for="(hourlyTask,hourlyIndex) in newDraftPlan.dailyTasks[dailyIndex].dailyTasks" :key="hourlyIndex">
+          <div class="bg-stone-600 p-6 rounded mt-6" alt = "hourly task" v-for="(hourlyTask,hourlyIndex) in newDraftPlan.dailyTasks[dailyIndex].hourlyTasks" :key="hourlyIndex">
 
             
             <div class="flex gap-3 bg-slate-400 rounded p-5 mt-6">
@@ -210,7 +212,7 @@ const handleLogout = async () => {
                 <div class="flex flex-col pt-2">
                   <div class="flex flex-col gap-3">
                    
-                      <div v-for="(todo,todoIndex) in newDraftPlan.dailyTasks[dailyIndex].dailyTasks[hourlyIndex].todos" :key="todo.id" class="flex flex-row gap-4">
+                      <div v-for="(todo,todoIndex) in newDraftPlan.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos" :key="todo.id" class="flex flex-row gap-4">
                         <input 
                         type="text"
                         class="input input-bordered w-full"
