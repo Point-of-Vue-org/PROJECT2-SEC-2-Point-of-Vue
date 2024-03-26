@@ -57,5 +57,7 @@ List of Feature
 
 ## 3/26/2024
 - Password change validation V2 (successfully)
+- Delete User account (Danger zone) (successfully)
 - Page for Welcome new User (successfully)
+- UI for Edit Daily plan (in progress)
 
