@@ -39,3 +39,24 @@ export function checkPassword(password) {
     }
 }
 
+export function validateNickname(nickname) {
+    const warningMsg = []
+
+    const isLengthValid = nickname.length >= 3
+    const isMaxLengthValid = nickname.length <= 20
+    const isCharacterValid = /^[\x20-\x7E]+$/.test(nickname) && nickname !== ''
+
+    if (!isLengthValid) warningMsg.push("At least 3 characters long")
+    if (!isCharacterValid) warningMsg.push("Contain only printable ASCII characters")
+    if (!isMaxLengthValid) warningMsg.push("Nickname must be less than 20 characters long")
+
+    return {
+        isNicknameValid: isLengthValid && isCharacterValid && isMaxLengthValid,
+        warning: warningMsg,
+        status: {
+            isLengthValid,
+            isCharacterValid,
+            isMaxLengthValid
+        }
+    }
+}

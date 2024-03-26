@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { checkPassword } from '../../../libs/passwordValidation';
+import { checkPassword } from '../../../libs/validationUtils';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { hash } from '../../../libs/plannetEncrypt';
@@ -34,14 +34,12 @@ function handleSave(){
 <div class="flex flex-col pt-5 gap-3 pl-5 w-screen max-w-sm">
     <input type="text" class="input input-bordered w-100" @input="checkPassword(password)" placeholder="Enter new password" v-model="password">
     <p class="text-red-400" v-show=" !isPasswdValid.isPasswordSecure">
-    <p v-for ="warn in  isPasswdValid.warning">{{warn}}</p>
+        <p v-for ="warn in  isPasswdValid.warning">{{warn}}</p>
     </p>
-       
-
     <button  class="btn btn-primary w-2/4 ml-auto" @click="handleSave">Change Password</button>
 </div>
 </template>
- 
+
 <style scoped>
 
 </style>../../../libs/userManagement

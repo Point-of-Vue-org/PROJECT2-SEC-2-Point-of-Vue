@@ -10,6 +10,7 @@ import Icon from '@/components/Icon.vue'
 import PlanContainer from '@/components/PlanContainer.vue'
 import PlanCard from '@/components/PlanCard.vue'
 import { User } from '../../classes/User'
+import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -75,16 +76,20 @@ watch(route, () => {
     <section class="flex-auto p-10 flex flex-col gap-5">
       <div class="bg-base-200 rounded-2xl border border-neutral w-full h-80 overflow-hidden flex flex-col">
         <img
-          :src="user?.setting?.avatarUrl"
+          v-if="user?.setting?.avatarUrl"
+          :src="user.setting.avatarUrl"
           alt="avatar"
           class="absolute rounded-full h-52 w-52 object-cover border-8 border-base-200 translate-x-8 translate-y-24"
         />
+        <UserProfilePlaceholder v-else color="#ff5500" bgcolor="white" class="absolute rounded-full h-52 w-52 object-cover border-8 border-base-200 translate-x-8 translate-y-24"/>
         <div class="h-[12rem]">
           <img
-            :src="user?.setting?.bannerUrl"
+            v-if="user?.setting?.avatarUrl"
+            :src="user.setting.bannerUrl"
             alt="avatar"
             class="w-full h-full object-cover"
           />
+          <div v-else class="bg-neutral w-full h-full object-cover"></div>
         </div>
         <div class="h-[8rem] bg-base-200 flex flex-col gap-4 mt-4 translate-x-[16rem]">
           <div class="flex flex-col">
@@ -114,13 +119,17 @@ watch(route, () => {
       </nav>
       <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex flex-col items-center">
         <div class="h-6"></div>
-        <PlanContainer>
+        <PlanContainer v-if="postPlans.length > 0">
           <PlanCard
             v-for="plan in postPlans"
             :key="plan.id"
             :planData="plan"
           />
         </PlanContainer>
+        <div v-else class="flex flex-col items-center gap-4">
+          <div class="text-2xl font-bold">No post</div>
+          <div>It seems like <span class="text-primary">{{ user.nickname }}</span> has not posted anything yet</div>
+        </div>
       </div>
     </section>
   </main>
