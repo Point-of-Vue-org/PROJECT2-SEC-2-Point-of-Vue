@@ -80,6 +80,7 @@ watch([password, confirmPassword], () => {
           required class="input bg-neutral rounded-xl w-full" />
         <input v-model="confirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password"
           title="Confirm password" required class="input bg-neutral rounded-xl w-full" />
+        <div class="text-orange-400 text-xs">{{ errorMsg }}</div>
         <ul class="text-xs flex cursor-default">
           <div class="flex-1 flex flex-col gap-2">
             <li :class="result.status.isLengthValid && result.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
@@ -116,15 +117,7 @@ watch([password, confirmPassword], () => {
               Only valid character
             </li>
           </div>
-          <!-- <li :class="{'text-green-300' : result.isLengthValid, 'text-red-400' : !result.isLengthValid}">At least 8 characters long</li>
-          <li :class="{'text-green-300' : result.isCharacterValid, 'text-red-400' : !result.isCharacterValid}">Contain upper case, lower case, digits and special characters</li>
-          <li :class="{'text-green-300' : result.haveLowerCase, 'text-red-400' : !result.haveLowerCase}">At least one lower case character</li>
-          <li :class="{'text-green-300' : result.haveUpperCase, 'text-red-400' : !result.haveUpperCase}">At least one upper case character</li>
-          <li :class="{'text-green-300' : result.haveDigit, 'text-red-400' : !result.haveDigit}">At least one digit</li>
-          <li :class="{'text-green-300' : result.haveSymbol, 'text-red-400' : !result.haveSymbol}">At least one special character</li>
-          <li :class="{'text-green-300' : result.isMaxLengthValid, 'text-red-400' : !result.isMaxLengthValid}">Password must be less than 30 characters long</li> -->
         </ul>
-        <!-- <div class="text-orange-400 text-sm">{{ errorMsg }}</div> -->
         <button type="submit" class="btn rounded-full btn-accent text-base-100">Sign up</button>
       </div>
       <div>
