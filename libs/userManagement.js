@@ -223,3 +223,17 @@ export async function validateToken(){
     return validationStatus
   }
 }
+
+/**
+ * The function `deleteUser` sends a DELETE request to a JSON server API to delete a user with the
+ * specified userId.
+ * @param userId - The `userId` parameter is the unique identifier of the user that you want to delete
+ * from the server.
+ * @returns The `fetch` function is being returned, which sends a DELETE request to the specified JSON
+ * server URI to delete a user with the given `userId`.
+ */
+export function deleteUser(userId){
+  return fetch(`${JSON_SERVER_URI}/users/${userId}`, {
+    method: 'DELETE',
+  })
+}

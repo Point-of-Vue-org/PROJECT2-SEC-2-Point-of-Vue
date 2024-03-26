@@ -5,8 +5,10 @@ import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { hash } from '../../../libs/plannetEncrypt';
 import { useToastStore } from '@/stores/toast';
-import { updateUserData } from '../../../libs/userManagement';
+import { deleteUser, updateUserData } from '../../../libs/userManagement';
 import Icon from '@/components/Icon.vue';
+import { useRouter } from 'vue-router';
+import { logout } from '../../../libs/userManagement';
 
 const toastStore = useToastStore()
 const userStore = useUserStore()
@@ -15,7 +17,7 @@ const confirmPassword = ref('')
 const errorMsg = ref('')
 const oldPasswd = ref('')
 const email = ref('')
-
+const router = useRouter()
 
 const isPasswdValid = computed(() => {
   return checkPassword(password.value)
@@ -61,9 +63,13 @@ function handleEmailChange() {
     console.log(e)
     toastStore.addToast('Email is invalid', 'error')
   }
+}
+function handleDeleteAccount(){
+  logout(userStore.userData.id)
+  deleteUser(userStore.userData.id)
   
-
-
+  toastStore.addToast('Delete account successfully', 'error')
+  router.push('/')
 }
   
 
@@ -144,7 +150,7 @@ function handleEmailChange() {
     <div class="flex flex-col">
       <div class="text-2xl font-helvetica font-bold text-red-600">Danger Zone</div>
       <div class="divider divider-primary w-[60rem]"></div>
-      <button class="btn bg-error w-1/2">Delete Account</button>
+      <button class="btn bg-error w-1/2" @click="handleDeleteAccount">Delete Account</button>
     </div>
     
     </div>
