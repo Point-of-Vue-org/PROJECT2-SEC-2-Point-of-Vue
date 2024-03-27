@@ -6,28 +6,32 @@ import Header from "@/components/Header.vue";
 import { useUserStore } from "@/stores/user";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { createOrUpdatePlan, getPlanBy } from "../../libs/planManagement";
+import { createOrUpdatePlan, getPlanBy, isPlanExist } from "../../libs/planManagement";
 import { HourlyTask } from "../../classes/HourlyTask";
 import { Todo } from "../../classes/Todo";
 import BasePlan from "../../classes/plan/BasePlan";
 import ListContainer from "@/components/ListContainer.vue";
 import ListItem from "@/components/ListItem.vue";
 import PlannetSidebar from "@/components/PlannetSidebar.vue";
+import PostPlan from "../../classes/plan/PostPlan";
+import { useToastStore } from "@/stores/toast";
 
 const isLoading = ref(false)
 const router = useRouter();
 const route = useRoute();
 const userStore = useUserStore();
+const toastStore = useToastStore()
 const saveState = reactive({
   saving: false,
   saved: false,
   saveFail: false
 })
 const draftPlan = ref(new BasePlan())
-
+const isConfirmShow = ref(false)
 //handle Auto saving
 watch(draftPlan, async (newValue) => {
   saveState.saving = true
+  console.log(newValue);
 
   try {
     await createOrUpdatePlan(newValue, 'draft')
@@ -42,10 +46,11 @@ watch(draftPlan, async (newValue) => {
   }
 }, { deep: true })
 
+
 onMounted(async () => {
   let id = route.params.id;
   draftPlan.value = await getPlanBy('id', id, 'draft')
-  console.log(draftPlan);
+  
 })
 
 function handleAddDailyTask() {
@@ -99,6 +104,64 @@ function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
 
   todos.splice(index, 1)
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
+}
+
+function handlePopUpPublish(){
+  isConfirmShow.value = !isConfirmShow.value
+
+}
+async function handlePublishNow(){
+  if(draftPlan.value.title.length < 1){
+    toastStore.addToast('Please enter title', 'error')
+    return
+  }
+  if(draftPlan.value.description.length < 1){
+    toastStore.addToast('Please enter description', 'error')
+    return
+  }
+  if(draftPlan.value.dailyTasks.length < 1){
+    toastStore.addToast('Please add daily tasks', 'error')
+    return
+  }
+  for(let dailyTask of draftPlan.value.dailyTasks){
+    if(dailyTask.title.length < 1){
+      toastStore.addToast('Please enter daily task title', 'error')
+      return
+    }
+    if(dailyTask.hourlyTasks.length < 1){
+      toastStore.addToast('Please add hourly tasks', 'error')
+      return
+    }
+    for(let hourlyTask of dailyTask.hourlyTasks){
+      if(hourlyTask.header.length < 1){
+        toastStore.addToast('Please enter hourly task header', 'error')
+        return
+      }
+      if (hourlyTask.start === '' || hourlyTask.end === '') {
+        toastStore.addToast('Please enter start and end time', 'error')
+        return
+      }
+      if(hourlyTask.description.length < 1 && hourlyTask.todos.length < 1){
+        toastStore.addToast('Please enter hourly task description or add todos', 'error')
+        return
+      }
+    }
+  }
+  // draftPlan.value.type = 'post'
+  const isPostPlanExist = await isPlanExist(draftPlan.value.id, 'post')
+  if(isPostPlanExist){
+    if(window.confirm('This plan is already published. Do you want to override it?') === false) return
+  }
+  const newPostPlan = new PostPlan(draftPlan.value)
+  newPostPlan.published = true
+  newPostPlan.postDate = Date.now()
+  const res = await createOrUpdatePlan(newPostPlan, 'post')
+  if(res){
+    toastStore.addToast(`Plan ${newPostPlan.title}#${newPostPlan.id} published successfully`,'success')
+  }else{
+    toastStore.addToast(`Failed to publish plan ${newPostPlan.title}#${newPostPlan.id}`, 'error')
+  }
+  
 }
 
 onBeforeMount(async () => {
@@ -288,6 +351,10 @@ const handleLogout = async () => {
                 </ListContainer>
               </template>
             </ListItem>
+            <div class="pt-4">
+              <button class="btn hover:bg-green-700 bg-slate-100 text-black hover:text-white" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">Publish Post</button>
+            </div>
+           
           </ListContainer>
           <!-- <div v-else class="flex flex-col gap-2 mb-16">
             <div class="skeleton h-16 w-full"></div>
@@ -309,6 +376,16 @@ const handleLogout = async () => {
             <div>Your change not saved !</div>
           </div>
         </div>
+        <div  v-show="isConfirmShow" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-300 z-40 h-1/2 w-1/2 rounded max-h-96" alt= "popup">
+          <div class="flex items-center flex-col  h-1/2 w-full pt-10">
+            <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/>
+            <p class="text-black">Do you want to publish this draft now ?</p>
+<div class="flex gap-3 pt-5">
+  <button class="btn bg-blue-600" @click="handlePublishNow">Publish Now</button>
+  <button class="btn bg-error" @click="handlePopUpPublish">Cancel</button>
+</div>
+          </div>
+           </div>
     </section>
     <!-- <section class="flex-auto flex justify-center">
       <div class="w-[85%]">
@@ -386,6 +463,7 @@ const handleLogout = async () => {
         </div>
       </div>
     </section> -->
+    
   </main>
 </template>
 
