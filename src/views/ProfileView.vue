@@ -119,7 +119,7 @@ watch(route, () => {
           <PlanCard
             v-for="plan in postPlans"
             :key="plan.id"
-            :planData="plan"
+            :postPlan="plan"
           />
         </PlanContainer>
         <div v-else class="flex flex-col items-center gap-4">

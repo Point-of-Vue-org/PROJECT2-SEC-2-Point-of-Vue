@@ -1,6 +1,7 @@
 import ActivePlan from "../classes/plan/ActivePlan"
 import BasePlan from "../classes/plan/BasePlan"
 import PostPlan from "../classes/plan/PostPlan"
+import { updateUserData } from "./userManagement"
 
 const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 
@@ -99,24 +100,30 @@ export async function sortByDate(posts, order) {
     posts.sort((a, b) => (new Date(a.postDate).getTime() - new Date(b.postDate).getTime()) * order === 'asc' ? 1 : -1)
 }
 
-/**
- * Calculate task completion by percentage
- * @param {string} posts - Message from post
- * @returns {Number} - A promise that resolves a number of tasks
- */
-// export async function completedTasksByPercent(posts) {
-//     let completedTasks = 0
-//     let totalTasks = 0
-//     posts.forEach(post => {
-//         totalTasks += post.tasks.length
-//         post.tasks.forEach(task => {
-//             if (task.isCompleted) completedTasks++
-//         })
-//     })
+export async function toggleUpVote(userData, postPlanData) {
+    let upVoted = userData.upVotedPosts.includes(postPlanData.id)
 
-//     if (totalTasks === 0) {
-//         return 0
-//     }
+    const updatedPlan = await updatePlanData(postPlanData.id, { upVote: postPlanData.upVote + (upVoted ? -1 : 1) }, 'post')
+    if (updatedPlan) postPlanData.upVote += upVoted ? -1 : 1
 
-//     return (completedTasks / totalTasks) * 100
-// }
+    if (!upVoted) userData.upVotedPosts.push(postPlanData.id)
+    else userData.upVotedPosts.splice(userData.upVotedPosts.indexOf(postPlanData.id), 1)
+    const updatedUser = await updateUserData(userData.id, { upVotedPosts: userData.upVotedPosts })
+    if (updatedUser) upVoted = !upVoted
+
+    return upVoted
+}
+
+export async function toggleDownVote(userData, postPlanData) {
+    let downVoted = userData.downVotedPosts.includes(postPlanData.id)
+
+    const updatedPlan = await updatePlanData(postPlanData.id, { downVote: postPlanData.downVote + (downVoted ? -1 : 1) }, 'post')
+    if (updatedPlan) postPlanData.downVote += downVoted ? -1 : 1
+
+    if (!downVoted) userData.downVotedPosts.push(postPlanData.id)
+    else userData.downVotedPosts.splice(userData.downVotedPosts.indexOf(postPlanData.id), 1)
+    const updatedUser = await updateUserData(userData.id, { downVotedPosts: userData.downVotedPosts })
+    if (updatedUser) downVoted = !downVoted
+
+    return downVoted
+}

@@ -4,18 +4,20 @@ import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
 import { ref, onMounted } from 'vue'
 import { getUserBy, updateUserData } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
-import { updatePlanData } from '../../libs/planManagement';
+import { toggleDownVote, toggleUpVote, updatePlanData } from '../../libs/planManagement';
 import { useToastStore } from '@/stores/toast';
 import BasePlan from '../../classes/plan/BasePlan';
 import { formatDate } from '../../libs/utils';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
-	planData: {
+	postPlan: {
 		type: BasePlan,
 		required: true
 	}
 })
 
+const router = useRouter()
 const userStore = useUserStore()
 const toastStore = useToastStore()
 const author = ref({})
@@ -23,25 +25,23 @@ const upVoted = ref(false)
 
 onMounted(
 	async () => {
-		author.value = await getUserBy('id', props.planData.authorId)
-		upVoted.value = userStore.userData.upVotedPosts?.includes(props.planData.id) || false
+		author.value = await getUserBy('id', props.postPlan?.authorId)
+		upVoted.value = userStore.userData.upVotedPosts?.includes(props.postPlan?.id) || false
 	}
 )
 
-const toggleUpVote = () => {
-	if (!userStore.userData.id) {
-		toastStore.addToast('You must be logged in to upvote', 'error')
-		return
-	}
-	const isUsedToUpVoted = userStore.userData.upVotedPosts.includes(props.planData.id)
+const handlePlanClick = () => {
+	if (props.postPlan.type === 'post') router.push(`/post/${props.postPlan.id}`)
+	else router.push(`/plan/edit/${props.postPlan.id}`)
+}
 
-	updatePlanData(props.planData.id, { upVote: props.planData.upVote + (isUsedToUpVoted ? -1 : 1) }, 'post')
-	props.planData.upVote += isUsedToUpVoted ? -1 : 1
-
-	if (!isUsedToUpVoted) userStore.userData.upVotedPosts.push(props.planData.id)
-	else userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.planData.id), 1)
-	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
-	upVoted.value = !isUsedToUpVoted
+const handleToggleUpVote = async () => {
+  if (!userStore.userData.id) {
+    toastStore.addToast('You must be logged in to upvote', 'error')
+    return
+  }
+  if (userStore.userData.downVotedPosts.includes(props.postPlan.id)) await toggleDownVote(userStore.userData, props.postPlan)
+  upVoted.value = await toggleUpVote(userStore.userData, props.postPlan)
 }
 
 </script>
@@ -70,24 +70,29 @@ const toggleUpVote = () => {
 					<div class="text-xs opacity-70">{{ '@' + author?.username || 'Username' }}</div>
 				</div>
 			</div>
-			<RouterLink :to="`/post/${planData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ planData.title || 'Title' }}</RouterLink>
-			<div class="text-[0.6rem] font-bold">{{ formatDate(planData.postDate) }}</div>
+			<div @click="handlePlanClick" class="text-xl font-bold hover:underline cursor-pointer">{{ postPlan?.title || 'Untitled plan' }}</div>
+			<div class="text-[0.6rem] font-bold">{{ formatDate(postPlan?.postDate) }}</div>
 		</div>
-		<div class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem] overflow-hidden">
-			<img v-if="planData.imageUrl" :src="planData.imageUrl" alt="Post image" class="w-full h-full object-cover" />
+		<div @click="handlePlanClick" class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem] overflow-hidden cursor-pointer">
+			<img
+				v-if="postPlan?.imageUrl"
+				:src="postPlan.imageUrl"
+				alt="Post image"
+				class="w-full h-full object-cover"
+			/>
 			<div v-else class="w-full h-full grid place-items-center font-bold">
 				I am Mock-up image
 			</div>
 		</div>
-		<div v-if="planData.type === 'post'" class="flex-none mt-2 flex items-center justify-between select-none">
-			<div @click="toggleUpVote" class="flex items-center gap-3">
+		<div v-if="postPlan?.type === 'post'" class="flex-none mt-2 flex items-center justify-between select-none">
+			<div @click="handleToggleUpVote" class="flex items-center gap-3 cursor-pointer">
 				<Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
 				<Icon v-show="!upVoted" iconName="up-vote" />
-				<div class="font-bold">{{ planData.upVote || '0' }}</div>
+				<div class="font-bold">{{ postPlan.upVote || '0' }}</div>
 			</div>
-			<div class="flex items-center gap-3">
+			<div @click="handlePlanClick" class="flex items-center gap-3 cursor-pointer">
 				<Icon iconName="chat-right-dots" />
-				<div class="font-bold">{{ planData.comments.length || '0' }}</div>
+				<div class="font-bold">{{ postPlan.comments.length || '0' }}</div>
 			</div>
 			<!-- <Icon iconName="paper-clip" /> -->
 		</div>

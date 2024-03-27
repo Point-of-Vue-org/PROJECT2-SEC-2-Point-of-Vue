@@ -2,10 +2,10 @@
 import { ref, onBeforeMount, onMounted, watch} from 'vue'
 import { useRouter, RouterLink, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { getUserBy, logout, validateToken } from '../../libs/userManagement'
+import { getUserBy, logout, updateUserData, validateToken } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user';
-import { getPlanBy } from '../../libs/planManagement.js'
+import { getPlanBy, toggleUpVote, toggleDownVote } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
 import PostPlan from '../../classes/plan/PostPlan'
@@ -23,6 +23,9 @@ const userStore = useUserStore()
 const postPlan = ref(new PostPlan())
 const author = ref({})
 
+const upVoted = ref(false)
+const downVoted = ref(false)
+
 const newComment = ref('')
 // const comments = ref([])
 
@@ -32,6 +35,9 @@ async function fetchData() {
     postPlan.value = await getPlanBy('id', route.params.id, 'post')
     console.log(postPlan.value);
     author.value = await getUserBy('id', postPlan.value.authorId)
+
+    upVoted.value = userStore.userData.upVotedPosts?.includes(postPlan.value.id) || false
+    downVoted.value = userStore.userData.downVotedPosts?.includes(postPlan.value.id) || false
     // comments.value = await postPlan.value.getComments()
     // comments.value.push(
     //   ...postPlan.value.comments.map(
@@ -82,26 +88,23 @@ const handleLogout = async () => {
   router.replace('/login')
 }
 
-const toggleUpVote = () => {
-	if (!userStore.userData.id) {
-		toastStore.addToast('You must be logged in to upvote', 'error')
-		return
-	}
-	const isUsedToUpVoted = userStore.userData.upVotedPosts.includes(props.planData.id)
-
-	updatePlanData(props.planData.id, { upVote: props.planData.upVote + (isUsedToUpVoted ? -1 : 1) }, 'post')
-	props.planData.upVote += isUsedToUpVoted ? -1 : 1
-
-	if (!isUsedToUpVoted) userStore.userData.upVotedPosts.push(props.planData.id)
-	else userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.planData.id), 1)
-	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
-	upVoted.value = !isUsedToUpVoted
+const handleToggleUpVote = async () => {
+  if (!userStore.userData.id) {
+    toastStore.addToast('You must be logged in to upvote', 'error')
+    return
+  }
+  if (downVoted.value) downVoted.value = await toggleDownVote(userStore.userData, postPlan.value)
+  upVoted.value = await toggleUpVote(userStore.userData, postPlan.value)
 }
 
-watch(() => postPlan.value, (newVal, oldVal) => {
-  console.log('newVal', newVal)
-  console.log('oldVal', oldVal)
-})
+const handleToggleDownVote = async () => {
+  if (!userStore.userData.id) {
+    toastStore.addToast('You must be logged in to downvote', 'error')
+    return
+  }
+  if (upVoted.value) upVoted.value = await toggleUpVote(userStore.userData, postPlan.value)
+  downVoted.value = await toggleDownVote(userStore.userData, postPlan.value)
+}
 
 </script>
 
@@ -200,23 +203,14 @@ watch(() => postPlan.value, (newVal, oldVal) => {
           <div class="skeleton h-16 w-full"></div>
         </div>
         <div class="divider"></div>
-        <div class="flex gap-4 my-4">
-          <div class="font-semibold">Upvotes</div>
-          <div class="flex items-center gap-2">
-            <Icon iconName="up-vote" />
-            <div class="font-semibold">{{ postPlan.upVote }}</div>
-            <Icon iconName="down-vote" />
-          </div>
-        </div>
-        <div class="divider"></div>
         <div class="flex flex-col">
           <div class="font-semibold">Created by</div>
           <div class="flex gap-4 items-center my-4 bg-base">
             <img
-              v-if="!isLoading && author?.setting?.avatarUrl"
-              :src="author.setting.avatarUrl"
-              alt="author image"
-              class="w-20 h-20 rounded-full object-cover"
+            v-if="!isLoading && author?.setting?.avatarUrl"
+            :src="author.setting.avatarUrl"
+            alt="author image"
+            class="w-20 h-20 rounded-full object-cover"
             />
             <div v-else class="skeleton w-10 h-10"></div>
             <div class="flex flex-col gap-0.5">
@@ -231,18 +225,46 @@ watch(() => postPlan.value, (newVal, oldVal) => {
           </div>
         </div>
         <div class="divider"></div>
-        <div class="font-semibold  my-4">Comments</div>
-        <div class="flex flex-col gap-2 mb-6">
-          <textarea
-          v-model="newComment"
-          class="w-full h-24 p-4 border border-neutral bg-accent text-neutral rounded-2xl placeholder:text-neutral placeholder:opacity-50 focus:outline-none focus:placeholder:opacity-25"
-          placeholder="Write a comment..."
-          ></textarea>
-          <button @click="handleAddComment" class="btn btn-sm btn-primary self-end" :disabled="newComment.length === 0">Add your comment</button>
-          <div class="flexgap-2">
-            <Icon iconName="comment" />
+        <div class="flex flex-col gap-4 my-4">
+          <div class="flex gap-4">
+            <div class="font-semibold">{{ postPlan.upVote }} Upvotes</div>
             <div class="font-semibold">{{ postPlan.comments.length }} Comments</div>
           </div>
+          <div class="flex gap-4 items-center">
+            <div
+              :class="{
+                'border-neutral': !upVoted && !downVoted,
+                'border-green-400': upVoted,
+                'border-red-400': downVoted
+              }"
+              class="flex items-center gap-2 border-2 p-1 w-fit rounded-2xl"
+            >
+              <button @click="handleToggleUpVote" class="btn btn-square btn-ghost">
+                <Icon v-show="!upVoted" iconName="up-vote-lg" />
+                <Icon v-show="upVoted" iconName="up-vote-fill-lg" class="text-green-400" />
+              </button>
+              <button @click="handleToggleDownVote" class="btn btn-square btn-ghost">
+                <Icon v-show="!downVoted" iconName="down-vote-lg" />
+                <Icon v-show="downVoted" iconName="down-vote-fill-lg" class="text-red-400" />
+              </button>
+            </div>
+            <button class="btn btn-primary">
+              <Icon iconName="save" />
+              <span>Save to my draft</span>
+            </button>
+          </div>
+        </div>
+        <!-- <div class="font-semibold  my-4">Comments</div> -->
+        <div class="flex gap-2 mb-6 items-center border border-neutral bg-accent rounded-2xl px-4">
+          <div class="flex-none w-fit">
+            <img :src="userStore.userData.setting.avatarUrl" class="w-8 h-8 rounded-full" />
+          </div>
+          <textarea
+            v-model="newComment"
+            class="flex-1 w-full h-24 p-4 text-neutral rounded-2xl placeholder:text-neutral placeholder:opacity-50 focus:outline-none focus:placeholder:opacity-25 bg-transparent resize-none"
+            placeholder="Write a comment..."
+          ></textarea>
+          <button @click="handleAddComment" class="flex-none btn btn-sm btn-primary" :disabled="newComment.length === 0">Comment</button>
         </div>
         <div v-if="!isLoading" class="flex flex-col gap-2 mb-16">
           <CommentCard v-for="(comment, index) in postPlan.comments" :key="index" :comment="comment" />

@@ -6,7 +6,7 @@ import { Comment } from '../../classes/Comment';
 import UserProfilePlaceholder from './UserProfilePlaceholder.vue';
 import { formatDate } from '../../libs/utils';
 import { useUserStore } from '@/stores/user';
-import { updateCommentData } from '../../libs/commentManagement';
+import { toggleUpVoteComment, updateCommentData } from '../../libs/commentManagement';
 
 const props = defineProps({
   comment: {
@@ -26,25 +26,11 @@ onMounted(async () => {
   }
   author.value = await getUserBy('id', props.comment.authorId)
   upVoted.value = userStore.userData.upVotedComments?.includes(props.comment.id) || false
-  console.log(props.comment.id, upVoted.value);
 })
 
-const toggleUpVote = () => {
-  if (!userStore.userData.id) {
-		toastStore.addToast('You must be logged in to upvote', 'error')
-		return
-	}
-	const isUsedToUpVoted = userStore.userData.upVotedComments.includes(props.comment.id)
-
-	updateCommentData(props.comment.id, { upVote: props.comment.upVote + (isUsedToUpVoted ? -1 : 1) })
-	props.comment.upVote += isUsedToUpVoted ? -1 : 1
-
-	if (!isUsedToUpVoted) userStore.userData.upVotedComments.push(props.comment.id)
-	else userStore.userData.upVotedComments.splice(userStore.userData.upVotedComments.indexOf(props.comment.id), 1)
-	updateUserData(userStore.userData.id, { upVotedComments: userStore.userData.upVotedComments })
-	upVoted.value = !isUsedToUpVoted
+const handleToggleUpVote = async () => {
+  upVoted.value = await toggleUpVoteComment(userStore.userData, props.comment)
 }
-
 
 </script>
 
@@ -60,7 +46,7 @@ const toggleUpVote = () => {
     </div>
     <div class="text-xs my-1">{{ formatDate(comment.date) }}</div>
     <div class="my-2">{{ props.comment.content }}</div>
-    <div @click="toggleUpVote" class="flex items-center gap-2 select-none">
+    <div @click="handleToggleUpVote" class="flex items-center gap-2 select-none">
       <Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
       <Icon v-show="!upVoted" iconName="up-vote" />
       <div class="font-bold">{{ comment.upVote || '0' }}</div>

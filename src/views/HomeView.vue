@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onBeforeMount, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { logout, validateToken } from '../../libs/userManagement'
+import { logout } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'
@@ -49,7 +49,7 @@ const handleLogout = async () => {
             <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           </div>
           <PlanContainer>
-            <PlanCard v-for="plan in postPlans" :key="plan.id" :planData="plan" />
+            <PlanCard v-for="plan in postPlans" :key="plan.id" :postPlan="plan" />
           </PlanContainer>
         </div>
       </div>

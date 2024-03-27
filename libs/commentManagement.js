@@ -1,4 +1,5 @@
 import { Comment } from "../classes/Comment"
+import { updateUserData } from "./userManagement"
 
 const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
 
@@ -33,4 +34,18 @@ export async function updateCommentData(id, updateData) {
   })
 
   return await res.json()
+}
+
+export async function toggleUpVoteComment(userData, commentData) {
+  let upVoted = userData.upVotedComments.includes(commentData.id)
+
+	const updatedPlan = await updateCommentData(commentData.id, { upVote: commentData.upVote + (upVoted ? -1 : 1) })
+	if (updatedPlan) commentData.upVote += upVoted ? -1 : 1
+
+	if (!upVoted) userData.upVotedComments.push(commentData.id)
+	else userData.upVotedComments.splice(userData.upVotedComments.indexOf(commentData.id), 1)
+	const updatedUser = await updateUserData(userData.id, { upVotedComments: userData.upVotedComments })
+	if (updatedUser) upVoted = !upVoted
+
+  return upVoted
 }

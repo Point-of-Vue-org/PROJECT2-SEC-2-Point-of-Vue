@@ -74,7 +74,7 @@ const router = createRouter({
     {
       path: '/plans',
       name: 'draft plan lists',
-      component: () => import('../views/DraftPlanList.vue')
+      component: () => import('../views/DraftPlanView.vue')
     },
     {
       path: '/:pathMatch(.*)*',

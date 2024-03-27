@@ -49,7 +49,7 @@ const handleLogout = async () => {
             <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           </div>
           <PlanContainer>
-            <PlanCard v-for="plan in draftPlans" :key="plan.id" :planData="plan" />
+            <PlanCard v-for="plan in draftPlans" :key="plan.id" :postPlan="plan" />
           </PlanContainer>
         </div>
       </div>
