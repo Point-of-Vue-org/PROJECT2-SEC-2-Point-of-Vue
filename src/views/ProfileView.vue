@@ -1,16 +1,16 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter, RouterLink, useRoute } from 'vue-router'
-import { getUserBy, logout, validateToken } from '../../libs/userManagement'
+import { getUserBy, logout } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
-import BaseSidebar from '@/components/BaseSidebar.vue'
-import { getPlans, getPlansBy } from '../../libs/planManagement'
+import { getPlansBy } from '../../libs/planManagement'
 import Icon from '@/components/Icon.vue'
 import PlanContainer from '@/components/PlanContainer.vue'
 import PlanCard from '@/components/PlanCard.vue'
 import { User } from '../../classes/User'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
+import PlannetSidebar from '@/components/PlannetSidebar.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -67,11 +67,7 @@ watch(route, () => {
     </template>
   </Header>
   <main class="flex">
-    <BaseSidebar class="flex-none">
-      <template #menu>
-        <!-- Sidbar content here -->
-      </template>
-    </BaseSidebar>
+    <PlannetSidebar />
     
     <section class="flex-auto p-10 flex flex-col gap-5">
       <div class="bg-base-200 rounded-2xl border border-neutral w-full h-80 overflow-hidden flex flex-col">
@@ -123,7 +119,7 @@ watch(route, () => {
           <PlanCard
             v-for="plan in postPlans"
             :key="plan.id"
-            :planData="plan"
+            :postPlan="plan"
           />
         </PlanContainer>
         <div v-else class="flex flex-col items-center gap-4">
