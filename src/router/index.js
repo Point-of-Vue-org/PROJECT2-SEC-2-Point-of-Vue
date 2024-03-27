@@ -75,14 +75,36 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue')
+    },
+    {
+      path: '/newuser/setup',
+      name: 'setup',
+      component: () => import('../views/SetupView.vue')
     }
   ]
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to, from, next) => {
   const { isTokenValid, userId } = await validateToken()
   const userStore = useUserStore()
-  if (isTokenValid) userStore.loadUserData(userId)
+  if (isTokenValid) await userStore.loadUserData(userId)
+
+  console.log(userStore.userData.hasSetup)
+
+  if (to.name !== 'setup' && userStore.userData.hasSetup === false && isTokenValid) { 
+    next('/newuser/setup')
+  } else next()
+
+  // if(from.name === 'login' && to.name === 'home'){
+  //   if(userStore.userData.nickname === ''){
+  //     next('/newuser/setup')
+  //   } else next()
+  // } else next()
+  // if(!['login', 'register', 'setup'].includes(to.name)){
+  //   if(!userStore.userData.nickname){
+  //     next('/newuser/setup')
+  //   } else next()
+  // } else next()
 })
 
 export default router
