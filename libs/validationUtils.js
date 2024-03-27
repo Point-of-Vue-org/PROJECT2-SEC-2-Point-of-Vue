@@ -1,3 +1,6 @@
+import { hash } from "./plannetEncrypt"
+import { getUserBy } from "./userManagement"
+
 /**
  * Check if password is Secure or not
  * @param {String} password
@@ -59,4 +62,13 @@ export function validateNickname(nickname) {
             isMaxLengthValid
         }
     }
+}
+export async function checkOldPassword(userId,oldPassword){
+    const user = await getUserBy('id', userId)
+    console.log(user);
+    if (user.password ===  hash(oldPassword)) {
+        return true
+    } else {
+        return false
+    } 
 }

@@ -1,31 +1,47 @@
 <script setup>
 import { computed, watch } from 'vue';
-import { checkPassword } from '../../../libs/validationUtils';
+import { checkOldPassword, checkPassword } from '../../../libs/validationUtils';
 import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { hash } from '../../../libs/plannetEncrypt';
 import { useToastStore } from '@/stores/toast';
-import { updateUserData } from '../../../libs/userManagement';
+import { deleteUser, updateUserData } from '../../../libs/userManagement';
 import Icon from '@/components/Icon.vue';
+import { useRouter } from 'vue-router';
+import { logout } from '../../../libs/userManagement';
 
 const toastStore = useToastStore()
 const userStore = useUserStore()
 const password = ref('')
 const confirmPassword = ref('')
 const errorMsg = ref('')
+const oldPasswd = ref('')
+const email = ref('')
+const router = useRouter()
+
 const isPasswdValid = computed(() => {
   return checkPassword(password.value)
 })
-function handleSave() {
+async function handleSave() {
+  let isOldPasswdValid = await checkOldPassword(userStore.userData.id,oldPasswd.value)
   if (!isPasswdValid.value.isPasswordValid) {
     toastStore.addToast('Password is invalid', 'error')
     return
     // userStore.userData.password = encrypt(password.value)
     // user.saveUserData(user.userData)
-  } else {
-    updateUserData(userStore.userData.id, { password: hash(password.value) })
+  }
+ 
+  if(!isOldPasswdValid){
+    toastStore.addToast('Old password is invalid', 'error')
+    return
+  }
+   
+  if(isOldPasswdValid && isPasswdValid.value.isPasswordValid && password.value === confirmPassword.value){
+
+    await updateUserData(userStore.userData.id, { password: hash(password.value) })
+    console.log("save success");
     toastStore.addToast('Save password successfully', 'success')
-    userStore.loadUserData()
+    await userStore.loadUserData()
   }
 }
 watch([password, confirmPassword], () => {
@@ -35,6 +51,27 @@ watch([password, confirmPassword], () => {
     errorMsg.value = ''
   }
 })
+
+function handleEmailChange() {
+  userStore.userData.email = email.value
+  try{
+    updateUserData(userStore.userData.id,userStore.userData)
+    toastStore.addToast('Save email successfully', 'success')
+
+  }
+  catch(e){
+    console.log(e)
+    toastStore.addToast('Email is invalid', 'error')
+  }
+}
+function handleDeleteAccount(){
+  logout(userStore.userData.id)
+  deleteUser(userStore.userData.id)
+  
+  toastStore.addToast('Delete account successfully', 'error')
+  router.push('/')
+}
+  
 
 
 </script>
@@ -46,6 +83,8 @@ watch([password, confirmPassword], () => {
       <div class="divider divider-primary w-[60rem]"></div>
     </div>
     <div class="flex flex-col gap-2 w-fit">
+      <div>Your Old password</div>
+      <input v-model="oldPasswd" type="password" class="input input-bordered">
       <div>New password</div>
       <input v-model="password" type="password" class="input input-bordered" @input="checkPassword(password)">
       <div>Confirm new password</div>
@@ -97,6 +136,24 @@ watch([password, confirmPassword], () => {
     </div>
     <button class="btn btn-primary w-40" @click="handleSave">Change Password</button>
   </div>
+  
+  <div class="w-full p-10 flex flex-col gap-4">
+    <div class="flex flex-col">
+      <div class="text-2xl font-helvetica font-bold">Change Account Email</div>
+      <div class="divider divider-primary w-[60rem]"></div>
+    </div>
+    <div class="flex flex-col gap-2 w-1/3">
+      <div>Change Email</div>
+      <input v-model="email" placeholder="Type your new email" type="email" class="input input-bordered"/>
+      <button class="btn bg-primary text-black" @click="handleEmailChange">Confirm Change</button>
+    </div>
+    <div class="flex flex-col">
+      <div class="text-2xl font-helvetica font-bold text-red-600">Danger Zone</div>
+      <div class="divider divider-primary w-[60rem]"></div>
+      <button class="btn bg-error w-1/2" @click="handleDeleteAccount">Delete Account</button>
+    </div>
+    
+    </div>
 </template>
 
 <style scoped></style>
