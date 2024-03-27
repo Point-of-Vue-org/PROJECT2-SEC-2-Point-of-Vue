@@ -8,3 +8,29 @@ export async function getCommentsBy(key, value) {
   const data = await res.json()
   return data.map((commentData) => new Comment(commentData))
 }
+
+export async function createComment(commentObject) {
+  const url = `${JSON_SERVER_URI}/comments`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(commentObject)
+  })
+  const data = await res.json()
+  return new Comment(data)
+}
+
+export async function updateCommentData(id, updateData) {
+  const url = `${JSON_SERVER_URI}/comments/${id}`
+  const res = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateData),
+  })
+
+  return await res.json()
+}

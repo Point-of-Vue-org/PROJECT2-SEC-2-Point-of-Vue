@@ -1,4 +1,4 @@
-import { getCommentsBy } from '../../libs/commentManagement'
+import { createComment, getCommentsBy } from '../../libs/commentManagement'
 import { createOrUpdatePlan } from '../../libs/planManagement'
 import BasePlan from './BasePlan.js'
 
@@ -38,12 +38,13 @@ export default class PostPlan extends BasePlan {
     async getComments() {
         const comments = await getCommentsBy('postId', this.id)
         this.comments = comments
-        return comments
+        return this.comments.reverse()
     }
 
-    addComment(comment) {
-        this.comments.push(comment)
-        createOrUpdatePlan(this, 'post')
+    async addComment(commentObject) {
+        commentObject.postId = this.id
+        const comment = await createComment(commentObject)
+        return comment
     }
 
     getDraft() {

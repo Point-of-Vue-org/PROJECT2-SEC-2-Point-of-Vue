@@ -1,9 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUserBy } from '../../libs/userManagement';
+import { getUserBy, updateUserData } from '../../libs/userManagement';
 import Icon from './Icon.vue';
 import { Comment } from '../../classes/Comment';
 import UserProfilePlaceholder from './UserProfilePlaceholder.vue';
+import { formatDate } from '../../libs/utils';
+import { useUserStore } from '@/stores/user';
+import { updateCommentData } from '../../libs/commentManagement';
 
 const props = defineProps({
   comment: {
@@ -12,28 +15,34 @@ const props = defineProps({
   }
 })
 
+const userStore = useUserStore()
 const author = ref({})
 const upVoted = ref(false)
 
 onMounted(async () => {
+  if (props.comment.author) {
+    author.value = props.comment.author
+    return
+  }
   author.value = await getUserBy('id', props.comment.authorId)
-  // console.log(author.value)
+  upVoted.value = userStore.userData.upVotedComments?.includes(props.comment.id) || false
+  console.log(props.comment.id, upVoted.value);
 })
 
 const toggleUpVote = () => {
-	// if (userStore.userData.upVotedComments.includes(props.postData.id)) {
-	// 	props.postData.upVote--
-	// 	updatePostData(props.postData.id, { upVote: props.postData.upVote })
-	// 	userStore.userData.upVotedPosts.splice(userStore.userData.upVotedPosts.indexOf(props.postData.id), 1)
-	// 	updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
-	// 	upVoted.value = false
-	// 	return
-	// }
-	// props.postData.upVote++
-	// updatePostData(props.postData.id, { upVote: props.postData.upVote })
-	// userStore.userData.upVotedPosts.push(props.postData.id)
-	// updateUserData(userStore.userData.id, { upVotedPosts: userStore.userData.upVotedPosts })
-	// upVoted.value = true
+  if (!userStore.userData.id) {
+		toastStore.addToast('You must be logged in to upvote', 'error')
+		return
+	}
+	const isUsedToUpVoted = userStore.userData.upVotedComments.includes(props.comment.id)
+
+	updateCommentData(props.comment.id, { upVote: props.comment.upVote + (isUsedToUpVoted ? -1 : 1) })
+	props.comment.upVote += isUsedToUpVoted ? -1 : 1
+
+	if (!isUsedToUpVoted) userStore.userData.upVotedComments.push(props.comment.id)
+	else userStore.userData.upVotedComments.splice(userStore.userData.upVotedComments.indexOf(props.comment.id), 1)
+	updateUserData(userStore.userData.id, { upVotedComments: userStore.userData.upVotedComments })
+	upVoted.value = !isUsedToUpVoted
 }
 
 
@@ -49,11 +58,12 @@ const toggleUpVote = () => {
         <div class="text-xs opacity-70">{{ '@' + author.username }}</div>
       </div>
     </div>
+    <div class="text-xs my-1">{{ formatDate(comment.date) }}</div>
     <div class="my-2">{{ props.comment.content }}</div>
     <div @click="toggleUpVote" class="flex items-center gap-2 select-none">
       <Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
       <Icon v-show="!upVoted" iconName="up-vote" />
-      <div class="font-bold">{{ props.comment.upVote || '0' }}</div>
+      <div class="font-bold">{{ comment.upVote || '0' }}</div>
     </div>
   </div>
 </template>

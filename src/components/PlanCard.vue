@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/user';
 import { updatePlanData } from '../../libs/planManagement';
 import { useToastStore } from '@/stores/toast';
 import BasePlan from '../../classes/plan/BasePlan';
+import { formatDate } from '../../libs/utils';
 
 const props = defineProps({
 	planData: {
@@ -26,33 +27,6 @@ onMounted(
 		upVoted.value = userStore.userData.upVotedPosts?.includes(props.planData.id) || false
 	}
 )
-
-function formatPostDate(planDate) {
-
-	const date = new Date(planDate)
-
-	if (date.getDate() === new Date().getDate() && date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear()) {
-		if (date.getHours() === new Date().getHours()) {
-			if (date.getMinutes() === new Date().getMinutes()) {
-				return 'Just now'
-			}
-
-			return new Date().getMinutes() - date.getMinutes()  + ' minutes ago'
-		}
-		return 'Today at ' + date.toLocaleTimeString('en-US', {
-			hour: 'numeric',
-			minute: 'numeric'
-		})
-	}
-
-	return date.toLocaleDateString('en-US', {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric'
-	})
-}
 
 const toggleUpVote = () => {
 	if (!userStore.userData.id) {
@@ -97,7 +71,7 @@ const toggleUpVote = () => {
 				</div>
 			</div>
 			<RouterLink :to="`/post/${planData.id}`" class="text-xl font-bold hover:underline cursor-pointer">{{ planData.title || 'Title' }}</RouterLink>
-			<div class="text-[0.6rem] font-bold">{{ formatPostDate(planData.postDate) }}</div>
+			<div class="text-[0.6rem] font-bold">{{ formatDate(planData.postDate) }}</div>
 		</div>
 		<div class="flex-1 w-full h-44 bg-base-100 rounded-[0.6rem] overflow-hidden">
 			<img v-if="planData.imageUrl" :src="planData.imageUrl" alt="Post image" class="w-full h-full object-cover" />
@@ -105,7 +79,7 @@ const toggleUpVote = () => {
 				I am Mock-up image
 			</div>
 		</div>
-		<div class="flex-none mt-2 flex items-center justify-between select-none">
+		<div v-if="planData.type === 'post'" class="flex-none mt-2 flex items-center justify-between select-none">
 			<div @click="toggleUpVote" class="flex items-center gap-3">
 				<Icon v-show="upVoted" iconName="up-vote-fill" color="#5e5" />
 				<Icon v-show="!upVoted" iconName="up-vote" />

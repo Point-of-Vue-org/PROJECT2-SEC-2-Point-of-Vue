@@ -4,7 +4,6 @@ import { useRouter, RouterLink, useRoute } from "vue-router";
 import { logout, validateToken } from "../../libs/userManagement";
 import Header from "@/components/Header.vue";
 import { useUserStore } from "@/stores/user";
-import BaseSidebar from "@/components/BaseSidebar.vue";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
 import { createOrUpdatePlan, getPlanBy } from "../../libs/planManagement";
@@ -13,6 +12,7 @@ import { Todo } from "../../classes/Todo";
 import BasePlan from "../../classes/plan/BasePlan";
 import ListContainer from "@/components/ListContainer.vue";
 import ListItem from "@/components/ListItem.vue";
+import PlannetSidebar from "@/components/PlannetSidebar.vue";
 
 const isLoading = ref(false)
 const router = useRouter();
@@ -23,10 +23,10 @@ const saveState = reactive({
   saved: false,
   saveFail: false
 })
-const newDraftPlan = ref(new BasePlan())
+const draftPlan = ref(new BasePlan())
 
 //handle Auto saving
-watch(newDraftPlan, async (newValue) => {
+watch(draftPlan, async (newValue) => {
   saveState.saving = true
 
   try {
@@ -44,19 +44,19 @@ watch(newDraftPlan, async (newValue) => {
 
 onMounted(async () => {
   let id = route.params.id;
-  newDraftPlan.value = await getPlanBy('id', id, 'draft')
-  console.log(newDraftPlan);
+  draftPlan.value = await getPlanBy('id', id, 'draft')
+  console.log(draftPlan);
 })
 
 function handleAddDailyTask() {
   const newDailyTask = new DailyTask();
   newDailyTask.hourlyTasks = []; // Initialize dailyTasks as an empty array
-  newDraftPlan.value.dailyTasks.push(newDailyTask);
+  draftPlan.value.dailyTasks.push(newDailyTask);
 }
 
 function handleAddHourlyTask(index) {
   const newHourlyTask = new HourlyTask();
-  newDraftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask);
+  draftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask);
 }
 
 /**
@@ -77,28 +77,28 @@ const handleHourlyTaskDescriptionInput = (hourlyTask, e) => {
 function addTodo(dailyIndex, hourlyIndex) {
   const newTodo = new Todo()
   newTodo.id = (Math.random() + 1).toString(36).substring(7);
-  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
+  const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
   todos.push(newTodo)
-  newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
+  draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
 function handleDeleteDailyTask(dailyIndex) {
-  let dailyTasks = [...newDraftPlan.value.dailyTasks]
+  let dailyTasks = [...draftPlan.value.dailyTasks]
   dailyTasks.splice(dailyIndex, 1)
-  newDraftPlan.value.dailyTasks = dailyTasks
+  draftPlan.value.dailyTasks = dailyTasks
 }
 
 function handleDeleteHourlyTask(dailyIndex, hourlyIndex) {
-  newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks.splice(hourlyIndex, 1)
+  draftPlan.value.dailyTasks[dailyIndex].hourlyTasks.splice(hourlyIndex, 1)
 }
 
 function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
-  const todos = [...newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
+  const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
 
   const index = todos.findIndex(t => t.id === todoId)
 
   todos.splice(index, 1)
-  newDraftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
+  draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
 onBeforeMount(async () => {
@@ -135,11 +135,8 @@ const handleLogout = async () => {
     </template>
   </Header>
   <main class="flex">
-    <BaseSidebar class="flex-none">
-      <template #menu>
-        <!-- Sidbar content here -->
-      </template>
-    </BaseSidebar>
+    <PlannetSidebar />
+    
     <section class="flex-auto flex justify-center relative">
       <div class="w-[85%] mt-12 flex flex-col gap-4">
           <!-- <div class="flex gap-4 items-center my-4">
@@ -160,28 +157,28 @@ const handleLogout = async () => {
           <div class="flex flex-col gap-3 mb-10">
             <input
               v-if="!isLoading"
-              v-model="newDraftPlan.title"
+              v-model="draftPlan.title"
               class="text-3xl font-bold font-helvetica bg-transparent outline-none focus:placeholder:opacity-50"
               placeholder="Your plan title here"
+              autofocus
             />
             <!-- <div v-else class="skeleton h-10 w-[32rem] max-w-full"></div> -->
             <textarea
               v-if="!isLoading"
-              v-model="newDraftPlan.description"
+              v-model="draftPlan.description"
               class="font-helvetica opacity-70 bg-transparent outline-none focus:placeholder:opacity-50"
               placeholder="Plan description..."
             />
             <!-- <div v-else class="skeleton h-6 w-[20rem] max-w-full"></div> -->
           </div>
-          <!-- ! ADD DAILY TASKS -->
           <div class="flex justify-end">
             <button class="btn" @click="handleAddDailyTask">
               <Icon iconName="plus-lg" /> Add Daily Task
             </button>
           </div>
           <ListContainer
-            v-if="newDraftPlan?.dailyTasks?.length > 0"
-            :items="newDraftPlan.dailyTasks"
+            v-if="draftPlan?.dailyTasks?.length > 0"
+            :items="draftPlan.dailyTasks"
             v-slot="{ items: dailyTasks }"
           >
             <ListItem
@@ -315,9 +312,9 @@ const handleLogout = async () => {
     </section>
     <!-- <section class="flex-auto flex justify-center">
       <div class="w-[85%]">
-        <input v-model="newDraftPlan.title" type="text" placeholder="Title here"
+        <input v-model="draftPlan.title" type="text" placeholder="Title here"
           class="text-7xl bg-transparent focus:outline-none w-full p-2 placeholder:opacity-50" />
-        <textarea v-model="newDraftPlan.description" placeholder="Description here"
+        <textarea v-model="draftPlan.description" placeholder="Description here"
           class="text-2xl bg-transparent focus:outline-none w-full p-2 placeholder:opacity-50"></textarea>
         <div class="flex items-end justify-end flex-col w-full">
           <button class="btn" @click="handleAddDailyTask">
@@ -325,7 +322,7 @@ const handleLogout = async () => {
           </button>
         </div>
         <div class="w-full pt-3 justify-center flex flex-col gap-4 items-center">
-          <div v-for="(dailyTask, dailyIndex) in newDraftPlan.dailyTasks" :key="dailyIndex" class="w-full">
+          <div v-for="(dailyTask, dailyIndex) in draftPlan.dailyTasks" :key="dailyIndex" class="w-full">
             <div alt="Daily task" class="flex flex-col">
               <div class="flex flex-row gap-3">
                 <button class="btn bg-error" @click="handleDeleteDailyTask(dailyIndex)">Delete</button>
@@ -340,7 +337,7 @@ const handleLogout = async () => {
                   <button class="btn " @click="handleAddHourlyTask(dailyIndex)">Add holytask</button>
                 </div>
                 <div class="bg-stone-600 p-6 rounded mt-6" alt="hourly task"
-                  v-for="(hourlyTask, hourlyIndex) in newDraftPlan.dailyTasks[dailyIndex].hourlyTasks"
+                  v-for="(hourlyTask, hourlyIndex) in draftPlan.dailyTasks[dailyIndex].hourlyTasks"
                   :key="hourlyIndex">
 
 
@@ -370,7 +367,7 @@ const handleLogout = async () => {
                       <div class="flex flex-col pt-2">
                         <div class="flex flex-col gap-3">
                           <div
-                            v-for="(todo, todoIndex) in newDraftPlan.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos"
+                            v-for="(todo, todoIndex) in draftPlan.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos"
                             :key="todo.id" class="flex flex-row gap-4">
                             <input type="text" class="input input-bordered w-full" :placeholder='`subtask ${todoIndex}`'
                               v-model="todo.description" />

@@ -5,20 +5,20 @@ import { logout, validateToken } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'
-import { getPlans } from '../../libs/planManagement'
+import { getPlans, getPlansBy } from '../../libs/planManagement'
 import Icon from '@/components/Icon.vue'
 import PlanContainer from '@/components/PlanContainer.vue'
 import PlanCard from '@/components/PlanCard.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
-const postPlans = ref([])
+const draftPlans = ref([])
 
 onMounted(
   async () => {
     // Fetch posts here
-    postPlans.value = await getPlans('post')
-    console.log(postPlans.value)
+    draftPlans.value = await getPlansBy('authorId', userStore.userData.id, 'draft')
+    console.log(draftPlans.value)
   }
 )
 
@@ -49,7 +49,7 @@ const handleLogout = async () => {
             <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           </div>
           <PlanContainer>
-            <PlanCard v-for="plan in postPlans" :key="plan.id" :planData="plan" />
+            <PlanCard v-for="plan in draftPlans" :key="plan.id" :planData="plan" />
           </PlanContainer>
         </div>
       </div>
