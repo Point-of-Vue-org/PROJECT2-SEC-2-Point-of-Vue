@@ -12,7 +12,7 @@ const draftPlans = ref([])
 onMounted(
   async () => {
     // Fetch posts here
-    draftPlans.value = await getPlansBy('authorId', userStore.userData.id, 'draft')
+    draftPlans.value = await getPlansBy('userId', userStore.userData.id, 'draft')
     console.log(draftPlans.value)
   }
 )

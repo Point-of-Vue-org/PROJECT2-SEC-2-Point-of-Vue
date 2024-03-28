@@ -3,6 +3,7 @@ import { DailyTask } from '../DailyTask'
 const defaultPlanData = {
     id: undefined,
     authorId: '',
+    userId: '',
     title: '',
     imageUrl: '',
     description: '',

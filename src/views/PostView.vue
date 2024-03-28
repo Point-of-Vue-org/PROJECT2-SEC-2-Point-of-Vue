@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy, logout, updateUserData, validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
-import { getPlanBy, toggleUpVote, toggleDownVote } from '../../libs/planManagement.js'
+import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
 import PostPlan from '../../classes/plan/PostPlan'
@@ -83,6 +83,16 @@ const handleToggleDownVote = async () => {
   downVoted.value = await toggleDownVote(userStore.userData, postPlan.value)
 }
 
+const handleSaveToDraft = async () => {
+  const draftPlan = postPlan.value.getDraft()
+  draftPlan.userId = userStore.userData.id
+  const res = await createOrUpdatePlan(draftPlan, 'draft')
+  if(res){
+    toastStore.addToast('Save draft successfully', 'success')
+  } else {
+    toastStore.addToast('Error occured, Draft can\'t save', 'error')
+  }
+}
 </script>
 
 <template>
