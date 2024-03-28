@@ -38,8 +38,7 @@ const handleLogout = async () => {
   </Header>
   <main class="flex">
     <PlannetSidebar @closeSidebarBtnClick="sidebarOpenState = false" :openState="sidebarOpenState" class="flex-none" />
-    
-    <section class="flex-auto">
+    <section class="flex-auto relative flex justify-center">
       <slot></slot>
     </section>
   </main>

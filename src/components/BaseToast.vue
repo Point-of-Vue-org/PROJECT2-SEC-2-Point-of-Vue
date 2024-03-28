@@ -12,7 +12,7 @@ const toastStore = useToastStore()
     </div>
   </div> -->
   <div v-for="(toast, index) in toastStore.toasts" :key="index">
-    <div v-if="toast !== null" :class="toast.show ? 'toast-in' : 'toast-out'" class="toast toast-end">
+    <div v-if="toast !== null" :class="toast.show ? 'toast-in' : 'toast-out'" class="toast toast-end z-50">
       <div :class="`alert alert-${toast.type}`">
         <span>{{ toast.message }}</span>
       </div>

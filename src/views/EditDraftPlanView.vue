@@ -1,23 +1,24 @@
 <script setup>
 import { ref, onBeforeMount, onMounted, watch, reactive } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { validateToken } from "../../libs/userManagement";
 import { useUserStore } from "@/stores/user";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { createOrUpdatePlan, getPlanBy, isPlanExist, deletePlan, getPlanBy } from "../../libs/planManagement";
+import { createOrUpdatePlan, getPlanBy, isPlanExist, deletePlan } from "../../libs/planManagement";
 import { HourlyTask } from "../../classes/HourlyTask";
 import { Todo } from "../../classes/Todo";
 import BasePlan from "../../classes/plan/BasePlan";
 import ListContainer from "@/components/ListContainer.vue";
 import ListItem from "@/components/ListItem.vue";
 import PlannetLayout from "@/components/PlannetLayout.vue";
-import PlannetSidebar from "@/components/PlannetSidebar.vue";
 import PostPlan from "../../classes/plan/PostPlan";
 import { useToastStore } from "@/stores/toast";
+import Modal from "@/components/Modal.vue";
 
 const isLoading = ref(false)
 const route = useRoute();
+const router = useRouter();
 const userStore = useUserStore();
 const toastStore = useToastStore()
 const saveState = reactive({
@@ -105,10 +106,10 @@ function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
-function handlePopUp(){
+function handlePopUpPublish(){
   isConfirmShow.value = !isConfirmShow.value
-
 }
+
 async function handlePublishNow(){
   if(draftPlan.value.title.length < 1){
     toastStore.addToast('Please enter title', 'error')
@@ -336,26 +337,17 @@ const handleDeleteDraftPlan = async () => {
           </template>
         </ListItem>
       </ListContainer>
-      <div class="pt-4">
-        <button class="btn hover:bg-green-700 bg-slate-100 text-black hover:text-white" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">Publish Post</button>
-      </div>
-      <div  v-show="isConfirmShow" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-slate-300 z-40 h-1/2 w-1/2 rounded max-h-96" alt= "popup">
-        <div class="flex items-center flex-col  h-1/2 w-full pt-10">
-          <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/>
-          <p class="text-black">Do you want to publish this draft now ?</p>
-          <div class="flex gap-3 pt-5">
-            <button class="btn bg-blue-600" @click="handlePublishNow">Publish Now</button>
-            <button class="btn bg-error" @click="handlePopUpPublish">Cancel</button>
-          </div>
-        </div>
-      </div>
       <!-- <div v-else class="flex flex-col gap-2 mb-16">
         <div class="skeleton h-16 w-full"></div>
         <div class="skeleton h-16 w-full"></div>
         <div class="skeleton h-16 w-full"></div>
       </div> -->
     </div>
-    <div class="absolute top-0 right-0">
+    <div class="absolute top-0 right-0 flex items-center">
+      <div class="flex gap-2">
+        <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">Publish as post</button>
+        <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan">Delete this draft</button>
+      </div>
       <div class="flex gap-3 p-5" v-show="saveState.saving">
         <div class="loading"></div>
         <div class="w-32">Saving</div>
@@ -369,6 +361,16 @@ const handleDeleteDraftPlan = async () => {
         <div>Your change not saved !</div>
       </div>
     </div>
+    <Modal :show="isConfirmShow">
+      <div class="flex items-center flex-col  h-1/2 w-full pt-10">
+        <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/>
+        <p class="text-black">Do you want to publish this draft now ?</p>
+        <div class="flex gap-3 pt-5">
+          <button class="btn bg-blue-600" @click="handlePublishNow">Publish Now</button>
+          <button class="btn bg-error" @click="handlePopUpPublish">Cancel</button>
+        </div>
+      </div>
+    </Modal>
   </PlannetLayout>
 </template>
 

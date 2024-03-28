@@ -225,7 +225,7 @@ const handleSaveToDraft = async () => {
               <Icon v-show="downVoted" iconName="down-vote-fill-lg" class="text-red-400" />
             </button>
           </div>
-          <button class="btn btn-primary">
+          <button class="btn btn-primary" @click="handleSaveToDraft">
             <Icon iconName="save" />
             <span>Save to my draft</span>
           </button>
