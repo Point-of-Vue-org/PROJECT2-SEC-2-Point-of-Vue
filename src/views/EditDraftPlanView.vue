@@ -113,7 +113,7 @@ function handlePopUpPublish(){
 async function handlePublishNow(){
   if(draftPlan.value.title.length < 1){
     toastStore.addToast('Please enter title', 'error')
-    return
+    return 
   }
   if(draftPlan.value.description.length < 1){
     toastStore.addToast('Please enter description', 'error')
@@ -362,12 +362,12 @@ const handleDeleteDraftPlan = async () => {
       </div>
     </div>
     <Modal :show="isConfirmShow">
-      <div class="flex items-center flex-col  h-1/2 w-full pt-10">
-        <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/>
-        <p class="text-black">Do you want to publish this draft now ?</p>
+      <div class="flex items-center flex-col  h-1/2 w-full pt-10 justify-center">
+        <!-- <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/> -->
+        <div class="text-2xl">Do you want to <span class="text-primary">publish</span> this draft now ?</div>
         <div class="flex gap-3 pt-5">
-          <button class="btn bg-blue-600" @click="handlePublishNow">Publish Now</button>
-          <button class="btn bg-error" @click="handlePopUpPublish">Cancel</button>
+          <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublishNow">Publish Now</button>
+          <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handlePopUpPublish">Cancel</button>
         </div>
       </div>
     </Modal>
