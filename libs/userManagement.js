@@ -178,13 +178,13 @@ export async function logout(userId) {
  * const user = await register('username', 'email', 'password')
  * console.log(user) // { id: '1', username: 'username', email: 'email', password: 'password' }
  */
-export async function register(username, email, password, nickname = '') {
+export async function register(username, email, password) {
   const response = await fetch(`${JSON_SERVER_URI}/users`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, email, password: hash(password), nickname, upVotedPosts: [], downVotedPosts: [], upVotedComments: [], downVotedComments: []}),
+    body: JSON.stringify(new User({ username, email, password: hash(password) })),
   })
   const newUser = await response.json()
   return newUser
