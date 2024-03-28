@@ -61,3 +61,7 @@ List of Feature
 - Page for Welcome new User (successfully)
 - UI for Edit Daily plan (in progress)
 
+## 3/27/2024
+- Publish plan UI v1 (successfully)
+- Plan to draft v1 (successfully)
+- Responsive v1 (in progress)
