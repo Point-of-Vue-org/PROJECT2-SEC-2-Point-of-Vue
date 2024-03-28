@@ -60,6 +60,7 @@ const router = createRouter({
           next(false)
         } else {
           const draftPlan = new BasePlan()
+          draftPlan.userId = userStore.userData.id
           draftPlan.authorId = await userStore.userData.id
           const { id: planId } = await createOrUpdatePlan(draftPlan, 'draft')
           next(`/plan/edit/${planId}`)

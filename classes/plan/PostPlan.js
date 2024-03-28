@@ -48,6 +48,8 @@ export default class PostPlan extends BasePlan {
     }
 
     getDraft() {
-        return new BasePlan(this)
+        const draftPlan = new BasePlan(this)
+        draftPlan.id = undefined
+        return draftPlan
     }
 }

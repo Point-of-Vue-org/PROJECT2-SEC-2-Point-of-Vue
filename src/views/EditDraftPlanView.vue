@@ -6,7 +6,7 @@ import Header from "@/components/Header.vue";
 import { useUserStore } from "@/stores/user";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { createOrUpdatePlan, getPlanBy, isPlanExist } from "../../libs/planManagement";
+import { createOrUpdatePlan, getPlanBy, isPlanExist, deletePlan, getPlanBy } from "../../libs/planManagement";
 import { HourlyTask } from "../../classes/HourlyTask";
 import { Todo } from "../../classes/Todo";
 import BasePlan from "../../classes/plan/BasePlan";
@@ -174,6 +174,19 @@ const handleLogout = async () => {
   await logout(userStore.userData.id);
   localStorage.removeItem("todo_token");
   router.replace("/login");
+}
+
+const handleDeleteDraftPlan = async () => {
+  const planName = draftPlan.value.title + '#' + draftPlan.value.id
+  if(window.confirm('Do you want to delete this draft ?')){
+    const res = await deletePlan(draftPlan.value.id, 'draft')
+    if(res){
+      toastStore.addToast(`Delete draft plan (${planName})`, 'success')
+      router.replace('/plans')
+    } else { 
+      toastStore.addToast(`Error occured, Can't delete draft plan (${planName})`, 'error')
+    }
+  }
 }
 </script>
 
@@ -363,6 +376,9 @@ const handleLogout = async () => {
           </div> -->
         </div>
         <div class="absolute top-0 right-0">
+          <div class="flex justify-end">
+            <button @click="handleDeleteDraftPlan" class="btn btn-sm btn-outline btn-error">Delete</button>
+          </div>
           <div class="flex gap-3 p-5" v-show="saveState.saving">
             <div class="loading"></div>
             <div class="w-32">Saving</div>
