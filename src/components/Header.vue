@@ -18,7 +18,7 @@ const handleSidebarBtnClick = () => {
   <header class="navbar justify-between bg-base-200 sticky top-0 z-10 h-16">
     <div class="flex gap-2">
       <div @click="handleSidebarBtnClick()" class="sm:hidden btn btn-ghost text-xl">
-        <Icon iconName="list" scale="2" />
+        <Icon iconName="list" :scale="2" />
       </div>
       <RouterLink to="/" class="btn btn-ghost text-xl">
         <span class="text-primary">

@@ -38,7 +38,7 @@ const handleForgetPassword = () => {
           <Logo size="4rem" color="currentColor" />
         </div>
         <p class="text-xl xs:text-2xl mb-2">Login to Plannet</p>
-        <p class="text-sm xs:text-base">Welcome to a workspace that's secure, powerful, and totally private.</p>
+        <p class="text-sm xs:text-base">Welcome to a better way to manage and share your tasks.</p>
       </div>
       <div class="flex flex-col gap-5 mt-6 mb-4">
         <div v-show="errorMsg" class="text-error">{{ errorMsg }}</div>
