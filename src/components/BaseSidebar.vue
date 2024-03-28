@@ -1,10 +1,28 @@
 <script setup>
+import Icon from './Icon.vue';
 
+defineProps({
+  openState: Boolean
+})
+
+const emits = defineEmits(['closeSidebarBtnClick'])
+
+const handleCloseSidebarBtnClick = () => {
+  emits('closeSidebarBtnClick')
+}
 </script>
 
 <template>
-  <aside class="h-[calc(100vh-theme(space.16))] min-w-56 sticky top-16">
-    <ul class="menu p-4 min-h-full bg-base-200 text-base-content flex flex-col gap-2">
+  <aside
+    :class="openState ? 'w-56' : 'w-0'"
+    class="h-screen sm:h-[calc(100vh-theme(space.16))] transition-[width] duration-500 fixed top-0 sm:w-56 sm:min-w-56 sm:sticky sm:top-16 overflow-hidden z-20"
+  >
+  <ul class="menu p-4 min-h-full bg-base-200 text-base-content flex flex-col gap-2">
+      <div class="flex sm:hidden justify-end">
+        <button class="btn btn-ghost" @click="handleCloseSidebarBtnClick">
+          <Icon iconName="x" />
+        </button>
+      </div>
       <slot name="menu">
         <li><a class="text-lg">Menu 1</a></li>
         <li><a class="text-lg">Menu 2</a></li>

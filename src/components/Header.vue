@@ -4,13 +4,22 @@ import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
 import { useUserStore } from '@/stores/user'
 import Icon from './Icon.vue';
 
+const emits = defineEmits(['sidebarBtnClick'])
+
 const userStore = useUserStore()
 const userData = userStore.userData
+
+const handleSidebarBtnClick = () => {
+  emits('sidebarBtnClick')
+}
 </script>
 
 <template>
-  <header class="navbar bg-base-200 sticky top-0 z-10 h-16">
-    <div class="flex-none">
+  <header class="navbar justify-between bg-base-200 sticky top-0 z-10 h-16">
+    <div class="flex gap-2">
+      <div @click="handleSidebarBtnClick()" class="sm:hidden btn btn-ghost text-xl">
+        <Icon iconName="list" :scale="2" />
+      </div>
       <RouterLink to="/" class="btn btn-ghost text-xl">
         <span class="text-primary">
           <Logo size="2rem" color="currentColor" />
@@ -18,13 +27,13 @@ const userData = userStore.userData
         <span class="text-lg font-bold">Plannet</span>
       </RouterLink>
     </div>
-    <div class="flex-1 gap-2 flex justify-center">
-      <div class="form-control">
-        <Icon iconName="search" class="absolute translate-x-5 translate-y-4 pointer-events-none" />
+    <div class="gap-2 hidden sm:flex justify-center">
+      <div class="form-control relative">
+        <Icon iconName="search" class="absolute left-5 top-4 pointer-events-none" />
         <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
       </div>
     </div>
-    <div v-if="userStore.userData.id" class="flex-none dropdown dropdown-end">
+    <div v-if="userStore.userData.id" class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 h-10 rounded-xl">
           <img

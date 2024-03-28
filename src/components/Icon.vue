@@ -7,7 +7,11 @@ const props = defineProps({
     type: String,
     required: true
   },
-  color: String
+  color: String,
+  scale: {
+    type: Number,
+    default: 1
+  }
 })
 
 const icon = ref('')
@@ -19,5 +23,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-html="icon" :style="{ color }"></div>
+  <div v-html="icon" :style="{ color, transform: `scale(${scale})` }"></div>
 </template>

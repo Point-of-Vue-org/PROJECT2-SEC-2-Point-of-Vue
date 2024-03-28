@@ -62,27 +62,27 @@ watch([password, confirmPassword], () => {
 
 <template>
   <main class="w-full h-screen grid place-items-center">
-    <form @submit.prevent="handleSubmitRegister" class=" w-96 flex flex-col">
+    <form @submit.prevent="handleSubmitRegister" class="w-72 xs:w-80 sm:w-96 flex flex-col">
       <div>
         <div class="text-primary mb-4">
           <Logo size="4rem" color="currentColor" />
         </div>
-        <p class="text-2xl mb-2">Sign up for Plannet</p>
-        <p>Welcome to a workspace that's secure, powerful, and totally private.</p>
+        <p class="text-xl xs:text-2xl mb-2">Sign up for Plannet</p>
+        <p class="text-sm xs:text-base">Welcome to a better way to manage and share your tasks.</p>
       </div>
       <div class="flex flex-col gap-3 mt-1 mb-4">
         <div v-show="!result.value?.isPasswordSecure" class="text-error">{{ result.value?.warning }}</div>
         <input v-model="username" type="text" placeholder="Username" autocomplete="username" title="Username" autofocus
-          required class="input bg-neutral rounded-xl w-96" />
+          required class="input bg-neutral rounded-xl w-full" />
         <input v-model="email" type="email" placeholder="Email" autocomplete="email" title="Email" required
-          class="input bg-neutral rounded-xl w-96">
+          class="input bg-neutral rounded-xl w-full">
         <input v-model="password" type="password" placeholder="Password" autocomplete="new-password" title="Password"
           required class="input bg-neutral rounded-xl w-full" />
         <input v-model="confirmPassword" type="password" placeholder="Confirm password" autocomplete="new-password"
           title="Confirm password" required class="input bg-neutral rounded-xl w-full" />
         <div class="text-orange-400 text-xs">{{ errorMsg }}</div>
-        <ul class="text-xs flex cursor-default">
-          <div class="flex-1 flex flex-col gap-2">
+        <ul class="text-[0.6rem] sm:text-[0.7rem] md:text-xs flex cursor-default">
+          <div class="flex-1 flex flex-col gap-1 sm:gap-2">
             <li :class="result.status.isLengthValid && result.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
               <Icon iconName="check" v-show="result.status.isLengthValid && result.status.isMaxLengthValid" />
               <Icon iconName="x" v-show="!result.status.isLengthValid || !result.status.isMaxLengthValid" />
@@ -99,7 +99,7 @@ watch([password, confirmPassword], () => {
               At least one upper case
             </li>
           </div>
-          <div class="divider divider-horizontal"></div>
+          <div class="w-1 xs:w-4 divider divider-horizontal"></div>
           <div class="flex-1 flex flex-col gap-2">
             <li :class="result.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2 items-center">
               <Icon iconName="check" v-show="result.status.haveDigit" />
@@ -121,7 +121,7 @@ watch([password, confirmPassword], () => {
         <button type="submit" class="btn rounded-full btn-accent text-base-100">Sign up</button>
       </div>
       <div>
-        <p>Do you have an account? <RouterLink to="/login" class="text-primary">Login</RouterLink>
+        <p class="text-sm xs:text-base">Do you have an account? <RouterLink to="/login" class="text-primary">Login</RouterLink>
         </p>
       </div>
     </form>

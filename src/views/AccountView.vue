@@ -1,14 +1,12 @@
 <script setup>
-import { useRouter, RouterLink, useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { logout, validateToken } from '../../libs/userManagement'
-import Header from '@/components/Header.vue'
+import { validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
 import { onBeforeMount } from 'vue'
 import AccountProfile from './account/AccountProfile.vue'
-import BaseSidebar from '@/components/BaseSidebar.vue'
-import Icon from '@/components/Icon.vue'
 import AccountSecurity from './account/AccountSecurity.vue';
+import PlannetLayout from '@/components/PlannetLayout.vue';
 
 const router = useRouter()
 const route = useRoute()
@@ -27,34 +25,11 @@ onBeforeMount(
     }
   }
 )
-
-const handleLogout = async () => {
-  if (window.confirm('Are you sure you want to logout?') === false) return
-  await logout(userStore.userData.id)
-  localStorage.removeItem('todo_token')
-  router.replace('/login')
-}
-
 </script>
 
 <template>
-  <Header>
-    <template #menu>
-      <li><RouterLink :to="`/profile/${userStore.userData.id}`" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
-      <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>
-      <li><a class="text-lg" @click="handleLogout"><Icon iconName="box-arrow-left" />Logout</a></li>
-    </template>
-  </Header>
-  <main class="flex">
-    <BaseSidebar>
-      <template #menu>
-        <li><RouterLink to="/account/profile" exactActiveClass="bg-neutral" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
-        <li><RouterLink to="/account/security" exactActiveClass="bg-neutral" class="text-lg"><Icon iconName="lock-fill" />Security</RouterLink></li>
-      </template>
-    </BaseSidebar>
-    <section class="w-full">
-      <AccountProfile v-if="route.params.category === 'profile'" />
-      <AccountSecurity v-else-if="route.params.category === 'security'"/>
-    </section>
-  </main>
+  <PlannetLayout>
+    <AccountProfile v-if="route.params.category === 'profile'" />
+    <AccountSecurity v-else-if="route.params.category === 'security'"/>
+  </PlannetLayout>
 </template>
