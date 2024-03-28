@@ -10,7 +10,10 @@ export default {
       },
       fontFamily: {
         'helvetica': 'Helvetica, sans-serif',
-      }
+      },
+      screens: {
+        'xs': '321px',
+      },
     }
   },
   daisyui: {

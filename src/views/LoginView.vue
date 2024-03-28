@@ -32,13 +32,13 @@ const handleForgetPassword = () => {
 
 <template>
   <main class="w-full h-screen grid place-items-center">
-    <form @submit.prevent="handleSubmitLogin" class="w-96 flex flex-col">
+    <form @submit.prevent="handleSubmitLogin" class="w-72 xs:w-80 sm:w-96 flex flex-col">
       <div>
         <div class="text-primary mb-4">
           <Logo size="4rem" color="currentColor" />
         </div>
-        <p class="text-2xl mb-2">Login to Plannet</p>
-        <p>Welcome to a workspace that's secure, powerful, and totally private.</p>
+        <p class="text-xl xs:text-2xl mb-2">Login to Plannet</p>
+        <p class="text-sm xs:text-base">Welcome to a workspace that's secure, powerful, and totally private.</p>
       </div>
       <div class="flex flex-col gap-5 mt-6 mb-4">
         <div v-show="errorMsg" class="text-error">{{ errorMsg }}</div>
@@ -64,10 +64,9 @@ const handleForgetPassword = () => {
         <button type="submit" class="btn rounded-full btn-accent text-base-100">Login</button>
       </div>
       <div>
-        <div @click="handleForgetPassword" class="text-primary">Forgot password?</div>
-        <div>Don't have an account? <RouterLink to="/register" class="text-primary">Sign up</RouterLink></div>
+        <div @click="handleForgetPassword" class="text-sm xs:text-base text-primary">Forgot password?</div>
+        <div class="text-sm xs:text-base">Don't have an account? <RouterLink to="/register" class="text-primary">Sign up</RouterLink></div>
       </div>
     </form>
   </main>
 </template>
-../../libs/userManagement
