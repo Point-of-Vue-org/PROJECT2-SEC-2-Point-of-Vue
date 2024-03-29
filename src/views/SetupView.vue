@@ -12,7 +12,9 @@ import Logo from '@/components/Logo.vue';
 import { validateNickname } from '../../libs/validationUtils';
 import Icon from '@/components/Icon.vue';
 import { upload } from '../../libs/imageManagement';
+import Modal from '@/components/Modal.vue';
 
+const isLoading = ref(false)
 const router = useRouter()
 const userStore = useUserStore()
 const toastStore = useToastStore()
@@ -87,22 +89,23 @@ const handleSecurityQuestionSelect = (question, value) => {
 //     await handleSubmitNickname()
 // }
 
-const handleAnswer = async () => {
-	console.log(securityQuestions)
-	try {
-		const res = await updateUserData(userStore.userData.id, { hasSetup: true, nickname: nickname.value, securityQuestions })
-		if (res) {
-			userStore.userData.nickname = res.nickname
-			toastStore.addToast('Successfully', 'success')
-			router.push('/')
-		}
-	}
-	catch (error) {
-		toastStore.addToast('Error occured', 'error')
-	}
-}
+// const handleAnswer = async () => {
+// 	console.log(securityQuestions)
+// 	try {
+// 		const res = await updateUserData(userStore.userData.id, { hasSetup: true, nickname: nickname.value, securityQuestions })
+// 		if (res) {
+// 			userStore.userData.nickname = res.nickname
+// 			toastStore.addToast('Successfully', 'success')
+// 			router.push('/')
+// 		}
+// 	}
+// 	catch (error) {
+// 		toastStore.addToast('Error occured', 'error')
+// 	}
+// }
 
 const handleFinish = async () => {
+	isLoading.value = true
 	let profileUrl = null
 	if (profileImageFile.value) {
 		try {
@@ -135,11 +138,19 @@ const handleFinish = async () => {
 	}
 	catch (error) {
 		toastStore.addToast('Error occured', 'error')
+	} finally {
+		isLoading.value = false
 	}
 }
 </script>
 
 <template>
+	<Modal :show="isLoading">
+    <div class="flex flex-col items-center gap-4">
+      <div>Setting up your profile...</div>
+      <div class="loading loading-lg loading-spinner"></div>
+    </div>
+  </Modal>
 	<main class="w-full h-screen overflow-hidden relative">
 		<!-- <div :class="{ 'scale-100': playFinishAnimation }" class="scale-0 absolute left-0 bottom-0 translate-x-[-50%] translate-y-[50%] origin-center transition-[width_height] duration-[2s] rounded-full w-[250rem] h-[250rem] z-50 bg-base-200 ease-in"></div> -->
 		<SlideShow :pageAmount="4" :currentPage="page">
