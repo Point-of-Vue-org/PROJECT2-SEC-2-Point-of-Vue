@@ -45,13 +45,15 @@ export function checkPassword(password) {
 export function validateNickname(nickname) {
     const warningMsg = []
 
+    // const invalidSpecialChar = /[^A-Za-z0-9_-]/.test(nickname)
     const isLengthValid = nickname.length >= 3
     const isMaxLengthValid = nickname.length <= 20
-    const isCharacterValid = /^[\x20-\x7E]+$/.test(nickname) && nickname !== ''
+    const isCharacterValid = /^[A-Za-z0-9_-]+$/.test(nickname) && nickname !== ''
 
-    if (!isLengthValid) warningMsg.push("At least 3 characters long")
-    if (!isCharacterValid) warningMsg.push("Contain only printable ASCII characters")
-    if (!isMaxLengthValid) warningMsg.push("Nickname must be less than 20 characters long")
+    if (!isLengthValid) warningMsg.push("Display name must be at least 3 characters long")
+    if (!isCharacterValid) warningMsg.push("Display name must contain only A-Z, a-z, 0-9, _ , -")
+    if (!isMaxLengthValid) warningMsg.push("Display name must be less than 20 characters long")
+    // if (invalidSpecialChar) warningMsg.push("Display name must contain only (A-Z, da-z, 0-9, _, -) characters")
 
     return {
         isNicknameValid: isLengthValid && isCharacterValid && isMaxLengthValid,
@@ -63,6 +65,7 @@ export function validateNickname(nickname) {
         }
     }
 }
+
 export async function checkOldPassword(userId,oldPassword){
     const user = await getUserBy('id', userId)
     console.log(user);

@@ -8,12 +8,23 @@ import { computed, reactive, ref } from 'vue';
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
 import SlideShow from '@/components/slide/SlideShow.vue';
 import SlidePage from '@/components/slide/SlidePage.vue';
+import Logo from '@/components/Logo.vue';
+import { validateNickname } from '../../libs/validationUtils';
+import Icon from '@/components/Icon.vue';
+import { upload } from '../../libs/imageManagement';
 
 const router = useRouter()
 const userStore = useUserStore()
 const toastStore = useToastStore()
 const page = ref(1)
-const nickname = ref(`Guest_${userStore.userData.id}`)
+const DEFAULT_NICKNAME = `Guest_${userStore.userData.id}`
+const nickname = ref(DEFAULT_NICKNAME)
+const nicknameStatus = computed(() => {
+	return validateNickname(nickname.value)
+})
+const disableNickNameNextBtn = computed(() => {
+	return nicknameStatus.value.warning.length > 0
+})
 const profileImageFile = ref(null)
 const profileImagePreview = computed(() => profileImageFile.value ? URL.createObjectURL(profileImageFile.value) : null)
 const securityQuestions = reactive({
@@ -34,20 +45,18 @@ const selectedQuestionIndexes = computed(() => [securityQuestions.q1.question, s
 const disableForgetPasswordNextBtn = computed(() => {
 	return selectedQuestionIndexes.value.includes(-1) || Object.values(securityQuestions).some(q => q.answer === '')
 })
+// const playFinishAnimation = ref(false)
 
 const handleNextPage = () => {
-	if (page.value >= 4) {
-		return
-	}
+	if (page.value >= 4) return
 	page.value += 1
-
 }
+
 const handlePreviousPage = () => {
-	if (page.value <= 1) {
-		return
-	}
+	if (page.value <= 1) return
 	page.value -= 1
 }
+
 // const handleSubmitNickname = async () => {
 //     if (nickname.value === '') return 
 //     try {
@@ -61,7 +70,6 @@ const handlePreviousPage = () => {
 //         toastStore.addToast('Error occured', 'error')
 //     }
 // }
-
 
 const handleProfileFileChange = (e) => {
 	const file = e.target.files[0]
@@ -93,85 +101,186 @@ const handleAnswer = async () => {
 		toastStore.addToast('Error occured', 'error')
 	}
 }
+
+const handleFinish = async () => {
+	let profileUrl = null
+	if (profileImageFile.value) {
+		try {
+			profileUrl = await upload(profileImageFile.value)
+		} catch (error) {
+			toastStore.addToast('Error occured while uploading profile image', 'error')
+			return
+		}
+	}
+	
+	try {
+		const res = await updateUserData(userStore.userData.id, {
+			hasSetup: true,
+			nickname: nickname.value,
+			securityQuestions,
+			setting: {
+				avatarUrl: profileUrl,
+				bannerUrl: ''
+			}
+		})
+
+		if (res) {
+			userStore.userData.nickname = res.nickname
+			toastStore.addToast('Setup completed', 'success')
+			// playFinishAnimation.value = true
+			// setTimeout(() => {
+			router.push('/')
+			// }, 2_000)
+		}
+	}
+	catch (error) {
+		toastStore.addToast('Error occured', 'error')
+	}
+}
 </script>
 
 <template>
-	<main class="w-full h-screen overflow-hidden">
+	<main class="w-full h-screen overflow-hidden relative">
+		<!-- <div :class="{ 'scale-100': playFinishAnimation }" class="scale-0 absolute left-0 bottom-0 translate-x-[-50%] translate-y-[50%] origin-center transition-[width_height] duration-[2s] rounded-full w-[250rem] h-[250rem] z-50 bg-base-200 ease-in"></div> -->
 		<SlideShow :pageAmount="4" :currentPage="page">
-			<SlidePage>
-				<div class="flex flex-col items-center justify-center gap-7 bg-base-200 w-[45rem] h-[30rem] rounded-2xl">
-					<div class="text-3xl font-helvetica w-fit">Setup your <span class="text-primary">display name!</span></div>
-					<div class="flex flex-col items-center gap-2">
-						<div class="opacity-75 my-4">Choose something that represents you and makes you easily recognizable!</div>
-						<div class="flex gap-5">
-							<input v-model="nickname" type="text" class="input input-bordered rounded-xl w-96 font-helvetica" placeholder="Type your nickname" />
-						</div>
-						<div>
-							*You can change display name later in your profile.*
-						</div>
+			<SlidePage :page="1" :currentPage="page" transitionType="scale">
+				<div class="flex flex-col items-center justify-center gap-7 bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative">
+					<div class="text-primary flex gap-2 items-center absolute top-5 left-5">
+						<Logo size="1.5rem" color="currentColor" />
+						<div class="text-base-content">Plannet</div>
 					</div>
-					<button class="btn btn-primary btn-sm" @click="handleNextPage">Next</button>
+					<div class="text-3xl font-helvetica w-fit font-bold">Setup your <span class="text-primary">display name!</span></div>
+					<div class="flex flex-col items-center gap-2">
+						<div class="text-secondary">Choose&nbsp;something&nbsp;that&nbsp;represents&nbsp;you&nbsp;and makes&nbsp;you&nbsp;easily&nbsp;recognizable!</div>
+						<div class="flex flex-col items-center gap-5">
+							<div class="text-sm text-error text-center">
+								<div v-for="warning in nicknameStatus.warning">{{ warning }}</div>
+							</div>
+							<input
+								v-model="nickname"
+								type="text"
+								class="input input-bordered text-center rounded-xl w-96 font-helvetica"
+								placeholder="Type your nickname"
+							/>
+						</div>
+						<div class="text-sm">*You can change display name later in your profile.*</div>
+					</div>
+					<div class="absolute bottom-6 right-6">
+						<button
+						:class="{
+								'btn-disabled': disableNickNameNextBtn,
+								'btn-primary': nickname !== DEFAULT_NICKNAME,
+								'btn-neutral btn-outline': nickname === DEFAULT_NICKNAME
+							}"
+							class="btn"
+							@click="handleNextPage"
+							:disabled="disableNickNameNextBtn"
+							>
+							{{ nickname !== DEFAULT_NICKNAME ? 'Next' : 'Skip' }}
+						</button>
+					</div>
 				</div>
 			</SlidePage>
-			<SlidePage>
-				<div class="flex flex-col justify-center items-center gap-7 bg-base-200 w-[45rem] h-[30rem] rounded-2xl">
-					<div class="text-3xl font-helvetica w-fit">Show me <span class="text-primary">how your look!</span></div>
+			<SlidePage :page="2" :currentPage="page" transitionType="scale">
+				<div class="flex flex-col justify-center items-center gap-7 bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative">
+					<div class="text-primary flex gap-2 items-center absolute top-5 left-5">
+						<Logo size="1.5rem" color="currentColor" />
+						<div class="text-base-content">Plannet</div>
+					</div>
+					<div class="flex flex-col items-center gap-4">
+						<div class="text-3xl font-helvetica w-fit font-bold">Show me <span class="text-primary">how your look!</span></div>
+						<div class="text-sm text-secondary">Upload your profile image to make your account more personal</div>
+					</div>
 					<div class="w-48 h-48 rounded-full overflow-hidden">
 						<img v-if="profileImagePreview" :src="profileImagePreview" alt="profile image" class="w-full h-full object-cover" />
 						<UserProfilePlaceholder v-else color="#ff5500" bgcolor="#f0f0f0" size="100%" />
 					</div>
 					<input id="profile-image-input" type="file" class="hidden" @change="handleProfileFileChange($event)" />
-					<label for="profile-image-input" class="btn btn-secondary">Upload your profile image</label>
-					<div class="flex gap-4">
-						<button class="btn btn-sm btn-neutral" @click="handlePreviousPage">Back</button>
+					<label for="profile-image-input" class="btn btn-secondary">
+						<Icon iconName="upload" />
+						<div>Upload your profile image</div>
+					</label>
+					<div class="flex gap-4 absolute bottom-6 justify-between left-6 right-6">
+						<button class="btn btn-neutral" @click="handlePreviousPage">Back</button>
 						<button
-							:class="{
+						:class="{
 								'btn-primary': profileImagePreview,
 								'btn-neutral btn-outline': !profileImagePreview
 							}"
-							class="btn btn-sm" @click="handleNextPage"
-						>
+							class="btn"
+							@click="handleNextPage"
+							>
 							{{ profileImagePreview ? 'Next' : 'Skip' }}
 						</button>
 					</div>
 				</div>
 			</SlidePage>
-			<SlidePage>
-				<div class="flex flex-col justify-center items-center gap-3 bg-base-200 w-[40rem] h-[45rem] rounded-2xl">
+			<SlidePage :page="3" :currentPage="page" transitionType="scale">
+				<div class="flex flex-col gap-5 justify-center items-center bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative">
+					<div class="text-primary flex gap-2 items-center absolute top-5 left-5">
+						<Logo size="1.5rem" color="currentColor" />
+						<div class="text-base-content">Plannet</div>
+					</div>
 					<div class="flex flex-col items-center gap-4">
-						<div class="text-3xl">Reset password question</div>
+						<Icon iconName="key-fill" scale="5" class="mb-4"/>
+						<div class="text-3xl font-bold">Reset password question</div>
 						<div class="flex flex-col items-center gap-1 text-sm">
 							<div>Please select <span class="text-primary">3 security questions</span> and provide the answer</div>
 							<div>This will help you to reset your password if you forget it</div>
 						</div>
 					</div>
-					<div v-for="i in 3" class="flex flex-col items-center gap-4">
-						<ResetPasswordQuestionList
+					<div class="flex flex-col gap-3">
+						<div v-for="i in 3" class="flex flex-col items-center gap-2">
+							<ResetPasswordQuestionList
 							:questionTitle="`Question ${i}`"
 							@questionSelect="handleSecurityQuestionSelect('q' + i, $event)"
 							:disabledQuestionIndex="selectedQuestionIndexes"
 							class="text-sm p-4 rounded-2xl bg-accent text-neutral focus:outline-none"
-						/>
-						<input
+							/>
+							<input
 							type="text"
 							v-model="securityQuestions['q' + i].answer"
 							class="input input-bordered rounded-xl w-full font-helvetica text-sm"
 							placeholder="Type your answer"
-						/>
+							/>
+						</div>
 					</div>
-					<div class="flex gap-4">
+					<div class="flex gap-4 absolute bottom-6 left-6 right-6 justify-between">
 						<button type="btn" class="btn btn-neutral" @click="handlePreviousPage">Back</button>
 						<button
-							type="submit"
+						type="submit"
 							:class="{
 								'btn-disabled': disableForgetPasswordNextBtn
 							}"
 							class="btn btn-primary"
 							@click="handleNextPage"
 							:disabled="disableForgetPasswordNextBtn"
-						>
+							>
 							Next
 						</button>
+					</div>
+				</div>
+			</SlidePage>
+			<SlidePage :page="4" :currentPage="page" transitionType="scale">
+				<div class="text-accent absolute opacity-10">
+					<Logo size="30rem" color="currentColor" />
+				</div>
+				<div class="flex flex-col justify-center items-center gap-7 rounded-2xl z-10 drop-shadow-[5px_5px_5px_#0005]">
+					<div class="text-4xl font-helvetica w-fit font-bold">Welcome to <span class="text-primary">Plannet!</span></div>
+					<div class="flex flex-col items-center">
+						<div class="text-2xl">{{ '\"' + nickname + '\"' }}</div>
+						<div class="text-base text-secondary">{{ '@' + userStore.userData.username }}</div>
+					</div>
+					<img v-if="profileImagePreview" :src="profileImagePreview" alt="profile preview" class="w-64 h-64 rounded-full">
+					<UserProfilePlaceholder v-else color="#ff5500" bgcolor="#f0f0f0" size="16rem" class="rounded-full" />
+					<div class="text-center">
+						<div>You have successfully set up your account.</div>
+						<div>Now you can start managing your plans and</div>
+						<div>share them with our community.</div>
+					</div>
+					<div class="flex gap-4">
+						<button class="btn btn-neutral" @click="handlePreviousPage">Back</button>
+						<button class="btn btn-primary" @click="handleFinish">Finish</button>
 					</div>
 				</div>
 			</SlidePage>

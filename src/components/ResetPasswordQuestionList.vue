@@ -8,7 +8,7 @@ const props = defineProps({
         required: true
     },
     disabledQuestionIndex: {
-        type: [Number, Array],
+        type: Array,
         default: []
     }
 })
