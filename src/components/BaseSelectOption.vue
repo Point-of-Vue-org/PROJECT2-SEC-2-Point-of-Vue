@@ -39,10 +39,10 @@ const handleOptionSelect = ({ target: { value } }) => {
 </script>
 
 <template>
-  <select @input="handleOptionSelect" :required="required">
-    <option disabled selected>{{ optionTitle }}</option>
-    <option v-for="(option, index) in optionList" :value="index" :key="index" :disabled="disabledOptionIndex.includes(index) && index !== selectedIndex">{{ option }}</option>
-  </select>
+    <select @input="handleOptionSelect" :required="required" :class="{ 'opacity-80': selectedIndex === -1 }">
+        <option disabled selected>{{ optionTitle }}</option>
+        <option v-for="(option, index) in optionList" :value="index" :key="index" :disabled="disabledOptionIndex.includes(index) && index !== selectedIndex">{{ option }}</option>
+    </select>
 </template>
 
 

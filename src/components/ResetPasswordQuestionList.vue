@@ -12,6 +12,7 @@ const props = defineProps({
         default: []
     }
 })
+
 const securityQuestions = [
     "What is the name of your first pet?",
     "In which city were you born?",
