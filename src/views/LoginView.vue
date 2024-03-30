@@ -24,8 +24,7 @@ const handleSubmitLogin = async () => {
 }
 
 const handleForgetPassword = () => {
-  alert('This feature is not available in demo (No password for you! 😜)')
-  window.open('https://www.youtube.com/watch?v=mkxer6pxQ6I', '_blank')
+  router.push('/forgot-password')
 }
 
 </script>

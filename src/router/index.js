@@ -55,6 +55,9 @@ const router = createRouter({
       beforeEnter: async (to, from, next) => {
         const userStore = useUserStore()
         const toastStore = useToastStore()
+        // if(to.name === 'forgot-password') {
+        //   next('/forgot-password')
+        // }
         if (!userStore.userData.id) {
           toastStore.addToast('You must be logged in to create a post', 'error')
           next(false)
@@ -86,6 +89,11 @@ const router = createRouter({
       path: '/newuser/setup',
       name: 'setup',
       component: () => import('../views/SetupView.vue')
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/ForgotPassword.vue')
     }
   ]
 })
