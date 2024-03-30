@@ -145,7 +145,7 @@ const handleAnswer = async () => {
 							<div>This will help you to reset your password if you forget it</div>
 						</div>
 					</div>
-					<div v-for="i in 3" class="flex flex-col items-center gap-4">
+					<div v-for="i in 3" class="flex flex-col items-center gap-4" :key="i">
 						<ResetPasswordQuestionList
 							:questionTitle="`Question ${i}`"
 							@questionSelect="handleSecurityQuestionSelect('q' + i, $event)"
