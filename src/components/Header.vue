@@ -5,13 +5,18 @@ import { useUserStore } from '@/stores/user'
 import Icon from './Icon.vue';
 import SearchBox from './SearchBox.vue'
 
-const emits = defineEmits(['sidebarBtnClick'])
+const emits = defineEmits(['sidebarBtnClick', 'submitSearch'])
 
 const userStore = useUserStore()
 const userData = userStore.userData
 
 const handleSidebarBtnClick = () => {
   emits('sidebarBtnClick')
+}
+
+const handleSumbitSearch = (value) => {
+  console.log('[Search 🔎]', value);
+  emits('submitSearch', value)
 }
 </script>
 
@@ -29,7 +34,7 @@ const handleSidebarBtnClick = () => {
       </RouterLink>
     </div>
     <div class="gap-2 hidden lg:flex justify-center">
-      <SearchBox />
+      <SearchBox @sumbitSearch="handleSumbitSearch" />
     </div>
     <div v-if="userStore.userData.id" class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">

@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import Icon from './Icon.vue';
 
+const emits = defineEmits(['sumbitSearch']);
+
 const openState = ref(false);
 const searchResult = ref([]);
 
@@ -22,12 +24,16 @@ const handleClickSearch = (e) => {
   e.stopPropagation();
   openState.value = false;
 }
+
+const handleSubmitSearch = (e) => {
+  emits('sumbitSearch', e.target.value);
+}
 </script>
 
 <template>
   <div @focusin="handleFocusIn" @focusout="handleFocusOut" class="form-control relative">
     <Icon iconName="search" class="absolute left-5 top-4 pointer-events-none" />
-    <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
+    <input @keyup.enter="handleSubmitSearch($event)" type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
     <div v-if="openState" class="absolute top-14 w-full bg-base-100 rounded-box border shadow-lg border-neutral">
       <ul class="p-2">
         <li class="p-2 hover:bg-base-200" @click="handleClickSearch">Search result 1</li>
