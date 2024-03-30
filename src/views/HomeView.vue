@@ -1,12 +1,14 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { getPlans } from '../../libs/planManagement'
 import PlanContainer from '@/components/PlanContainer.vue'
 import PlanCard from '@/components/PlanCard.vue'
 import PlannetLayout from '@/components/PlannetLayout.vue'
 import SortMethodSelector from '@/components/SortMethodSelector.vue'
 import { sortObject } from '../../libs/utils'
-
+import { useRoute, useRouter } from 'vue-router'
+const route = useRoute()
+const router = useRouter()
 const postPlans = ref([])
 const sortBy = ref(['postDate', 'desc'])
 const sortAblePostPlans = computed(() => {
@@ -20,11 +22,38 @@ onMounted(
     console.log(postPlans.value)
   }
 )
+const handleSubmitSearch = (value) =>{
+  router.push({
+    name:'home',
+    query: {
+      search: value
+    } 
+  })
+}
 
+watch(
+  () => route.query.search,
+  async (value) => {
+    if(value){
+      console.log("Hi");
+      const allPostPlans = await getPlans('post')
+      const searchPattern = new RegExp(route.query.search, 'ig')
+      postPlans.value = allPostPlans.filter(postPlan => {
+        const temp = searchPattern.test(postPlan.title)
+        console.log(temp);
+        return temp
+      })
+    } else {
+      router.push('/')
+      postPlans.value = await getPlans('post')
+    }
+  }
+)
 </script>
 
 <template>
-  <PlannetLayout>
+  <PlannetLayout @submitSearch="handleSubmitSearch">
+    <!-- {{ route.query?.search }} -->
     <div class="flex flex-col items-center">
       <div class="w-fit">
         <div class="h-24 w-full flex justify-start items-center">
