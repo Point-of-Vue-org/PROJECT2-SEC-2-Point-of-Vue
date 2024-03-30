@@ -13,6 +13,7 @@ import { validateNickname } from '../../libs/validationUtils';
 import Icon from '@/components/Icon.vue';
 import { upload } from '../../libs/imageManagement';
 import Modal from '@/components/Modal.vue';
+import { hash } from '../../libs/plannetEncrypt';
 
 const isLoading = ref(false)
 const router = useRouter()
@@ -80,6 +81,10 @@ const handleFinish = async () => {
 			toastStore.addToast('Error occured while uploading profile image', 'error')
 			return
 		}
+	}
+
+	for (const question of Object.values(securityQuestions)) {
+		question.answer = hash(question.answer)
 	}
 	
 	try {

@@ -1,23 +1,26 @@
 <script setup>
-import { ref, computed, reactive,watch } from "vue";
-import { getUserBy } from "../../libs/userManagement";
-import { checkPassword } from "../../libs/validationUtils";
-import BaseSelectOption from "../components/BaseSelectOption.vue";
-import ResetPasswordQuestionList from "@/components/ResetPasswordQuestionList.vue";
-import Icon from "@/components/Icon.vue";
-import SlidePage from "@/components/slide/SlidePage.vue";
-import SlideShow from "@/components/slide/SlideShow.vue";
-import Logo from "@/components/Logo.vue";
+import { ref, computed, reactive,watch } from "vue"
+import { getUserBy, updateUserData } from "../../libs/userManagement"
+import { checkPassword } from "../../libs/validationUtils"
+import Icon from "@/components/Icon.vue"
+import SlidePage from "@/components/slide/SlidePage.vue"
+import SlideShow from "@/components/slide/SlideShow.vue"
+import Logo from "@/components/Logo.vue"
+import { useToastStore } from "@/stores/toast"
+import { hash } from "../../libs/plannetEncrypt"
+import { useRouter } from "vue-router"
 
-
-const page = ref(1);
-const email = ref("");
-const showError = ref(false);
+const router = useRouter()
+const toastStore = useToastStore()
+const page = ref(1)
+const email = ref('')
+const showError = ref(false)
 const errorMsg = ref('')
-const securityQuestions = ref({});
+const securityQuestions = ref({})
 const confirmPassword = ref('')
 const password = ref('')
-const isPasswdValid = computed(() => {
+const userId = ref('')
+const passwordStatus = computed(() => {
   return checkPassword(password.value)
 })
 watch([password, confirmPassword], () => {
@@ -34,7 +37,7 @@ const answers = reactive({
 })
 const disableForgetPasswordNextBtn = computed(()=>{
   return Object.values(answers).some(answer => {
-    return answer === '';
+    return answer === ''
   })
 })
 const presetQuestion = ref([
@@ -50,33 +53,77 @@ const presetQuestion = ref([
   "What is your favorite food?",
   "What is the name of your favorite teacher?",
   "What is the name of the first company you worked for?",
-]);
+])
 // const selectedQuestionIndexes = computed(() => [securityQuestions.q1.question, securityQuestions.q2.question, securityQuestions.q3.question])
 
 async function handleNext() {
-  const user = await getUserBy("email", email.value);
-  console.log(user);
+  const user = await getUserBy("email", email.value)
+  console.log(user)
   if (user) {
-    showError.value = false;
-    securityQuestions.value = user.securityQuestions;
-    console.log(securityQuestions.value);
-    page.value++;
+    showError.value = false
+    securityQuestions.value = user.securityQuestions
+    console.log(securityQuestions.value)
+    page.value++
   } else {
-    showError.value = true;
+    showError.value = true
   }
 }
 function handlePreviousPage() {
-  page.value--;
+  page.value--
+}
+
+const handleConfirmEmail = async () => {
+  if (email.value === '') {
+    errorMsg.value = 'Please enter email'
+    return
+  }
+  const user = await getUserBy("email", email.value)
+  if(user){
+    securityQuestions.value = user.securityQuestions
+    userId.value = user.id
+    page.value++
+  }else{
+    errorMsg.value = 'Email does not exist'
+  }
 }
 
 function handleCheckAnswers() {
-  const isAllCorrect = securityQuestions.value.q1.answer === answers.q1 && securityQuestions.value.q2.answer === answers.q2 && securityQuestions.value.q3.answer === answers.q3;
+  const isAllCorrect = securityQuestions.value.q1.answer === hash(answers.q1) && securityQuestions.value.q2.answer === hash(answers.q2) && securityQuestions.value.q3.answer === hash(answers.q3)
   if (isAllCorrect) {
     showError.value = false
-    page.value++;
+    page.value++
+  } else {
+    showError.value = true
   }
-  else {
-    showError.value = true;
+}
+
+const handleSubmitNewPassword = async() => {
+  if (password.value === '') {
+    errorMsg.value = 'Please enter password'
+    return
+  }
+  if(!passwordStatus.value.isPasswordValid){
+    errorMsg.value = 'Password is invalid'
+    return
+  }
+  if (confirmPassword.value === '') {
+    errorMsg.value = 'Please enter confirm password'
+    return
+  }
+  if (password.value !== confirmPassword.value) {
+    errorMsg.value = 'Password and Confirm Password must match'
+    return
+  }
+  errorMsg.value = ''
+  try {
+    const res = await updateUserData(userId.value, { password: hash(password.value) })
+    if(res){
+      toastStore.addToast('Update password success, Please login','success')
+      router.push('/login')
+    }
+  } catch (error) {
+      console.error(error)
+      toastStore.addToast('Error occured', 'error')
   }
 }
 </script>
@@ -85,13 +132,13 @@ function handleCheckAnswers() {
     <SlideShow :pageAmount="3" :currentPage="page">
       <SlidePage :page="1" :currentPage="page" translate="scale">
         <p class="opacity-75">Please enter your Email</p>
+        <div class="text-error">{{ errorMsg }}</div>
         <input
-          type="text"
+          type="email"
           v-model="email"
           class="input input-bordered w-full max-w-xs"
         />
-        <button class="btn bg-primary" @click="handleNext">Next</button>
-        <p class="text-red-600" v-show="showError">This email is not existed</p>
+        <button class="btn bg-primary" @click="handleConfirmEmail">Confirm</button>
       </SlidePage>
         <SlidePage :page="2" :currentPage="page" translate="scale">
           <div
@@ -179,58 +226,57 @@ function handleCheckAnswers() {
           </div>
         </SlidePage>
         <SlidePage :page="3" :currentPage="page" translate="scale">
-         
-          <div class="flex flex-col gap-2 w-fit">
-    
-      <div>New password</div>
-      <input v-model="password" type="password" class="input input-bordered" @input="checkPassword(password)">
-      <div>Confirm new password</div>
-
-      <input v-model="confirmPassword" type="password" autocomplete="new-password" title="Confirm password" required
-        class="input input-bordered" />
-      <div class="text-xs text-orange-400">{{ errorMsg }}</div>
-      <ul class="text-xs flex cursor-defaul">
-        <div class="flex flex-col gap-2">
-          <li
-            :class="isPasswdValid.status.isLengthValid && isPasswdValid.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'"
-            class="flex gap-2 items-center">
-            <Icon iconName="check"
-              v-show="isPasswdValid.status.isLengthValid && isPasswdValid.status.isMaxLengthValid" />
-            <Icon iconName="x" v-show="!isPasswdValid.status.isLengthValid || !isPasswdValid.status.isMaxLengthValid" />
-            Must have 8-30 characters
-          </li>
-          <li :class="isPasswdValid.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 ">
-            <Icon iconName="check" v-show="isPasswdValid.status.haveLowerCase" />
-            <Icon iconName="x" v-show="!isPasswdValid.status.haveLowerCase" />
-            At least one lower case
-          </li>
-          <li :class="isPasswdValid.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
-            <Icon iconName="check" v-show="isPasswdValid.status.haveUpperCase" />
-            <Icon iconName="x" v-show="!isPasswdValid.status.haveUpperCase" />
-            At least one upper case
-          </li>
-        </div>
-        <div class="divider divider-horizontal"></div>
-        <div class="flex-1 flex flex-col gap-2">
-          <li :class="isPasswdValid.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
-            <Icon iconName="check" v-show="isPasswdValid.status.haveDigit" />
-            <Icon iconName="x" v-show="!isPasswdValid.status.haveDigit" />
-            At least one digit
-          </li>
-          <li :class="isPasswdValid.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
-            <Icon iconName="check" v-show="isPasswdValid.status.haveSymbol" />
-            <Icon iconName="x" v-show="!isPasswdValid.status.haveSymbol" />
-            At least one symbol
-          </li>
-          <li :class="isPasswdValid.status.isCharacterValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2"
-            title="Alphabet must have only A-Z and a-z">
-            <Icon iconName="check" v-show="isPasswdValid.status.isCharacterValid" />
-            <Icon iconName="x" v-show="!isPasswdValid.status.isCharacterValid" />
-            Only valid character
-          </li>
-        </div>
-      </ul>
-    </div>
+          <div class="flex flex-col justify-center items-center gap-7 bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative">
+            <div class="text-primary flex gap-2 items-center absolute top-5 left-5">
+              <Logo size="1.5rem" color="currentColor" />
+              <div class="text-base-content">Plannet</div>
+            </div>
+            <div>New password</div>
+            <input v-model="password" type="password" class="input input-bordered" @input="checkPassword(password)">
+            <div>Confirm new password</div>
+            <input v-model="confirmPassword" type="password" autocomplete="new-password" title="Confirm password" required class="input input-bordered" />
+            <div class="text-xs text-orange-400">{{ errorMsg }}</div>
+            <ul class="text-xs flex cursor-defaul">
+              <div class="flex flex-col gap-2">
+                <li :class="passwordStatus.status.isLengthValid && passwordStatus.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'"
+                  class="flex gap-2 items-center">
+                  <Icon iconName="check"
+                    v-show="passwordStatus.status.isLengthValid && passwordStatus.status.isMaxLengthValid" />
+                  <Icon iconName="x" v-show="!passwordStatus.status.isLengthValid || !passwordStatus.status.isMaxLengthValid" />
+                  Must have 8-30 characters
+                </li>
+                <li :class="passwordStatus.status.haveLowerCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2 ">
+                  <Icon iconName="check" v-show="passwordStatus.status.haveLowerCase" />
+                  <Icon iconName="x" v-show="!passwordStatus.status.haveLowerCase" />
+                  At least one lower case
+                </li>
+                <li :class="passwordStatus.status.haveUpperCase ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
+                  <Icon iconName="check" v-show="passwordStatus.status.haveUpperCase" />
+                  <Icon iconName="x" v-show="!passwordStatus.status.haveUpperCase" />
+                  At least one upper case
+                </li>
+              </div>
+              <div class="divider divider-horizontal"></div>
+              <div class="flex-1 flex flex-col gap-2">
+                <li :class="passwordStatus.status.haveDigit ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
+                  <Icon iconName="check" v-show="passwordStatus.status.haveDigit" />
+                  <Icon iconName="x" v-show="!passwordStatus.status.haveDigit" />
+                  At least one digit
+                </li>
+                <li :class="passwordStatus.status.haveSymbol ? 'text-green-300' : 'text-red-400'" class="flex gap-2">
+                  <Icon iconName="check" v-show="passwordStatus.status.haveSymbol" />
+                  <Icon iconName="x" v-show="!passwordStatus.status.haveSymbol" />
+                  At least one symbol
+                </li>
+                <li :class="passwordStatus.status.isCharacterValid ? 'text-green-300' : 'text-red-400'" class="flex gap-2" title="Alphabet must have only A-Z and a-z">
+                  <Icon iconName="check" v-show="passwordStatus.status.isCharacterValid" />
+                  <Icon iconName="x" v-show="!passwordStatus.status.isCharacterValid" />
+                  Only valid character
+                </li>
+              </div>
+            </ul>
+            <button @click="handleSubmitNewPassword" :class="{ 'btn-disabled': passwordStatus.warning.length > 0 || password !== confirmPassword }" class="btn btn-primary">Submit</button>
+          </div>
         </SlidePage>
     </SlideShow>
   </main>
