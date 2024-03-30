@@ -190,7 +190,7 @@ const handleSave = async () => {
             />
           </div>
         </div>
-        <div class="flex-auto flex flex-col gap-2">
+        <div class="flex-auto flex flex-col gap-2 portrait:md:ml-5">
           <label for="bio" class="font-semibold text-sm">Bio</label>
           <textarea
             v-model="bio"
