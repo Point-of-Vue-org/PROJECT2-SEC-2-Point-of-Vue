@@ -15,10 +15,10 @@ const handleCloseSidebarBtnClick = () => {
 <template>
   <aside
     :class="openState ? 'w-56' : 'w-0'"
-    class="h-screen sm:h-[calc(100vh-theme(space.16))] transition-[width] duration-500 fixed top-0 sm:w-56 sm:min-w-56 sm:sticky sm:top-16 overflow-hidden z-20"
+    class="h-screen lg:h-[calc(100vh-theme(space.16))] transition-[width] duration-500 fixed top-0 lg:w-56 lg:min-w-56 lg:sticky lg:top-16 overflow-hidden z-20"
   >
   <ul class="menu p-4 min-h-full bg-base-200 text-base-content flex flex-col gap-2">
-      <div class="flex sm:hidden justify-end">
+      <div class="flex lg:hidden justify-end">
         <button class="btn btn-ghost" @click="handleCloseSidebarBtnClick">
           <Icon iconName="x" />
         </button>

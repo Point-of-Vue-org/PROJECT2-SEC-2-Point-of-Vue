@@ -17,7 +17,7 @@ const handleSidebarBtnClick = () => {
 <template>
   <header class="navbar justify-between bg-base-200 sticky top-0 z-10 h-16">
     <div class="flex gap-2">
-      <div @click="handleSidebarBtnClick()" class="sm:hidden btn btn-ghost text-xl">
+      <div @click="handleSidebarBtnClick()" class="lg:hidden btn btn-ghost text-xl">
         <Icon iconName="list" :scale="2" />
       </div>
       <RouterLink to="/" class="btn btn-ghost text-xl">
@@ -27,7 +27,7 @@ const handleSidebarBtnClick = () => {
         <span class="text-lg font-bold">Plannet</span>
       </RouterLink>
     </div>
-    <div class="gap-2 hidden sm:flex justify-center">
+    <div class="gap-2 hidden lg:flex justify-center">
       <div class="form-control relative">
         <Icon iconName="search" class="absolute left-5 top-4 pointer-events-none" />
         <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />

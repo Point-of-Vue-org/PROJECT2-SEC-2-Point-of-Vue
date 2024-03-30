@@ -31,12 +31,12 @@ const handleSkip = async () => {
 <template>
     <main class="w-full h-screen grid place-items-center">
         <form  @submit.prevent="handleSubmitNickname" class="flex flex-col w-[50rem] items-center gap-7">
-            <div class="text-3xl text-primary font-helvetica w-fit">Do you want to show your nickname for everyone ?</div>
+            <div class="text-3xl text-primary font-helvetica w-fit portrait:md:text-[1.725rem]">Do you want to show your nickname for everyone ?</div>
             <div class="flex gap-5">
                 <input v-model="nickname" type="text" class="input input-bordered rounded-xl w-96 font-helvetica" placeholder="Type your nickname" />
                 <button type="submit" class="btn btn-primary text-[1rem] font-bold text-base-100">Save</button>
             </div>
-            <button @click="handleSkip" class="text-accent text-[1.2rem] absolute right-24 bottom-24 font-bold hover:text-secondary">Skip</button>
+            <button @click="handleSkip" class="text-accent text-[1.2rem] absolute right-24 bottom-24 font-bold hover:text-secondary marker:portrait:md:text[1.1rem]">Skip</button>
         </form>
     </main>
 </template>

@@ -113,7 +113,7 @@ function handlePopUpPublish(){
 async function handlePublishNow(){
   if(draftPlan.value.title.length < 1){
     toastStore.addToast('Please enter title', 'error')
-    return
+    return 
   }
   if(draftPlan.value.description.length < 1){
     toastStore.addToast('Please enter description', 'error')
@@ -344,7 +344,7 @@ const handleDeleteDraftPlan = async () => {
       </div> -->
     </div>
     <div class="absolute top-0 right-0 flex items-center">
-      <div class="flex gap-2">
+      <div class="flex gap-2 portrait:md:hidden">
         <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">Publish as post</button>
         <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan">Delete this draft</button>
       </div>
@@ -360,14 +360,35 @@ const handleDeleteDraftPlan = async () => {
         <Icon iconName="caution" class="w-10 h-10 flex items-center" />
         <div>Your change not saved !</div>
       </div>
+      <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4 absolute right-0 landscape:lg:hidden">
+        <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
+          <Icon iconName="three-dots" :scale="1.5" />
+        </div>
+        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-accent border mr-4">
+          <li @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">
+            <button class="flex justify-start gap-2 btn btn-ghost">
+              <Icon iconName="journal-bookmark-fill" />
+              <div>Publish as post</div>
+            </button>
+          </li>
+          <div class="divider my-0 mx-2"></div>
+          <li @click="handleDeleteDraftPlan">
+            <div class="flex justify-start gap-2 btn btn-error btn-outline btn-sm">
+              <Icon iconName="trash-fill" />
+              <div>Delete this draft</div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
+    
     <Modal :show="isConfirmShow">
-      <div class="flex items-center flex-col  h-1/2 w-full pt-10">
-        <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/>
-        <p class="text-black">Do you want to publish this draft now ?</p>
+      <div class="flex items-center flex-col  h-1/2 w-full pt-10 justify-center">
+        <!-- <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/> -->
+        <div class="text-2xl">Do you want to <span class="text-primary">publish</span> this draft now ?</div>
         <div class="flex gap-3 pt-5">
-          <button class="btn bg-blue-600" @click="handlePublishNow">Publish Now</button>
-          <button class="btn bg-error" @click="handlePopUpPublish">Cancel</button>
+          <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublishNow">Publish Now</button>
+          <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handlePopUpPublish">Cancel</button>
         </div>
       </div>
     </Modal>
