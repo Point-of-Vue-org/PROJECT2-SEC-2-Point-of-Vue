@@ -90,15 +90,10 @@ export async function updatePlanData(id, updateData, type) {
     return await res.json()
 }
 
-export async function sortByUpvote(posts, order) {
-    if(!['asc', 'desc'].includes(order)) throw new Error('Order must be \"asc\" or \"desc\"')
-    return posts.sort((a, b) => (a.upVote - b.upVote) * order === 'asc' ? 1 : -1)
-}
-
-export async function sortByDate(posts, order) {
-    if(!['asc', 'desc'].includes(order)) throw new Error('Order must be \"asc\" or \"desc\"')
-    posts.sort((a, b) => (new Date(a.postDate).getTime() - new Date(b.postDate).getTime()) * order === 'asc' ? 1 : -1)
-}
+// export async function sortByUpvote(posts, order) {
+//     if(!['asc', 'desc'].includes(order)) throw new Error('Order must be \"asc\" or \"desc\"')
+//     return posts.sort((a, b) => (a.upVote - b.upVote) * order === 'asc' ? 1 : -1)
+// }
 
 export async function toggleUpVote(userData, postPlanData) {
     let upVoted = userData.upVotedPosts.includes(postPlanData.id)

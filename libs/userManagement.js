@@ -11,6 +11,7 @@ const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:500
  * @returns {Promise<User[]>} A promise that resolves to an array of User objects
  */
 export async function getUsersBy(key, value) {
+  if (!key || !value) return null
   const response = await fetch(
     `${JSON_SERVER_URI}/users?${key}=${value}`
   )
@@ -26,6 +27,7 @@ export async function getUsersBy(key, value) {
  * @returns {Promise<User>} A promise that resolves to a User object
  */
 export async function getUserBy(key, value) {
+  if (!key || !value) return null
   const data = await getUsersBy(key, value)
   if (!data[0]) return null
   return data[0]
@@ -178,13 +180,13 @@ export async function logout(userId) {
  * const user = await register('username', 'email', 'password')
  * console.log(user) // { id: '1', username: 'username', email: 'email', password: 'password' }
  */
-export async function register(username, email, password, nickname = '') {
+export async function register(username, email, password) {
   const response = await fetch(`${JSON_SERVER_URI}/users`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, email, password: hash(password), nickname, upVotedPosts: [], downVotedPosts: [], upVotedComments: [], downVotedComments: []}),
+    body: JSON.stringify(new User({ username, email, password: hash(password) })),
   })
   const newUser = await response.json()
   return newUser
