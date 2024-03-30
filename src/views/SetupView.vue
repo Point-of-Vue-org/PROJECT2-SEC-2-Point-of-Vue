@@ -127,7 +127,7 @@ const handleFinish = async () => {
 						<div class="text-secondary">Choose&nbsp;something&nbsp;that&nbsp;represents&nbsp;you&nbsp;and makes&nbsp;you&nbsp;easily&nbsp;recognizable!</div>
 						<div class="flex flex-col items-center gap-5">
 							<div class="text-sm text-error text-center">
-								<div v-for="warning in nicknameStatus.warning">{{ warning }}</div>
+								<div v-for="(warning,index) in nicknameStatus.warning" :key="index">{{ warning }}</div>
 							</div>
 							<input
 								v-model="nickname"
@@ -203,7 +203,7 @@ const handleFinish = async () => {
 						</div>
 					</div>
 					<div class="flex flex-col gap-3">
-						<div v-for="i in 3" class="flex flex-col items-center gap-2">
+						<div v-for="i in 3" class="flex flex-col items-center gap-2" :key="i">
 							<ResetPasswordQuestionList
 							:questionTitle="`Question ${i}`"
 							@questionSelect="handleSecurityQuestionSelect('q' + i, $event)"
