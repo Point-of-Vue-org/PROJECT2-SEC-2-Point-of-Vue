@@ -19,9 +19,9 @@ export default {
   daisyui: {
     themes: [
       {
-        mytheme: {
-          primary: "#ff5500",
-          secondary: "#666666",
+        plannet: {
+          primary: "#f50",
+          secondary: "#9e9c9b",
           accent: "#a8a29e",
           neutral: "#3c3533",
           "base-100": "#292524",

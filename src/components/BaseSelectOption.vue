@@ -15,7 +15,7 @@ const props = defineProps({
         default: false
     },
     disabledOptionIndex: {
-        type: [Number, Array],
+        type: Array,
         default: []
     }
 })
