@@ -33,3 +33,27 @@ export function formatDate(rawDate) {
 		minute: 'numeric'
 	})
 }
+
+export function sortObject(array, sortBy, order) {
+	if(!['asc', 'desc'].includes(order)) throw new Error('Order must be \"asc\" or \"desc\"')
+
+	if (!array.length) return []
+
+	// console.log(object);
+	let fieldTypes = null
+	if (array.some((plan) => plan[sortBy] === undefined)) throw new Error('Invalid sortBy key')
+	else fieldTypes = typeof array[0][sortBy]
+
+	console.log('fieldTypes', fieldTypes);
+
+	const copyArray = [...array]
+	
+	if (fieldTypes === 'string') {
+			copyArray.sort((a, b) => (a[sortBy].localeCompare(b[sortBy])) * (order === 'asc' ? 1 : -1))
+	} else if (fieldTypes === 'number'){
+			copyArray.sort((a, b) => (a[sortBy] - b[sortBy]) * (order === 'asc' ? 1 : -1))
+	} else {
+			throw new Error('Invalid sortBy key type')
+	}
+	return copyArray
+}
