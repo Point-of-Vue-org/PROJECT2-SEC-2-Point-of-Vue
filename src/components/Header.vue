@@ -3,6 +3,7 @@ import Logo from '@/components/Logo.vue'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
 import { useUserStore } from '@/stores/user'
 import Icon from './Icon.vue';
+import SearchBox from './SearchBox.vue'
 
 const emits = defineEmits(['sidebarBtnClick'])
 
@@ -28,10 +29,7 @@ const handleSidebarBtnClick = () => {
       </RouterLink>
     </div>
     <div class="gap-2 hidden lg:flex justify-center">
-      <div class="form-control relative">
-        <Icon iconName="search" class="absolute left-5 top-4 pointer-events-none" />
-        <input type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
-      </div>
+      <SearchBox />
     </div>
     <div v-if="userStore.userData.id" class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
