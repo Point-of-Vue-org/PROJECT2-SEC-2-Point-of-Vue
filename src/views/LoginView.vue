@@ -63,7 +63,7 @@ const handleForgetPassword = () => {
         <button type="submit" class="btn rounded-full btn-accent text-base-100">Login</button>
       </div>
       <div>
-        <div @click="handleForgetPassword" class="text-sm xs:text-base text-primary">Forgot password?</div>
+        <div @click="handleForgetPassword" class="text-sm xs:text-base text-primary cursor-pointer">Forgot password?</div>
         <div class="text-sm xs:text-base">Don't have an account? <RouterLink to="/register" class="text-primary">Sign up</RouterLink></div>
       </div>
     </form>
