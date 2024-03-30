@@ -43,11 +43,11 @@ const securityQuestions = reactive({
 		answer: ''
 	},
 })
+
 const selectedQuestionIndexes = computed(() => [securityQuestions.q1.question, securityQuestions.q2.question, securityQuestions.q3.question])
 const disableForgetPasswordNextBtn = computed(() => {
 	return selectedQuestionIndexes.value.includes(-1) || Object.values(securityQuestions).some(q => q.answer === '')
 })
-// const playFinishAnimation = ref(false)
 
 const handleNextPage = () => {
 	if (page.value >= 4) return
@@ -59,20 +59,6 @@ const handlePreviousPage = () => {
 	page.value -= 1
 }
 
-// const handleSubmitNickname = async () => {
-//     if (nickname.value === '') return 
-//     try {
-//         const res = await updateUserData(userStore.userData.id, { hasSetup: true, nickname: nickname.value })
-//         if(res){
-//             userStore.userData.nickname = res.nickname
-//             toastStore.addToast('Successfully Welcome to plannet', 'success')
-//             router.push('/')
-//         }
-//     } catch (error) {
-//         toastStore.addToast('Error occured', 'error')
-//     }
-// }
-
 const handleProfileFileChange = (e) => {
 	const file = e.target.files[0]
 	if (!file) return
@@ -83,26 +69,6 @@ const handleSecurityQuestionSelect = (question, value) => {
 	console.log(question, value)
 	securityQuestions[question].question = value
 }
-
-// const handleSkip = async () => {
-//     nickname.value = 'Guest'
-//     await handleSubmitNickname()
-// }
-
-// const handleAnswer = async () => {
-// 	console.log(securityQuestions)
-// 	try {
-// 		const res = await updateUserData(userStore.userData.id, { hasSetup: true, nickname: nickname.value, securityQuestions })
-// 		if (res) {
-// 			userStore.userData.nickname = res.nickname
-// 			toastStore.addToast('Successfully', 'success')
-// 			router.push('/')
-// 		}
-// 	}
-// 	catch (error) {
-// 		toastStore.addToast('Error occured', 'error')
-// 	}
-// }
 
 const handleFinish = async () => {
 	isLoading.value = true
@@ -130,10 +96,7 @@ const handleFinish = async () => {
 		if (res) {
 			userStore.userData.nickname = res.nickname
 			toastStore.addToast('Setup completed', 'success')
-			// playFinishAnimation.value = true
-			// setTimeout(() => {
 			router.push('/')
-			// }, 2_000)
 		}
 	}
 	catch (error) {
@@ -152,7 +115,6 @@ const handleFinish = async () => {
     </div>
   </Modal>
 	<main class="w-full h-screen overflow-hidden relative">
-		<!-- <div :class="{ 'scale-100': playFinishAnimation }" class="scale-0 absolute left-0 bottom-0 translate-x-[-50%] translate-y-[50%] origin-center transition-[width_height] duration-[2s] rounded-full w-[250rem] h-[250rem] z-50 bg-base-200 ease-in"></div> -->
 		<SlideShow :pageAmount="4" :currentPage="page">
 			<SlidePage :page="1" :currentPage="page" transitionType="scale">
 				<div class="flex flex-col items-center justify-center gap-7 bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative">
