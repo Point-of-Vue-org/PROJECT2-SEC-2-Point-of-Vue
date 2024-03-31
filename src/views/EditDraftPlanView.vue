@@ -227,21 +227,6 @@ const handleDeleteDraftPlan = async () => {
           </ul>
         </div>
       </div>
-      <!-- <div class="flex gap-4 items-center my-4">
-        <img
-          v-if="!isLoading && author?.setting?.avatarUrl"
-          :src="author.setting.avatarUrl"
-          alt="author image"
-          class="w-10 h-10 rounded-full object-cover"
-        />
-        <div v-else class="skeleton w-10 h-10"></div>
-        <div class="flex flex-col gap-0.5">
-          <div v-if="!isLoading && author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
-          <div v-else class="skeleton h-6 w-20"></div>
-          <div v-if="!isLoading && author.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
-          <div v-else class="skeleton h-4 w-20"></div>
-        </div>
-      </div> -->
       <div class="flex flex-col gap-3 mb-10">
         <input
           v-if="!isLoading"
@@ -250,14 +235,12 @@ const handleDeleteDraftPlan = async () => {
           placeholder="Your plan title here"
           autofocus
         />
-        <!-- <div v-else class="skeleton h-10 w-[32rem] max-w-full"></div> -->
         <textarea
           v-if="!isLoading"
           v-model="draftPlan.description"
           class="font-helvetica opacity-70 bg-transparent outline-none focus:placeholder:opacity-50"
           placeholder="Plan description..."
         />
-        <!-- <div v-else class="skeleton h-6 w-[20rem] max-w-full"></div> -->
       </div>
       <div class="flex justify-end">
         <button class="btn" @click="handleAddDailyTask">
@@ -314,9 +297,8 @@ const handleDeleteDraftPlan = async () => {
                 <template #title>
                   <div class="grid grid-cols-[1fr_2fr_13fr_1fr] gap-2 w-full place-items-center">
                     <input type="checkbox" class="checkbox" disabled />
-                    <!-- <div class="place-self-start">{{ hourlyTask.start }} - {{ hourlyTask.end }}</div> -->
                     <div class="place-self-start flex gap-2">
-                      <input type="time" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /> to <input type="time" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" />
+                      <input type="number" min="0" max="24" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /> to <input type="number" min="0" max="24" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" />
                     </div>
                     <div class="place-self-start w-full">
                       <input
