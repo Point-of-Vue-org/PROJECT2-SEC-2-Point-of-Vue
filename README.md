@@ -27,7 +27,13 @@
 <td><b>SIRIWAN HOSAREE</b></td>
 <td>
   <ul>
-  <li>Leader board</li>
+  <li>UserManagement</li>
+  <li>Validation Utils</li>  
+  <li>Forgot pasword UI</li>
+  <li>Poster Design</li>
+  <li>Change preference system</li>
+
+  <li>Forgot password system</li>
   
   </ul>
 </td>
@@ -42,6 +48,13 @@
 <td>
 <ul>
 <li>Responsive UI design</li>
+<li>Search system</li>
+<li>UI design</li>
+<li>Data structure design</li>
+<li>Upload image system</li>
+<li>Component design</li>
+<li>sort post system</li>
+<li>Time in post</li>
 
 </ul>
 </td>
@@ -53,9 +66,14 @@
 <td><b>AKKARAWIT SITTIPRAKAN</b></td>
 <td>
 <ul>
-<li>Animation Logo
-</li>
-<li>Quality Setting</li>
+<li> Add post ui</li>
+<li>Forgot password system</li>
+<li>Feasibility studey of upload image system</li>
+<li>Change preference system</li>
+<li>Password change validation</li>
+<li>user management</li>
+<li>Ui draft plan demo</li>
+<li>Security peference</li>
 
 </ul>
 </td>
@@ -69,8 +87,11 @@
 <td><b>BUNYAKORN PORNSOMBATPAIBOOL</b></td>
 <td>
 <ul>
-<li>Versus mode responsive UI</li>
-
+<li>Responsive design</li>
+<li>Setup account page</li>
+<li>Plan to draft</li>
+<li>Password change validation</li>
+<li>Change preference system</li>
 </ul>
 </td>
 <td>0%</td>
@@ -81,8 +102,13 @@
 <td><b>METHUS DUMRONGMONGKHOLKUL</b></td>
 <td>
 <ul>
+<li>UserManagement util</li>
 <li>Encryption</li>
-
+<li>Poster design</li>
+<li>Change password</li>
+<li>Ui draft plan demo</li>
+<li>Security peference</li>
+ <li>Forgot password system</li>
 </ul>
 </td>
 <td>0%</td>
