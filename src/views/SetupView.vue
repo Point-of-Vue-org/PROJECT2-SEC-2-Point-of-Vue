@@ -240,8 +240,8 @@ const handleFinish = async () => {
 				</div>
 			</SlidePage>
 			<SlidePage :page="4" :currentPage="page" transitionType="scale">
-				<div class="text-accent absolute opacity-10">
-					<Logo size="30rem" color="currentColor" />
+				<div class="text-accent absolute opacity-5">
+					<Logo size="40rem" color="currentColor" />
 				</div>
 				<div class="flex flex-col justify-center items-center gap-7 rounded-2xl z-10 drop-shadow-[5px_5px_5px_#0005]">
 					<div class="text-4xl font-helvetica w-fit font-bold">Welcome to <span class="text-primary">Plannet!</span></div>
