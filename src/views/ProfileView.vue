@@ -52,7 +52,7 @@ watch(route, () => {
         <UserProfilePlaceholder v-else color="#ff5500" bgcolor="white" class="absolute rounded-full h-52 w-52 object-cover border-8 border-base-200 translate-x-8 translate-y-24"/>
         <div class="h-[12rem]">
           <img
-            v-if="user?.setting?.avatarUrl"
+            v-if="user?.setting?.bannerUrl"
             :src="user.setting.bannerUrl"
             alt="avatar"
             class="w-full h-full object-cover"

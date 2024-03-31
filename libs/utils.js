@@ -41,7 +41,7 @@ export function sortObject(array, sortBy, order) {
 
 	// console.log(object);
 	let fieldTypes = null
-	if (array.some((plan) => plan[sortBy] === undefined)) throw new Error('Invalid sortBy key')
+	if (array.some((obj) => obj[sortBy] === undefined)) throw new Error('Invalid sortBy key')
 	else fieldTypes = typeof array[0][sortBy]
 
 	console.log('fieldTypes', fieldTypes);
@@ -53,6 +53,7 @@ export function sortObject(array, sortBy, order) {
 	} else if (fieldTypes === 'number'){
 			copyArray.sort((a, b) => (a[sortBy] - b[sortBy]) * (order === 'asc' ? 1 : -1))
 	} else {
+			console.log('fieldTypes', fieldTypes);
 			throw new Error('Invalid sortBy key type')
 	}
 	return copyArray

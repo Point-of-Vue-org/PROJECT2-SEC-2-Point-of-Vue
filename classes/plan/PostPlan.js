@@ -10,7 +10,6 @@ export default class PostPlan extends BasePlan {
         this.downVote = postPlanData?.downVote || 0
         this.comments = postPlanData?.comments || []
         this.published = postPlanData?.published || false
-        this.getComments()
         this.type = 'post'
     }
 
@@ -35,10 +34,13 @@ export default class PostPlan extends BasePlan {
         createOrUpdatePlan(this, 'post')
     }
 
-    async getComments() {
+    async loadComments() {
         const comments = await getCommentsBy('postId', this.id)
         this.comments = comments
-        return this.comments.reverse()
+    }
+
+    getComments() {
+        return this.comments
     }
 
     async addComment(commentObject) {
