@@ -38,7 +38,7 @@ const handleToggleUpVote = async () => {
   <div class="rounded-2xl p-4 bg-neutral">
     <div class="flex gap-3 items-center">
       <img v-if="author?.setting?.avatarUrl" :src="author?.setting?.avatarUrl" class="rounded-full w-8 h-8 object-cover" />
-      <UserProfilePlaceholder v-else size="2rem" color="white" bgcolor="black" class="rounded-full" />
+      <UserProfilePlaceholder v-else size="2rem" color="#f50" bgcolor="white" class="rounded-full" />
       <div class="flex flex-col">
         <div class="font-semibold">{{ author.nickname }}</div>
         <div class="text-xs opacity-70">{{ '@' + author.username }}</div>

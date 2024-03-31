@@ -102,8 +102,7 @@ router.beforeEach(async (to, from, next) => {
   const { isTokenValid, userId } = await validateToken()
   const userStore = useUserStore()
   if (isTokenValid) await userStore.loadUserData(userId)
-
-  console.log(userStore.userData.hasSetup)
+  console.log(userStore.userData)
 
   if (to.name !== 'setup' && userStore.userData.hasSetup === false && isTokenValid) { 
     next('/newuser/setup')

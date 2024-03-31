@@ -18,16 +18,16 @@ const defaultUserData = {
 export class User {
     constructor(userData = {}) {
         for (let key in defaultUserData) {
-            if (typeof defaultUserData[key] === 'object' &&
-                !Array.isArray(defaultUserData[key]) &&
-                typeof userData[key] === 'object' &&
-                !Array.isArray(userData[key])
-            ) {
-                for (let subKey in defaultUserData[key]) {
-                    this[key][subKey] = userData[key][subKey] || defaultUserData[key][subKey]
-                }
-                continue
-            }
+            // if (typeof defaultUserData[key] === 'object' &&
+            //     !Array.isArray(defaultUserData[key]) &&
+            //     typeof userData[key] === 'object' &&
+            //     !Array.isArray(userData[key])
+            // ) {
+            //     for (let subKey in defaultUserData[key]) {
+            //         this[key][subKey] = userData[key][subKey] || defaultUserData[key][subKey]
+            //     }
+            //     continue
+            // }
             this[key] = userData[key] || defaultUserData[key]
         }
         // this = { ...defaultUserData, ...userData }

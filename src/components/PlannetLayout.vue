@@ -6,6 +6,7 @@ import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'
 import Icon from '@/components/Icon.vue'
+const emits = defineEmits(['submitSearch'])
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -16,6 +17,9 @@ const handleLogout = async () => {
   await logout(userStore.userData.id)
   localStorage.removeItem('todo_token')
   router.replace('/login')
+}
+const handleSubmitSearch = (value) =>{
+emits('submitSearch',value)
 }
 
 </script>
@@ -29,7 +33,7 @@ const handleLogout = async () => {
     @click="sidebarOpenState = false"
     class="pointer-events-none w-full h-screen fixed z-20 transition-colors duration-300"
   ></div>
-  <Header @sidebarBtnClick="sidebarOpenState = true">
+  <Header @sidebarBtnClick="sidebarOpenState = true" @submitSearch="handleSubmitSearch">
     <template #menu>
       <li><RouterLink :to="`/profile/${userStore.userData.id}`" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
       <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>

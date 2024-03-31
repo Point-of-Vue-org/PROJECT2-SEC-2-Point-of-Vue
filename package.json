@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "host": "vite --host",
-    "backend": "json-server --watch ./data/db.json --port 5001",
+    "backend": "json-server --watch ./data/db.json --port 5000",
     "start:window": "bash run.bat",
     "start:linux": "bash run.sh"
   },
