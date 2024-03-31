@@ -28,16 +28,13 @@
 <td>
   <ul>
   <li>Leader board</li>
-  <li>Challenge mode: Combo</li>
-  <li>Class Board</li>
-  <li>Loading screen: Random card</li>
-  <li>Versus mode algorithm</li>
+  
   </ul>
 </td>
 <td>
-  16.67%
+  0%
 </td>
-<td><img src="/readme_src/avatar/mook.png"></td>
+<td><img src="./src/assets/readme/avatar/mook.jpg"></td>
 </tr>
 <tr>
 <td>65130500084</td>
@@ -45,15 +42,11 @@
 <td>
 <ul>
 <li>Responsive UI design</li>
-<li>Challenge mode algorithm</li>
-<li>Graphic design</li>
-<li>Code review</li>
-<li>Sound system</li>
-<li>Game infrastructure</li>
+
 </ul>
 </td>
 <td>30%</td>
-<td><img src="/readme_src//avatar/mink.png"></td>
+<td><img src="./src/assets/readme/avatar/mink.jpg"></td>
 </tr>
 <tr>
 <td>65130500089</td>
@@ -63,19 +56,13 @@
 <li>Animation Logo
 </li>
 <li>Quality Setting</li>
-<li>Refactor to oop phase 1</li>
-<li>Encryption</li>
-<li>Save setting to localStorage</li>
-<li>Generate AI image</li>
-<li>Find sound assets</li>
-<li>Readme</li>
-<li>Misc. helper</li>
+
 </ul>
 </td>
 <td>
-  20%
+  0%
 </td>
-<td><img src="/readme_src/avatar/title.png"></td>
+<td><img src="./src/assets/readme/avatar/title.jpg"></td>
 </tr>
 <tr>
 <td>65130500108</td>
@@ -83,12 +70,11 @@
 <td>
 <ul>
 <li>Versus mode responsive UI</li>
-<li>Challenge mode player responsive UI</li>
-<li>Versus mode algorithm: Timer</li>
+
 </ul>
 </td>
-<td>16.67%</td>
-<td><img src="/readme_src/avatar/goko.png"></td>
+<td>0%</td>
+<td><img src="./src/assets/readme/avatar/goko.jpg"></td>
 </tr>
 <tr>
 <td>65130500114</td>
@@ -96,13 +82,11 @@
 <td>
 <ul>
 <li>Encryption</li>
-<li>Generate AI image</li>
-<li>Shuffle algorithm</li>
-<li>Write how to play</li>
+
 </ul>
 </td>
-<td>16.66%</td>
-<td><img src="/readme_src/avatar/tae.png"></td>
+<td>0%</td>
+<td><img src="./src/assets/readme/avatar/tae.jpg"></td>
 </tr>
 </tbody>
 </table>
