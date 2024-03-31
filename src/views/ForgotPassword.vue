@@ -130,15 +130,15 @@ const handleSubmitNewPassword = async() => {
 <template>
   <main class="w-full h-screen overflow-hidden relative">
     <SlideShow :pageAmount="3" :currentPage="page">
-      <SlidePage :page="1" :currentPage="page" translate="scale">
-        <p class="opacity-75">Please enter your Email</p>
+      <SlidePage :page="1" :currentPage="page" translate="scale" class="gap-2">
+        <p class="opacity-75 text-2xl">Please enter your Email</p>
         <div class="text-error">{{ errorMsg }}</div>
         <input
           type="email"
           v-model="email"
           class="input input-bordered w-full max-w-xs"
         />
-        <button class="btn bg-primary" @click="handleConfirmEmail">Confirm</button>
+        <button class="btn bg-primary text-neutral font-bold" @click="handleConfirmEmail">Confirm</button>
       </SlidePage>
         <SlidePage :page="2" :currentPage="page" translate="scale">
           <div

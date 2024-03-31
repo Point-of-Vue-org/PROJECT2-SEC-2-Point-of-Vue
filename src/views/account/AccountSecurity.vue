@@ -142,10 +142,10 @@ function handleDeleteAccount(){
         <div class="text-2xl font-helvetica font-bold">Change Account Email</div>
         <div class="divider divider-primary w-[60rem] portrait:md:w-[40rem] landscape:md:w-[50rem]"></div>
       </div>
-      <div class="flex flex-col gap-2 w-1/3">
+      <div class="flex flex-col gap-3 w-1/3">
         <div>Change Email</div>
         <input v-model="email" placeholder="Type your new email" type="email" class="input input-bordered"/>
-        <button class="btn bg-primary text-black" @click="handleEmailChange">Confirm Change</button>
+        <button class="btn bg-primary text-black w-40" @click="handleEmailChange">Confirm Change</button>
       </div>
       <div class="flex flex-col">
         <div class="text-2xl font-helvetica font-bold text-red-600">Danger Zone</div>
