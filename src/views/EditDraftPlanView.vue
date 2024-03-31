@@ -5,7 +5,7 @@ import { validateToken } from "../../libs/userManagement";
 import { useUserStore } from "@/stores/user";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { createOrUpdatePlan, getPlanBy, isPlanExist, deletePlan } from "../../libs/planManagement";
+import { createOrUpdatePlan, getPlanBy, isPlanExist, deletePlan, updatePlanData } from "../../libs/planManagement";
 import { HourlyTask } from "../../classes/HourlyTask";
 import { Todo } from "../../classes/Todo";
 import BasePlan from "../../classes/plan/BasePlan";
@@ -28,10 +28,11 @@ const saveState = reactive({
   saveFail: false
 })
 const draftPlan = ref(new BasePlan())
-const postImageFile = ref(null)
 const isConfirmShow = ref(false)
 
-watch(draftPlan, async (newValue) => {
+watch(draftPlan, async (newValue, oldValue) => {
+  saveState.saved = true
+  if (oldValue.id === undefined) return
   saveState.saving = true
   console.log(newValue);
   try {
@@ -189,6 +190,15 @@ const handlePostImageFileChange = async (e) => {
   }
 }
 
+const handleDeletePostImage = async () => {
+  const res = await updatePlanData(draftPlan.value.id, { imageUrl: '' }, 'draft')
+  if(res){
+    draftPlan.value.imageUrl = ''
+  } else {
+    toastStore.addToast('Failed to delete post image', 'error')
+  }
+}
+
 </script>
 
 <template>
@@ -239,7 +249,7 @@ const handlePostImageFileChange = async (e) => {
         <label for="post-image-file" class="h-52 relative rounded-2xl overflow-hidden cursor-pointer">
           <div v-if="draftPlan.imageUrl" class="w-full h-52 relative">
             <div v-show="draftPlan.imageUrl" class="bg-[#0008] absolute w-full h-full"></div>
-            <button class="absolute btn btn-error rounded-[1rem_0_1rem_0]">
+            <button @click="handleDeletePostImage" class="absolute btn btn-error rounded-[1rem_0_1rem_0]">
               <Icon iconName="trash-fill" />
               <div>Delete cover image</div>
             </button>

@@ -1,7 +1,13 @@
 <script setup>
 defineProps({
-	color: String,
-	size: String
+	color: {
+		type: String,
+		default: 'currentColor'
+	},
+	size: {
+		type: String,
+		default: '4rem'
+	}
 })
 </script>
 

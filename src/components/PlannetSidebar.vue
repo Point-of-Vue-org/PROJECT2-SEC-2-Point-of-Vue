@@ -23,11 +23,11 @@ defineProps({
           <span class="whitespace-nowrap">Write your plan</span>
         </RouterLink>
         <div class="divider m-0"></div>
-        <RouterLink to="/" class="btn justify-start" exact-active-class="btn-accent">
+        <RouterLink to="/" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="calendar-week-fill" />
           <span class="whitespace-nowrap">Plan feeds</span>
         </RouterLink>
-        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent">
+        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="journal-bookmark-fill" />
           <span class="whitespace-nowrap">My Drafts</span>
         </RouterLink>

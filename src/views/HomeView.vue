@@ -11,18 +11,18 @@ import { getUsers } from '../../libs/userManagement'
 import Icon from '@/components/Icon.vue'
 const route = useRoute()
 const router = useRouter()
-const postPlans = ref([])
+const planDatas = ref([])
 const sortBy = ref(['postDate', 'desc'])
 const users = ref([])
 const sortAblePostPlans = computed(() => {
-  return sortObject(postPlans.value, sortBy.value[0], sortBy.value[1])
+  return sortObject(planDatas.value, sortBy.value[0], sortBy.value[1])
 })
 
 onMounted(
   async () => {
     // Fetch posts here
-    postPlans.value = await getPlans('post')
-    console.log(postPlans.value)
+    planDatas.value = await getPlans('post')
+    console.log(planDatas.value)
   }
 )
 
@@ -44,8 +44,8 @@ watch(
       console.log("Hi");
       const allPostPlans = await getPlans('post')
       const searchPattern = new RegExp(route.query.search, 'i')
-      postPlans.value = allPostPlans.filter(postPlan => {
-      const temp = searchPattern.test(postPlan.title)
+      planDatas.value = allPostPlans.filter(planData => {
+      const temp = searchPattern.test(planData.title)
         console.log(temp);
         return temp
       })
@@ -54,7 +54,7 @@ watch(
     } else {
       router.push('/')
       users.value = []
-      postPlans.value = await getPlans('post')
+      planDatas.value = await getPlans('post')
     }
   },
   { immediate: true }
@@ -73,7 +73,7 @@ watch(
           </div>
           <div>
             <div class="text-xl">Search keywords: "{{ route.query.search }}"</div>
-            <div class="text-secondary">{{ postPlans.length }} plan{{ postPlans.length > 1 ? 's' : '' }} found</div>
+            <div class="text-secondary">{{ planDatas.length }} plan{{ planDatas.length > 1 ? 's' : '' }} found</div>
           </div>
         </div>
         <div v-else class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-8 rounded-2xl">
@@ -99,7 +99,7 @@ watch(
           />
         </div>
         <PlanContainer v-if="users.length === 0">
-          <PlanCard v-for="plan in sortAblePostPlans" :key="plan.id" :postPlan="plan" />
+          <PlanCard v-for="plan in sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
         <div v-else>
           <div v-for="user in users" :key="user.id" class="flex items-center">

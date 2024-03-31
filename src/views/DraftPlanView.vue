@@ -53,7 +53,7 @@ onMounted(
           />
         </div>
         <PlanContainer>
-          <PlanCard v-for="plan in sortAbleDraftPlans" :key="plan.id" :postPlan="plan" />
+          <PlanCard v-for="plan in sortAbleDraftPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
       </div>
     </div>
