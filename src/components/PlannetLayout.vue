@@ -6,7 +6,6 @@ import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'
 import Icon from '@/components/Icon.vue'
-const emits = defineEmits(['submitSearch'])
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -18,8 +17,14 @@ const handleLogout = async () => {
   localStorage.removeItem('todo_token')
   router.replace('/login')
 }
+
 const handleSubmitSearch = (value) =>{
-emits('submitSearch',value)
+  router.push({
+    name:'home',
+    query: {
+      search: value
+    } 
+  })
 }
 
 </script>

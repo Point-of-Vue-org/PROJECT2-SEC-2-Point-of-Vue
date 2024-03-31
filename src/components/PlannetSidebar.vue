@@ -16,7 +16,7 @@ defineProps({
     <template #menu>
       <!-- Sidbar content here -->
       <slot>
-        <SearchBox @sumbitSearch="handleSumbitSearch" class="block lg:hidden" />
+        <!-- <SearchBox @sumbitSearch="handleSumbitSearch" class="block lg:hidden" /> -->
         <div class="divider m-0 lg:hidden"></div>
         <RouterLink to="/plan/create" class="btn btn-outline flex-nowrap">
           <Icon iconName="pen-fill" />

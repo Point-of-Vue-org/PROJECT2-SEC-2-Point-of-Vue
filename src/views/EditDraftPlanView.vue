@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, watch, reactive } from "vue";
+import { ref, onBeforeMount, onMounted, watch, reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { validateToken } from "../../libs/userManagement";
 import { useUserStore } from "@/stores/user";
@@ -15,6 +15,7 @@ import PlannetLayout from "@/components/PlannetLayout.vue";
 import PostPlan from "../../classes/plan/PostPlan";
 import { useToastStore } from "@/stores/toast";
 import Modal from "@/components/Modal.vue";
+import { upload } from "../../libs/imageManagement";
 
 const isLoading = ref(false)
 const route = useRoute();
@@ -27,13 +28,14 @@ const saveState = reactive({
   saveFail: false
 })
 const draftPlan = ref(new BasePlan())
+const postImageFile = ref(null)
 const isConfirmShow = ref(false)
-//handle Auto saving
+
 watch(draftPlan, async (newValue) => {
   saveState.saving = true
   console.log(newValue);
-
   try {
+    newValue.updatedAt = Date.now()
     await createOrUpdatePlan(newValue, 'draft')
     saveState.saving = false
     saveState.saveFail = false
@@ -46,11 +48,9 @@ watch(draftPlan, async (newValue) => {
   }
 }, { deep: true })
 
-
 onMounted(async () => {
   let id = route.params.id;
   draftPlan.value = await getPlanBy('id', id, 'draft')
-  
 })
 
 function handleAddDailyTask() {
@@ -99,7 +99,6 @@ function handleDeleteHourlyTask(dailyIndex, hourlyIndex) {
 
 function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
-
   const index = todos.findIndex(t => t.id === todoId)
 
   todos.splice(index, 1)
@@ -182,9 +181,18 @@ const handleDeleteDraftPlan = async () => {
   }
 }
 
+const handlePostImageFileChange = async (e) => {
+  const file = e.target.files[0]
+  if (file) {
+    const imageUrl = await upload(file)
+    draftPlan.value.imageUrl = imageUrl
+  }
+}
+
 </script>
 
 <template>
+  <input id="post-image-file" type="file" class="hidden" @change="handlePostImageFileChange" />
   <PlannetLayout>
     <div class="w-[85%] mt-12 flex flex-col gap-4 relative">
       <div class="flex items-center justify-between">
@@ -202,7 +210,7 @@ const handleDeleteDraftPlan = async () => {
             <div>Your change not saved !</div>
           </div>
         </div>
-        <div class="gap-2 hidden portrait:sm:flex landscape:sm:flex">
+        <div class="gap-2 hidden landscape:lg:flex">
           <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="journal-bookmark-fill" /> Publish as post</button>
           <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" /> Delete this draft</button>
         </div>
@@ -228,6 +236,30 @@ const handleDeleteDraftPlan = async () => {
         </div>
       </div>
       <div class="flex flex-col gap-3 mb-10">
+        <label for="post-image-file" class="h-52 relative rounded-2xl overflow-hidden cursor-pointer">
+          <div v-if="draftPlan.imageUrl" class="w-full h-52 relative">
+            <div v-show="draftPlan.imageUrl" class="bg-[#0008] absolute w-full h-full"></div>
+            <button class="absolute btn btn-error rounded-[1rem_0_1rem_0]">
+              <Icon iconName="trash-fill" />
+              <div>Delete cover image</div>
+            </button>
+            <img
+              :src="draftPlan.imageUrl"
+              alt="author image"
+              class="w-full h-full object-cover"
+            />
+          </div>
+          <div
+            v-else
+            class="w-full h-52 flex flex-col items-center justify-center bg-neutral"
+          >
+            <div class="flex items-center pointer-events-none">
+              <Icon iconName="upload" scale="2" class="w-16 h-12 grid place-items-center" />
+              <div class="text-2xl">Upload post image</div>
+            </div>
+            <div class="pointer-events-none">WIP: right now we recommend you to upload image that has 1:1 ratio (square) or close to it</div>
+          </div>
+        </label>
         <input
           v-if="!isLoading"
           v-model="draftPlan.title"
@@ -298,7 +330,7 @@ const handleDeleteDraftPlan = async () => {
                   <div class="grid grid-cols-[1fr_2fr_13fr_1fr] gap-2 w-full place-items-center">
                     <input type="checkbox" class="checkbox" disabled />
                     <div class="place-self-start flex gap-2">
-                      <input type="number" min="0" max="24" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /> to <input type="number" min="0" max="24" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" />
+                      <input type="time" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /> to <input type="time" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" />
                     </div>
                     <div class="place-self-start w-full">
                       <input

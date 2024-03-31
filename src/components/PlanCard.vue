@@ -28,8 +28,10 @@ onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.postPlan?.authorId)
 		upVoted.value = userStore.userData.upVotedPosts?.includes(props.postPlan?.id) || false
-		await props.postPlan?.loadComments()
-		commentsCount.value = props.postPlan?.comments?.length || 0
+		if (props.postPlan.type === 'post') {
+			await props.postPlan?.loadComments()
+			commentsCount.value = props.postPlan?.comments?.length || 0
+		}
 	}
 )
 
@@ -75,7 +77,10 @@ const handleToggleUpVote = async () => {
 					</div>
 				</div>
 				<div @click="handlePlanClick" class="text-[1.25em] font-bold hover:underline cursor-pointer">{{ postPlan?.title || 'Untitled plan' }}</div>
-				<div class="text-[0.6em] font-bold">{{ formatDate(postPlan?.postDate) }}</div>
+				<div>
+					<div v-show="postPlan.type === 'draft'" class="text-[0.8em]">Last updated at {{ formatDate(postPlan?.updatedAt) }}</div>
+					<div class="text-[0.6em]" :class="{ 'font-bold': postPlan.type === 'post' }">Create at {{ formatDate(postPlan.type === 'post' ? postPlan?.postDate : postPlan?.createdAt ) }}</div>
+				</div>
 			</div>
 			<div @click="handlePlanClick" class="flex-1 w-full h-[11em] bg-base-100 rounded-[0.6em] overflow-hidden cursor-pointer">
 				<img

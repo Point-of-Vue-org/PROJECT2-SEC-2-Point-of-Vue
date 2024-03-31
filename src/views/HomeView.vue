@@ -8,6 +8,7 @@ import SortMethodSelector from '@/components/SortMethodSelector.vue'
 import { sortObject } from '../../libs/utils'
 import { useRoute, useRouter } from 'vue-router'
 import { getUsers } from '../../libs/userManagement'
+import Icon from '@/components/Icon.vue'
 const route = useRoute()
 const router = useRouter()
 const postPlans = ref([])
@@ -24,14 +25,6 @@ onMounted(
     console.log(postPlans.value)
   }
 )
-const handleSubmitSearch = (value) =>{
-  router.push({
-    name:'home',
-    query: {
-      search: value
-    } 
-  })
-}
 
 watch(
   () => route.query.search,
@@ -69,11 +62,29 @@ watch(
 </script>
 
 <template>
-  <PlannetLayout @submitSearch="handleSubmitSearch">
-    <div class="flex flex-col items-center">
-      <div class="w-fit">
-        Search: {{ route.query?.search }}
-        <div class="h-24 w-full flex justify-start items-center">
+  <PlannetLayout>
+    <div class="flex flex-col items-center w-full">
+      <div class="w-[90%]">
+        <!-- Search: {{ route.query?.search }} -->
+        <div class="h-16"></div>
+        <div v-if="route.query.search" class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-10 rounded-2xl">
+          <div class="w-14 grid place-items-center">
+            <Icon iconName="search" scale="2" />
+          </div>
+          <div>
+            <div class="text-xl">Search keywords: "{{ route.query.search }}"</div>
+            <div class="text-secondary">{{ postPlans.length }} plan{{ postPlans.length > 1 ? 's' : '' }} found</div>
+          </div>
+        </div>
+        <div v-else class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-8 rounded-2xl">
+          <div class="w-14 grid place-items-center">
+            <Icon iconName="calendar-week-fill" scale="2" />
+          </div>
+          <div>
+            <div class="text-2xl font-bold">Plan feeds</div>
+          </div>
+        </div>
+        <div class="h-16 w-full flex justify-start items-center">
           <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           <SortMethodSelector
             :sortOptions="[
