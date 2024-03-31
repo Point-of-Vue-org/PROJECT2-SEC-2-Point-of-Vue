@@ -186,7 +186,47 @@ const handleDeleteDraftPlan = async () => {
 
 <template>
   <PlannetLayout>
-    <div class="w-[85%] mt-12 flex flex-col gap-4">
+    <div class="w-[85%] mt-12 flex flex-col gap-4 relative">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="flex gap-3" v-show="saveState.saving">
+            <div class="loading"></div>
+            <div>Saving</div>
+          </div>
+          <div class="flex gap-3" v-show="!saveState.saving && saveState.saved">
+            <Icon iconName="cloud-save" class="w-[1.5rem] h-[1.5rem]" />
+            <div>Saved</div>
+          </div>
+          <div class="flex gap-3 items-center" v-show="!saveState.saving && saveState.saveFail">
+            <Icon iconName="caution" class="w-10 h-10 flex items-center" />
+            <div>Your change not saved !</div>
+          </div>
+        </div>
+        <div class="gap-2 hidden portrait:sm:flex landscape:sm:flex">
+          <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="journal-bookmark-fill" /> Publish as post</button>
+          <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" /> Delete this draft</button>
+        </div>
+        <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4 absolute right-0 landscape:lg:hidden">
+          <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
+            <Icon iconName="three-dots" :scale="1.5" />
+          </div>
+          <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-accent border mr-4">
+            <li @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">
+              <button class="flex justify-start gap-2 btn btn-ghost">
+                <Icon iconName="journal-bookmark-fill" />
+                <div>Publish as post</div>
+              </button>
+            </li>
+            <div class="divider my-0 mx-2"></div>
+            <li @click="handleDeleteDraftPlan">
+              <div class="flex justify-start gap-2 btn btn-error btn-outline btn-sm">
+                <Icon iconName="trash-fill" />
+                <div>Delete this draft</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
       <!-- <div class="flex gap-4 items-center my-4">
         <img
           v-if="!isLoading && author?.setting?.avatarUrl"
@@ -342,44 +382,6 @@ const handleDeleteDraftPlan = async () => {
         <div class="skeleton h-16 w-full"></div>
         <div class="skeleton h-16 w-full"></div>
       </div> -->
-    </div>
-    <div class="absolute top-0 right-0 flex items-center">
-      <div class="flex gap-2 portrait:md:hidden">
-        <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">Publish as post</button>
-        <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan">Delete this draft</button>
-      </div>
-      <div class="flex gap-3 p-5" v-show="saveState.saving">
-        <div class="loading"></div>
-        <div class="w-32">Saving</div>
-      </div>
-      <div class="flex gap-3 p-5" v-show="!saveState.saving && saveState.saved">
-        <Icon iconName="cloud-save" class="w-[1.5rem] h-[1.5rem]" />
-        <div class="w-32">Saved</div>
-      </div>
-      <div class="flex gap-3 p-5 items-center" v-show="!saveState.saving && saveState.saveFail">
-        <Icon iconName="caution" class="w-10 h-10 flex items-center" />
-        <div>Your change not saved !</div>
-      </div>
-      <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4 absolute right-0 landscape:lg:hidden">
-        <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
-          <Icon iconName="three-dots" :scale="1.5" />
-        </div>
-        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-accent border mr-4">
-          <li @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">
-            <button class="flex justify-start gap-2 btn btn-ghost">
-              <Icon iconName="journal-bookmark-fill" />
-              <div>Publish as post</div>
-            </button>
-          </li>
-          <div class="divider my-0 mx-2"></div>
-          <li @click="handleDeleteDraftPlan">
-            <div class="flex justify-start gap-2 btn btn-error btn-outline btn-sm">
-              <Icon iconName="trash-fill" />
-              <div>Delete this draft</div>
-            </div>
-          </li>
-        </ul>
-      </div>
     </div>
     
     <Modal :show="isConfirmShow">

@@ -128,7 +128,7 @@ const handleSubmitNewPassword = async() => {
 }
 </script>
 <template>
-  <main class="w-full h-screen overflow-hidden relative">
+  <main class="w-full h-svh sm:h-screen overflow-hidden relative">
     <SlideShow :pageAmount="3" :currentPage="page">
       <SlidePage :page="1" :currentPage="page" translate="scale" class="gap-2">
         <p class="opacity-75 text-2xl">Please enter your Email</p>

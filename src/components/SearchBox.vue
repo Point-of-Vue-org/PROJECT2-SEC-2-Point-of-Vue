@@ -31,10 +31,10 @@ const handleSubmitSearch = (e) => {
 </script>
 
 <template>
-  <div @focusin="handleFocusIn" @focusout="handleFocusOut" class="form-control relative">
+  <div @focusin="handleFocusIn" @focusout="handleFocusOut" class="form-control relative w-full">
     <Icon iconName="search" class="absolute left-5 top-4 pointer-events-none" />
-    <input @keyup.enter="handleSubmitSearch($event)" type="text" placeholder="Search" class="pl-12 input input-bordered min-w-96 md:w-auto rounded-xl" />
-    <div v-if="openState" class="absolute top-14 w-full bg-base-100 rounded-box border shadow-lg border-neutral">
+    <input @keyup.enter="handleSubmitSearch($event)" type="text" placeholder="Search" class="pl-12 input input-bordered w-full max-w-96 md:w-auto rounded-xl" />
+    <div v-if="openState" class="absolute top-14 w-full bg-base-300 rounded border shadow-lg border-neutral z-50">
       <ul class="p-2">
         <li class="p-2 hover:bg-base-200" @click="handleClickSearch">Search result 1</li>
         <li class="p-2 hover:bg-base-200">Search result 2</li>
