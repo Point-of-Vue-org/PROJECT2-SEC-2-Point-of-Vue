@@ -65,3 +65,14 @@ List of Feature
 - Publish plan UI v1 (successfully)
 - Plan to draft v1 (successfully)
 - Responsive v1 (in progress)
+
+## 3/29/2024
+- Forgot password system (in progress)
+- Sort post system (successfully)
+- Set up account (successfully)
+
+## 3/30/2024
+- Search post v1 (successfully)
+- Fix bug sidebar in User Security (successfully)
+- Forgot password v1 (successfully)
+
