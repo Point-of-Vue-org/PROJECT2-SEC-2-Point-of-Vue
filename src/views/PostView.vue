@@ -1,18 +1,19 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, watch} from 'vue'
+import { ref, onBeforeMount, onMounted, watch, computed} from 'vue'
 import { useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy, logout, updateUserData, validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
-import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan } from '../../libs/planManagement.js'
+import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan, updatePlanData } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
 import PostPlan from '../../classes/plan/PostPlan'
 import CommentCard from '@/components/CommentCard.vue'
 import ListItem from '@/components/ListItem.vue'
 import { Comment } from '../../classes/Comment'
-import { formatDate } from '../../libs/utils'
+import { formatDate, sortObject } from '../../libs/utils'
 import PlannetLayout from '@/components/PlannetLayout.vue'
+import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
 
 const isLoading = ref(false)
 const route = useRoute()
@@ -23,14 +24,19 @@ const author = ref({})
 
 const upVoted = ref(false)
 const downVoted = ref(false)
-
+const comments = ref([])
+const sortAbleComments = computed(() => {
+  return sortObject(comments.value, 'date', 'desc')
+})
 const newComment = ref('')
 
 async function fetchData() {
   isLoading.value = true
   try {
     postPlan.value = await getPlanBy('id', route.params.id, 'post')
-    console.log(postPlan.value);
+    await postPlan.value.loadComments()
+    comments.value = postPlan.value.comments
+
     author.value = await getUserBy('id', postPlan.value.authorId)
 
     upVoted.value = userStore.userData.upVotedPosts?.includes(postPlan.value.id) || false
@@ -54,11 +60,12 @@ const handleAddComment = async () => {
     date: Date.now(),
   })
   console.log(comment);
-  const res = await postPlan.value.addComment(comment)
-  if (res) {
+
+  const addedComment = await postPlan.value.addComment(comment)
+  if (addedComment) {
     toastStore.addToast('Comment added', 'success')
-    comment['author'] = userStore.userData
-    postPlan.value.comments.unshift(comment)
+    addedComment['author'] = userStore.userData
+    postPlan.value.comments.push(addedComment)
     newComment.value = ''
   } else {
     toastStore.addToast('Failed to add comment', 'error')
@@ -102,6 +109,7 @@ const handleSaveToDraft = async () => {
         <div v-if="!isLoading && postPlan.imageUrl">
           <div class="bg-[#0008] absolute w-full h-full"></div>
           <img
+            v-if="!isLoading && postPlan.imageUrl"
             :src="postPlan.imageUrl"
             alt="author image"
             class="w-full h-52 object-cover"
@@ -184,12 +192,13 @@ const handleSaveToDraft = async () => {
         <div class="font-semibold">Created by</div>
         <div class="flex gap-4 items-center my-4 bg-base">
           <img
-          v-if="!isLoading && author?.setting?.avatarUrl"
-          :src="author.setting.avatarUrl"
-          alt="author image"
-          class="w-20 h-20 rounded-full object-cover"
+            v-if="!isLoading && author?.setting?.avatarUrl"
+            :src="author.setting.avatarUrl"
+            alt="author image"
+            class="w-20 h-20 rounded-full object-cover"
           />
-          <div v-else class="skeleton w-10 h-10"></div>
+          <div v-else-if="isLoading" class="skeleton w-10 h-10"></div>
+          <UserProfilePlaceholder v-else size="5rem" color="#f50" bgcolor="white" class="rounded-full" />
           <div class="flex flex-col gap-0.5">
             <div v-if="!isLoading && author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
             <div v-else class="skeleton h-6 w-20"></div>
@@ -234,7 +243,11 @@ const handleSaveToDraft = async () => {
       <!-- <div class="font-semibold  my-4">Comments</div> -->
       <div class="flex gap-2 mb-6 items-center border border-neutral bg-accent rounded-2xl px-4">
         <div class="flex-none w-fit">
-          <img :src="userStore.userData.setting.avatarUrl" class="w-8 h-8 rounded-full" />
+          <img
+            v-if="userStore.userData.setting.avatarUrl"
+            :src="userStore.userData.setting.avatarUrl" class="w-8 h-8 rounded-full"
+          />
+          <UserProfilePlaceholder v-else size="2rem" color="#f50" bgcolor="white" class="rounded-full" />
         </div>
         <textarea
           v-model="newComment"
@@ -244,7 +257,7 @@ const handleSaveToDraft = async () => {
         <button @click="handleAddComment" class="flex-none btn btn-sm btn-primary text-neutral" :disabled="newComment.length === 0">Comment</button>
       </div>
       <div v-if="!isLoading" class="flex flex-col gap-2 mb-16">
-        <CommentCard v-for="(comment, index) in postPlan.comments" :key="index" :comment="comment" />
+        <CommentCard v-for="comment in sortAbleComments" :key="comment.id" :comment="comment" />
       </div>
       <div v-else class="flex flex-col gap-2 mb-16">
         <div class="skeleton h-16 w-full"></div>

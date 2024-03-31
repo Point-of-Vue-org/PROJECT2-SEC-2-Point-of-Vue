@@ -3,6 +3,21 @@ import { isEmail } from './utils'
 import { decrypt, hash } from './plannetEncrypt.js'
 
 const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
+export async function getUsers(isSafeMode){
+  const response = await fetch(`${JSON_SERVER_URI}/users`)
+  const data = await response.json()
+  // if(isSafeMode){
+  //   return data.map(user => {
+  //     const safeUser = new User(user)
+  //     delete safeUser.password
+  //     delete safeUser.securityQuestions
+  //     console.log(safeUser);
+  //     return safeUser
+    
+  //   })
+  // }
+  return data.map(user => new User(user))
+}
 
 /**
  * Fetches a user by a given key and value

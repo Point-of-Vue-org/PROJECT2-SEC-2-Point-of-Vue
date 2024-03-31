@@ -1,4 +1,5 @@
 import { Comment } from "../classes/Comment"
+import { getPlanBy, updatePlanData } from "./planManagement"
 import { updateUserData } from "./userManagement"
 
 const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
@@ -19,7 +20,21 @@ export async function createComment(commentObject) {
     },
     body: JSON.stringify(commentObject)
   })
+
   const data = await res.json()
+  console.log('data', data);
+
+  if (data) {
+    // console.log(data.postId);
+    const postPlan = await getPlanBy('id', data.postId, 'post')
+    console.log(postPlan);
+    const res = await updatePlanData(postPlan.id, { commentsCount: postPlan.commentsCount + 1 }, 'post')
+    if (!res) throw new Error('Error updating post plan comments count')
+  } else {
+    // console.error('Error creating comment:', res)
+    throw new Error('Error creating comment')
+  }
+
   return new Comment(data)
 }
 

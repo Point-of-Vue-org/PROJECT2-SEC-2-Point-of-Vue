@@ -22,11 +22,14 @@ const userStore = useUserStore()
 const toastStore = useToastStore()
 const author = ref({})
 const upVoted = ref(false)
+const commentsCount = ref(0)
 
 onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.postPlan?.authorId)
 		upVoted.value = userStore.userData.upVotedPosts?.includes(props.postPlan?.id) || false
+		await props.postPlan?.loadComments()
+		commentsCount.value = props.postPlan?.comments?.length || 0
 	}
 )
 
@@ -60,8 +63,8 @@ const handleToggleUpVote = async () => {
 						/>
 						<div v-else>
 							<UserProfilePlaceholder
-								color="white"
-								bgcolor="black"
+								color="#f50"
+								bgcolor="white"
 								size="100%"
 							/>
 						</div>
@@ -93,7 +96,7 @@ const handleToggleUpVote = async () => {
 				</div>
 				<div @click="handlePlanClick" class="flex items-center gap-3 cursor-pointer">
 					<Icon iconName="chat-right-dots" />
-					<div class="font-bold">{{ postPlan.comments.length || '0' }}</div>
+					<div class="font-bold">{{ commentsCount || '0' }}</div>
 				</div>
 				<!-- <Icon iconName="paper-clip" /> -->
 			</div>
