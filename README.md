@@ -45,7 +45,7 @@
 
 </ul>
 </td>
-<td>30%</td>
+<td>0%</td>
 <td><img src="./src/assets/readme/avatar/mink.jpg"></td>
 </tr>
 <tr>
