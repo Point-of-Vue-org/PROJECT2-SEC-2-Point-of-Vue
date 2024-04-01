@@ -29,7 +29,7 @@ onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.planData?.authorId)
 		upVoted.value = props.planData?.upVotedUserIds?.includes(userStore.userData.id) || false
-		if (props.planData.type === 'post') {
+		if (props.planData?.type === 'post') {
 			await props.planData?.loadComments()
 			commentsCount.value = props.planData?.comments?.length || 0
 		}
@@ -79,8 +79,8 @@ const handleToggleUpVote = async () => {
 				</div>
 				<div @click="handlePlanClick" class="text-[1.25em] font-bold hover:underline cursor-pointer">{{ planData?.title || 'Untitled plan' }}</div>
 				<div>
-					<div v-show="planData.type === 'draft'" class="text-[0.7em]">Last updated at {{ formatDate(planData?.updatedAt) }}</div>
-					<div class="text-[0.6em]" :class="{ 'font-bold': planData.type === 'post' }">{{ (planData.type === 'draft' ? 'Create at ' : '') + formatDate(planData.type === 'post' ? planData?.postDate : planData?.createdAt ) }}</div>
+					<div v-show="planData?.type === 'draft'" class="text-[0.7em]">Last updated at {{ formatDate(planData?.updatedAt) }}</div>
+					<div class="text-[0.6em]" :class="{ 'font-bold': planData?.type === 'post' }">{{ (planData?.type === 'draft' ? 'Create at ' : '') + formatDate(planData?.type === 'post' ? planData?.postDate : planData?.createdAt ) }}</div>
 				</div>
 			</div>
 			<div @click="handlePlanClick" class="flex-1 w-full h-[11em] bg-base-100 rounded-[0.6em] overflow-hidden cursor-pointer">

@@ -166,7 +166,7 @@ const handleSave = async () => {
       </div>
     </div>
     <form @submit.prevent="handleSave" class="flex flex-col gap-10">
-      <div class="flex">
+      <div class="flex flex-col portrait:md:flex-row landscape:md:flex-row xl:flex-row">
         <div class="flex-1 flex flex-col gap-4">
           <div class="flex flex-col gap-2">
             <label for="nickname" class="font-semibold text-sm">Display Name</label>
@@ -190,7 +190,7 @@ const handleSave = async () => {
           </div>
         </div>
         <div class="flex-auto flex flex-col gap-2 portrait:md:ml-5">
-          <label for="bio" class="font-semibold text-sm">Bio</label>
+          <label for="bio" class="portrait:mt-3 font-semibold text-sm">Bio</label>
           <textarea
             v-model="bio"
             placeholder="Tell us about yourself..."
@@ -198,7 +198,7 @@ const handleSave = async () => {
           ></textarea>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary w-1/5 ml-auto" :disabled="disabledSave">
+      <button type="submit" class="btn btn-primary md:xl:w-1/5 ml-auto" :disabled="disabledSave">
         Save Changes
       </button>
     </form>

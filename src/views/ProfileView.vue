@@ -83,11 +83,11 @@ watch(route, () => {
         />
       </nav>
       <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex items-center">
-        <PlanContainer v-if="postPlans.length > 0" class="w-fit flex gap-36 landscape:md:gap-16 mx-4">
+        <PlanContainer v-if="postPlans.length > 0" class="flex">
           <PlanCard
             v-for="plan in postPlans"
             :key="plan.id"
-            :postPlan="plan"
+            :planData="plan"
           />
         </PlanContainer>
         <div v-else class="flex flex-col items-center gap-4">
