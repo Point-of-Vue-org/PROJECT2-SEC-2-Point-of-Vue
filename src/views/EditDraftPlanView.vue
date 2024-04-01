@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onBeforeMount, onMounted, watch, reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { validateToken } from "../../libs/userManagement";
+import { getUserBy, getUsers, updateUserData, validateToken } from "../../libs/userManagement";
 import { useUserStore } from "@/stores/user";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
@@ -16,11 +16,12 @@ import PostPlan from "../../classes/plan/PostPlan";
 import { useToastStore } from "@/stores/toast";
 import Modal from "@/components/Modal.vue";
 import { upload } from "../../libs/imageManagement";
+import LoadingModal from "@/components/LoadingModal.vue";
 
 const isLoading = ref(false)
-const route = useRoute();
-const router = useRouter();
-const userStore = useUserStore();
+const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
 const toastStore = useToastStore()
 const saveState = reactive({
   saving: false,
@@ -28,7 +29,7 @@ const saveState = reactive({
   saveFail: false
 })
 const draftPlan = ref(new BasePlan())
-const isConfirmShow = ref(false)
+const confirmOpenState = ref(false)
 
 watch(draftPlan, async (newValue, oldValue) => {
   saveState.saved = true
@@ -41,8 +42,7 @@ watch(draftPlan, async (newValue, oldValue) => {
     saveState.saving = false
     saveState.saveFail = false
     saveState.saved = true
-  }
-  catch (e) {
+  } catch (e) {
     saveState.saving = false
     saveState.saved = false
     saveState.saveFail = true
@@ -100,14 +100,14 @@ function handleDeleteHourlyTask(dailyIndex, hourlyIndex) {
 
 function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
-  const index = todos.findIndex(t => t.id === todoId)
+  const index = todos.findIndex(todo => todo.id === todoId)
 
   todos.splice(index, 1)
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
 function handlePopUpPublish(){
-  isConfirmShow.value = !isConfirmShow.value
+  confirmOpenState.value = !confirmOpenState.value
 }
 
 async function handlePublishNow(){
@@ -147,21 +147,40 @@ async function handlePublishNow(){
       }
     }
   }
-  // draftPlan.value.type = 'post'
+
   const isPostPlanExist = await isPlanExist(draftPlan.value.id, 'post')
   if(isPostPlanExist){
     if(window.confirm('This plan is already published. Do you want to override it?') === false) return
+    const newPostPlan = new PostPlan(draftPlan.value)
+    newPostPlan.published = true
+    newPostPlan.postDate = Date.now()
+    const res = await createOrUpdatePlan(newPostPlan, 'post')
+    if(res){
+      for (const userId of newPostPlan.upVotedUserIds) {
+        const user = await getUserBy('id', userId)
+        const planIdIndex = user.upVotedPlans.indexOf(newPostPlan.id)
+        user.upVotedPlans.splice(planIdIndex, 1)
+        const updatedUser = await updateUserData(user, { upVotedPlans: user.upVotedPlans })
+        if (updatedUser) {
+          console.log(updatedUser);
+          userStore.userData.upVotedPlans.splice(planIdIndex, 1)
+        }
+      }
+      for (const userId of newPostPlan.downVotedUserIds) {
+        const user = await getUserBy('id', userId)
+        const planIdIndex = user.downVotedPlans.indexOf(newPostPlan.id)
+        user.downVotedPlans.splice(planIdIndex, 1)
+        const updatedUser = await updateUserData(user, { downVotedPlans: user.downVotedPlans })
+        if (updatedUser) {
+          userStore.userData.downVotedPlans.splice(planIdIndex, 1)
+        }
+      }
+      toastStore.addToast(`Plan ${newPostPlan.title}#${newPostPlan.id} published successfully`,'success')
+    }else{
+      toastStore.addToast(`Failed to publish plan ${newPostPlan.title}#${newPostPlan.id}`, 'error')
+    }
   }
-  const newPostPlan = new PostPlan(draftPlan.value)
-  newPostPlan.published = true
-  newPostPlan.postDate = Date.now()
-  const res = await createOrUpdatePlan(newPostPlan, 'post')
-  if(res){
-    toastStore.addToast(`Plan ${newPostPlan.title}#${newPostPlan.id} published successfully`,'success')
-  }else{
-    toastStore.addToast(`Failed to publish plan ${newPostPlan.title}#${newPostPlan.id}`, 'error')
-  }
-  
+  confirmOpenState.value = false
 }
 
 onBeforeMount(async () => {
@@ -185,8 +204,20 @@ const handleDeleteDraftPlan = async () => {
 const handlePostImageFileChange = async (e) => {
   const file = e.target.files[0]
   if (file) {
-    const imageUrl = await upload(file)
-    draftPlan.value.imageUrl = imageUrl
+    let imageUrl = null
+    try {
+      isLoading.value = true
+      imageUrl = await upload(file)
+    } catch (error) {
+      console.error(error)
+      toastStore.addToast(error.message, 'error')
+    } finally {
+      isLoading.value = false
+    }
+
+    if (imageUrl) {
+      draftPlan.value.imageUrl = imageUrl
+    }
   }
 }
 
@@ -202,7 +233,25 @@ const handleDeletePostImage = async () => {
 </script>
 
 <template>
-  <input id="post-image-file" type="file" class="hidden" @change="handlePostImageFileChange" />
+  <input
+    id="post-image-file"
+    type="file"
+    class="hidden"
+    @change="handlePostImageFileChange"
+    accept="image/jpeg, image/png"
+    title="Upload post image"
+  />
+  <LoadingModal :show="isLoading" text="Uploading image..." />
+  <Modal :show="confirmOpenState">
+    <div class="flex items-center flex-col  h-1/2 w-full pt-10 justify-center">
+      <!-- <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/> -->
+      <div class="text-2xl">Do you want to <span class="text-primary">publish</span> this draft now ?</div>
+      <div class="flex gap-3 pt-5">
+        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublishNow">Publish Now</button>
+        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handlePopUpPublish">Cancel</button>
+      </div>
+    </div>
+  </Modal>
   <PlannetLayout>
     <div class="w-[85%] mt-12 flex flex-col gap-4 relative">
       <div class="flex items-center justify-between">
@@ -271,14 +320,12 @@ const handleDeletePostImage = async () => {
           </div>
         </label>
         <input
-          v-if="!isLoading"
           v-model="draftPlan.title"
           class="text-3xl font-bold font-helvetica bg-transparent outline-none focus:placeholder:opacity-50"
           placeholder="Your plan title here"
           autofocus
         />
         <textarea
-          v-if="!isLoading"
           v-model="draftPlan.description"
           class="font-helvetica opacity-70 bg-transparent outline-none focus:placeholder:opacity-50"
           placeholder="Plan description..."
@@ -407,17 +454,6 @@ const handleDeletePostImage = async () => {
         <div class="skeleton h-16 w-full"></div>
       </div> -->
     </div>
-    
-    <Modal :show="isConfirmShow">
-      <div class="flex items-center flex-col  h-1/2 w-full pt-10 justify-center">
-        <!-- <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/> -->
-        <div class="text-2xl">Do you want to <span class="text-primary">publish</span> this draft now ?</div>
-        <div class="flex gap-3 pt-5">
-          <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublishNow">Publish Now</button>
-          <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handlePopUpPublish">Cancel</button>
-        </div>
-      </div>
-    </Modal>
   </PlannetLayout>
 </template>
 

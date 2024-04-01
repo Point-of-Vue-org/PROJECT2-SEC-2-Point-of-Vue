@@ -12,7 +12,6 @@ import Logo from '@/components/Logo.vue';
 import { validateNickname } from '../../libs/validationUtils';
 import Icon from '@/components/Icon.vue';
 import { upload } from '../../libs/imageManagement';
-import Modal from '@/components/Modal.vue';
 import { hash } from '../../libs/plannetEncrypt';
 
 const isLoading = ref(false)
@@ -113,12 +112,7 @@ const handleFinish = async () => {
 </script>
 
 <template>
-	<Modal :show="isLoading">
-    <div class="flex flex-col items-center gap-4">
-      <div>Setting up your profile...</div>
-      <div class="loading loading-lg loading-spinner"></div>
-    </div>
-  </Modal>
+	<LoadingModal :show="isLoading" text="Setting up your profile..." />
 	<main class="w-full h-svh sm:h-screen overflow-hidden relative">
 		<SlideShow :pageAmount="4" :currentPage="page">
 			<SlidePage :page="1" :currentPage="page" transitionType="scale">

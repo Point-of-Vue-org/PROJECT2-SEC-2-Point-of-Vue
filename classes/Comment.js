@@ -4,7 +4,9 @@ const defaultCommentData = {
     postId: '',
     content: '',
     upVote: 0,
+    upVotedUserIds: [],
     downVote: 0,
+    downVotedUserIds: [],
     date: null,
     repliedTo: '',
 }

@@ -9,8 +9,8 @@ const defaultUserData = {
         bannerUrl: ''
     },
     bio: '',
-    upVotedPosts: [],
-    downVotedPosts: [],
+    upVotedPlans: [],
+    downVotedPlans: [],
     upVotedComments: [],
     downVotedComments: [],
 }
