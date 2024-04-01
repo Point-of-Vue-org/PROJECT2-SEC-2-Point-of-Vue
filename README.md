@@ -119,4 +119,9 @@
 </div>
 
 <hr>
-<br>
+
+<h2 align="center">Features</h2>
+
+<ul>
+    <li>write your plan</li>
+</ul>
