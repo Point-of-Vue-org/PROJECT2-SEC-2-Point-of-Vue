@@ -77,11 +77,11 @@ function handleDeleteAccount(){
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-4 w-full">
     <div class="w-full p-10 flex flex-col gap-4">
       <div class="flex flex-col mt-3">
         <div class="text-2xl font-helvetica font-bold">Password Reset</div>
-        <div class="divider divider-primary w-[60rem] portrait:md:w-[40rem] landscape:md:w-[50rem]"></div>
+        <div class="divider divider-secondary opacity-80 w-full max-w-[20rem] portrait:md:max-w-[40rem] landscape:md:max-w-[50rem]"></div>
       </div>
       <div class="flex flex-col gap-2 w-fit">
         <div>Your Old password</div>
@@ -140,7 +140,7 @@ function handleDeleteAccount(){
     <div class="w-full p-10 flex flex-col gap-4">
       <div class="flex flex-col">
         <div class="text-2xl font-helvetica font-bold">Change Account Email</div>
-        <div class="divider divider-primary w-[60rem] portrait:md:w-[40rem] landscape:md:w-[50rem]"></div>
+        <div class="divider divider-secondary opacity-80 w-full max-w-[20rem] portrait:md:max-w-[40rem] landscape:md:max-w-[50rem]"></div>
       </div>
       <div class="flex flex-col gap-3 w-1/3">
         <div>Change Email</div>
@@ -149,7 +149,7 @@ function handleDeleteAccount(){
       </div>
       <div class="flex flex-col">
         <div class="text-2xl font-helvetica font-bold text-red-600">Danger Zone</div>
-        <div class="divider divider-primary w-[60rem] portrait:md:w-[40rem] landscape:md:w-[50rem]"></div>
+        <div class="divider divider-secondary opacity-80 w-full max-w-[20rem] portrait:md:max-w-[40rem] landscape:md:max-w-[50rem]"></div>
         <button class="btn bg-error w-1/2" @click="handleDeleteAccount">Delete Account</button>
       </div>
     </div>
