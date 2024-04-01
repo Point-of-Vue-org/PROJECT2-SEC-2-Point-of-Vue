@@ -9,6 +9,13 @@ defineProps({
     type: Boolean
   }
 })
+
+const emits = defineEmits(['submitSearch'])
+
+const handleSubmitSearch = (value) => {
+  emits('submitSearch', value)
+}
+
 </script>
 
 <template>
@@ -16,7 +23,9 @@ defineProps({
     <template #menu>
       <!-- Sidbar content here -->
       <slot>
-        <!-- <SearchBox @sumbitSearch="handleSumbitSearch" class="block lg:hidden" /> -->
+        <div class="block lg:hidden">
+          <SearchBox @submitSearch="handleSubmitSearch" />
+        </div>
         <div class="divider m-0 lg:hidden"></div>
         <RouterLink to="/plan/create" class="btn btn-outline flex-nowrap">
           <Icon iconName="pen-fill" />
