@@ -6,7 +6,7 @@ import { useToastStore } from '@/stores/toast';
 import { updateUserData } from '../../../libs/userManagement';
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
 import { validateNickname } from '../../../libs/validationUtils';
-import LoadModal from '@/components/LoadModal.vue';
+import LoadingModal from '@/components/LoadingModal.vue';
 
 const isLoading = ref(false)
 const userStore = useUserStore()
@@ -107,7 +107,7 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <LoadModal :show="isLoading" text="Saving change..." />
+  <LoadingModal :show="isLoading" text="Saving change..." />
   <input
     id="banner-input"
     type="file"
