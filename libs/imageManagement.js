@@ -13,6 +13,17 @@ export async function saveImageURL(imageURL) {
 }
 
 export async function upload(imageFile) {
+
+  const supportedTypes = ['image/jpeg', 'image/png']
+
+  if (imageFile.size > 1024 * 1024 * 5) {
+    throw new Error('Image size must be less than 5MB!')
+  }
+
+  if (!supportedTypes.includes(imageFile.type)) {    
+    throw new Error('Invalid image type! Only JPEG and PNG are allowed!')
+  }
+
   const data = new FormData()
   data.append('image', imageFile)
 

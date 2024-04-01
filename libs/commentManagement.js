@@ -54,7 +54,10 @@ export async function updateCommentData(id, updateData) {
 export async function toggleUpVoteComment(userData, commentData) {
   let upVoted = userData.upVotedComments.includes(commentData.id)
 
-	const updatedPlan = await updateCommentData(commentData.id, { upVote: commentData.upVote + (upVoted ? -1 : 1) })
+	const updatedPlan = await updateCommentData(commentData.id, {
+    upVote: commentData.upVote + (upVoted ? -1 : 1),
+    upVotedUserIds: upVoted ? commentData.upVotedUserIds.filter((id) => id !== userData.id) : [...commentData.upVotedUserIds, userData.id]
+  })
 	if (updatedPlan) commentData.upVote += upVoted ? -1 : 1
 
 	if (!upVoted) userData.upVotedComments.push(commentData.id)

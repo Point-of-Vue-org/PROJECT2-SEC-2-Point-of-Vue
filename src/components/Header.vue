@@ -33,7 +33,7 @@ const handleSumbitSearch = (value) => {
         <span class="text-lg font-bold">Plannet</span>
       </RouterLink>
     </div>
-    <div class="gap-2 hidden lg:flex justify-center">
+    <div class="gap-2 hidden lg:flex justify-center w-96">
       <SearchBox @sumbitSearch="handleSumbitSearch" />
     </div>
     <div v-if="userStore.userData.id" class="dropdown dropdown-end">

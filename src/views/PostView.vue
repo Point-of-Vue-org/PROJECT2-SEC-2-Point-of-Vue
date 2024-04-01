@@ -39,8 +39,8 @@ async function fetchData() {
 
     author.value = await getUserBy('id', postPlan.value.authorId)
 
-    upVoted.value = userStore.userData.upVotedPosts?.includes(postPlan.value.id) || false
-    downVoted.value = userStore.userData.downVotedPosts?.includes(postPlan.value.id) || false
+    upVoted.value = userStore.userData.upVotedPlans?.includes(postPlan.value.id) || false
+    downVoted.value = userStore.userData.downVotedPlans?.includes(postPlan.value.id) || false
   } catch (error) {
     console.error('error', error)
     toastStore.type = 'error'

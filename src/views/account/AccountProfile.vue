@@ -5,8 +5,8 @@ import { useUserStore } from '@/stores/user';
 import { useToastStore } from '@/stores/toast';
 import { updateUserData } from '../../../libs/userManagement';
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
-import Modal from '@/components/Modal.vue';
 import { validateNickname } from '../../../libs/validationUtils';
+import LoadModal from '@/components/LoadModal.vue';
 
 const isLoading = ref(false)
 const userStore = useUserStore()
@@ -107,23 +107,22 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <Modal :show="isLoading">
-    <div class="flex flex-col items-center gap-4">
-      <div>Saving Changes...</div>
-      <div class="loading loading-lg loading-spinner"></div>
-    </div>
-  </Modal>
+  <LoadModal :show="isLoading" text="Saving change..." />
   <input
     id="banner-input"
     type="file"
     @change="handleImageFileChange($event, 'banner')"
     class="hidden"
+    accept="image/jpeg, image/png"
+    title="Upload cover image"
   />
   <input
     id="avatar-input"
     type="file"
     @change="handleImageFileChange($event, 'avatar')"
     class="hidden"
+    accept="image/jpeg, image/png"
+    title="Upload avatar image"
   />
   <section class="w-full p-10 flex flex-col gap-4">
     <div class="w-full h-24 mb-2 relative">

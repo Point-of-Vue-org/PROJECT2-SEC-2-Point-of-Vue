@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router';
 import BaseSidebar from './BaseSidebar.vue';
 import Icon from './Icon.vue';
+import SearchBox from './SearchBox.vue';
 
 defineProps({
   openState: {
@@ -15,16 +16,18 @@ defineProps({
     <template #menu>
       <!-- Sidbar content here -->
       <slot>
+        <!-- <SearchBox @sumbitSearch="handleSumbitSearch" class="block lg:hidden" /> -->
+        <div class="divider m-0 lg:hidden"></div>
         <RouterLink to="/plan/create" class="btn btn-outline flex-nowrap">
           <Icon iconName="pen-fill" />
           <span class="whitespace-nowrap">Write your plan</span>
         </RouterLink>
-        <div class="divider"></div>
-        <RouterLink to="/" class="btn justify-start" exact-active-class="btn-accent">
+        <div class="divider m-0"></div>
+        <RouterLink to="/" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="calendar-week-fill" />
           <span class="whitespace-nowrap">Plan feeds</span>
         </RouterLink>
-        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent">
+        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="journal-bookmark-fill" />
           <span class="whitespace-nowrap">My Drafts</span>
         </RouterLink>
