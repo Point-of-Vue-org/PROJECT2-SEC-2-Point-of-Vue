@@ -54,7 +54,7 @@ const handleToggleUpVote = async () => {
 
 <template>
 	<div class="text-[1.25rem] sm:text-[1rem]">
-		<div class="w-[16em] h-[24em] bg-neutral rounded-2xl p-[1em] flex flex-col gap-[0.5em] text-accent shadow-postcard">
+		<div class="portrait:md:w-[15em] w-[16em] h-[24em] bg-neutral rounded-2xl p-[1em] flex flex-col gap-[0.5em] text-accent shadow-postcard">
 			<div class="flex-none flex flex-col gap-[1em]">
 				<div class="flex gap-[1em] items-center tracking-wider">
 					<div class=" w-[2.5em] h-[2.5em] bg-black rounded-full overflow-hidden">

@@ -82,8 +82,8 @@ watch(route, () => {
           @sortOptionSelect="sortBy = $event"
         />
       </nav>
-      <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex items-center">
-        <PlanContainer v-if="postPlans.length > 0" class="flex">
+      <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex items-center justify-center">
+        <PlanContainer v-if="postPlans.length > 0" pageName="profileview">
           <PlanCard
             v-for="plan in postPlans"
             :key="plan.id"

@@ -98,7 +98,7 @@ watch(
             @sortOptionSelect="sortBy = $event"
           />
         </div>
-        <PlanContainer v-if="users.length === 0">
+        <PlanContainer v-if="users.length === 0" pageName="homeview">
           <PlanCard v-for="plan in sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
         <div v-else>
