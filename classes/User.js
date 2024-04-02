@@ -1,4 +1,5 @@
 const defaultUserData = {
+    id: undefined,
     hasSetup: false,
     username: '',
     nickname: '',

@@ -9,6 +9,7 @@ import { sortObject } from '../../libs/utils'
 import { useRoute, useRouter } from 'vue-router'
 import { getUsers } from '../../libs/userManagement'
 import Icon from '@/components/Icon.vue'
+import UserCard from '@/components/UserCard.vue'
 const route = useRoute()
 const router = useRouter()
 const planDatas = ref([])
@@ -101,13 +102,8 @@ watch(
         <PlanContainer v-if="users.length === 0">
           <PlanCard v-for="plan in sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
-        <div v-else>
-          <div v-for="user in users" :key="user.id" class="flex items-center">
-            <div class="flex-1">
-              <div class="text-xl font-bold">{{ user.username }}</div>
-            </div>
-          </div>
-
+        <div v-else class="flex flex-col gap-4">
+          <UserCard v-for="user in users" :key="user.id" :userData="user" />
         </div>
       </div>
     </div>

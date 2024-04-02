@@ -27,7 +27,7 @@ const handleSubmitSearch = () => {
     <div class="w-11/12 max-w-[40rem] bg-base-100 p-4 rounded-2xl flex flex-col gap-4 border border-secondary">
       <div class="relative w-full flex gap-2">
         <Icon iconName="search" class="absolute left-5 top-4 pointer-events-none" />
-        <input v-model="searchTerms" @keyup.enter="handleSubmitSearch" type="text" placeholder="Type your keywords to search" class="pl-12 input input-bordered w-full rounded-lg" />
+        <input v-model="searchTerms" @keyup.enter="handleSubmitSearch" type="text" placeholder="Type your keywords to search" class="pl-12 input input-bordered w-full rounded-lg" autofocus />
         <button @click="handleSubmitSearch" class="btn btn-accent hidden lg:block">Search</button>
       </div>
       <div class="text-xs sm:text-sm text-secondary">You can type <span class="py-[0.125rem] px-[0.25rem] bg-accent text-base-100 rounded">@</span> at the beginning of the keyword to search for users. <span class="py-[0.125rem] px-[0.25rem] bg-accent text-base-100 rounded">e.g. @john</span></div>

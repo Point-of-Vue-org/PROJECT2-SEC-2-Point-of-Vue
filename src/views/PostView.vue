@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, watch, computed} from 'vue'
+import { ref, onMounted, computed} from 'vue'
 import { useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy, logout, updateUserData, validateToken } from '../../libs/userManagement'
