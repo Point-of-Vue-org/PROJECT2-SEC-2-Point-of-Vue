@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Icon from './Icon.vue';
 
-defineProps({
+const props = defineProps({
   width: {
     type: String,
     default: '40rem'
@@ -13,11 +13,25 @@ defineProps({
   },
   type: {
     type: String,
-    default: 'list'
+    default: 'list',
+    validator: (value) => ['list', 'sublist'].includes(value)
   },
+  extendBy: {
+    type: String,
+    default: 'fullbar',
+    validator: (value) => ['dropdown', 'fullbar'].includes(value)
+  }
 })
 
 const openState = ref(false)
+
+const handleClickToOpen = (eventSource) => {
+  if (props.extendBy === 'fullbar') openState.value = !openState.value
+  else if (props.extendBy === 'dropdown' && eventSource === 'dropdown') {
+    openState.value = !openState.value
+  }
+  console.log(openState.value)
+}
 
 </script>
 
@@ -25,31 +39,22 @@ const openState = ref(false)
   <li
     :style="{ width: width }"
     class="flex flex-col items-center"
-  >
+    >
     <div
-      :class="{
+    :class="{
         'h-14': type === 'list',
         'h-10': type === 'sublist'
       }"
-      class="w-full"
+      class="w-full cursor-pointer"
+      @click="handleClickToOpen('fullbar')"
     >
       <div
         :class="{
           'bg-base-200': type === 'list',
           'bg-base-100': type === 'sublist'
         }"
-        class="rounded-2xl w-full h-full text-2xl font-medium flex items-center gap-4 z-[5] relative"
+        class="px-4 rounded-2xl w-full h-full text-2xl font-medium flex items-center gap-4 z-[5] relative"
       >
-        <div class="w-10 h-14">
-          <!-- <div
-            v-if="draggable"
-            @mouseover="dragUnlock = true"
-            @mouseleave="dragUnlock = false"
-            class="cursor-grab w-full h-full flex justify-center items-center"
-          >
-            <Icon iconName="drag" />
-          </div> -->
-        </div>
         <div
           :class="{
             'text-2xl': type === 'list',
@@ -61,8 +66,10 @@ const openState = ref(false)
             <div>Title</div>
           </slot>
         </div>
-        <div @click="openState = !openState" class="w-10 h-14 flex justify-center items-center cursor-pointer">
-          <Icon iconName="chevron-down" :class="openState ? 'rotate-180' : 'rotate-0'" class="transition-transform" />
+        <div class="w-10 h-14 flex justify-center items-center cursor-pointer">
+          <div @click="handleClickToOpen('dropdown')" :class="{ 'rotate-180': openState }" class="transition-transform">
+            <Icon iconName="chevron-down" />
+          </div>
         </div>
       </div>
     </div>

@@ -347,6 +347,7 @@ const handleDeletePostImage = async () => {
           width="100%"
           contentHeight="auto"
           type="list"
+          extendBy="dropdown"
         >
           <template #title>
             <div class="flex items-center justify-between">
@@ -382,6 +383,7 @@ const handleDeletePostImage = async () => {
                 width="100%"
                 contentHeight="10rem"
                 type="sublist"
+                extendBy="dropdown"
               >
                 <template #title>
                   <div class="grid grid-cols-[1fr_2fr_13fr_1fr] gap-2 w-full place-items-center">
