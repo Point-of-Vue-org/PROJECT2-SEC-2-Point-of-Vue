@@ -40,6 +40,10 @@ const handleSubmitSearch = (value) => {
           <Icon iconName="journal-bookmark-fill" />
           <span class="whitespace-nowrap">My Drafts</span>
         </RouterLink>
+        <RouterLink to="/active-plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+          <Icon iconName="journal-bookmark-fill" />
+          <span class="whitespace-nowrap">My Active Plans</span>
+        </RouterLink>
       </slot>
     </template>
   </BaseSidebar>
