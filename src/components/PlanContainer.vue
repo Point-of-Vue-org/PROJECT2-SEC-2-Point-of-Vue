@@ -11,10 +11,10 @@ const props = defineProps({
 <template>
   <div
     :class="{
-      'portrait:md:grid-cols-2 landscape:md:grid-cols-2 landscape:xl:grid-cols-3': pageName === 'profileview',
+      'm-4 portrait:md:grid-cols-2 landscape:md:grid-cols-2 landscape:xl:grid-cols-3': pageName === 'profileview',
       'portrait:md:grid-cols-3 landscape:md:grid-cols-3 landscape:xl:grid-cols-4': pageName === 'homeview'
     }"
-    class="w-fit grid grid-cols-1 sm:grid-cols-2 grid-flow-row place-items-center gap-6"
+    class="w-fit grid grid-cols-1 sm:grid-cols-2 grid- gap-6"
   >
     <slot>
       <!-- <div>Card will be rendered here</div> -->
