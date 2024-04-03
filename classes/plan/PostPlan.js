@@ -7,31 +7,12 @@ export default class PostPlan extends BasePlan {
         super(postPlanData)
         this.postDate = postPlanData?.postDate || null
         this.upVote = postPlanData?.upVote || 0
+        this.upVotedUserIds = postPlanData?.upVotedUserIds || []
         this.downVote = postPlanData?.downVote || 0
+        this.downVotedUserIds = postPlanData?.downVotedUserIds || []
         this.comments = postPlanData?.comments || []
         this.published = postPlanData?.published || false
         this.type = 'post'
-    }
-
-    publish() {
-        // if (this.postDate === '') this.postDate = Date.now()
-        this.published = true
-        createOrUpdatePlan(this, 'post')
-    }
-
-    archive() {
-        this.published = false
-        createOrUpdatePlan(this, 'post')
-    }
-
-    upVote() {
-        this.upVote++
-        createOrUpdatePlan(this, 'post')
-    }
-
-    downVote() {
-        this.downVote++
-        createOrUpdatePlan(this, 'post')
     }
 
     async loadComments() {

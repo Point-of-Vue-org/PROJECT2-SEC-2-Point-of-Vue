@@ -30,7 +30,7 @@ const handleForgetPassword = () => {
 </script>
 
 <template>
-  <main class="w-full h-screen grid place-items-center">
+  <main class="w-full h-svh sm:h-screen grid place-items-center">
     <form @submit.prevent="handleSubmitLogin" class="w-72 xs:w-80 sm:w-96 flex flex-col">
       <div>
         <div class="text-primary mb-4">

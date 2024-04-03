@@ -5,8 +5,8 @@ import { useUserStore } from '@/stores/user';
 import { useToastStore } from '@/stores/toast';
 import { updateUserData } from '../../../libs/userManagement';
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
-import Modal from '@/components/Modal.vue';
 import { validateNickname } from '../../../libs/validationUtils';
+import LoadingModal from '@/components/LoadingModal.vue';
 
 const isLoading = ref(false)
 const userStore = useUserStore()
@@ -107,23 +107,22 @@ const handleSave = async () => {
 </script>
 
 <template>
-  <Modal :show="isLoading">
-    <div class="flex flex-col items-center gap-4">
-      <div>Saving Changes...</div>
-      <div class="loading loading-lg loading-spinner"></div>
-    </div>
-  </Modal>
+  <LoadingModal :show="isLoading" text="Saving change..." />
   <input
     id="banner-input"
     type="file"
     @change="handleImageFileChange($event, 'banner')"
     class="hidden"
+    accept="image/jpeg, image/png"
+    title="Upload cover image"
   />
   <input
     id="avatar-input"
     type="file"
     @change="handleImageFileChange($event, 'avatar')"
     class="hidden"
+    accept="image/jpeg, image/png"
+    title="Upload avatar image"
   />
   <section class="w-full p-10 flex flex-col gap-4">
     <div class="w-full h-24 mb-2 relative">
@@ -167,7 +166,7 @@ const handleSave = async () => {
       </div>
     </div>
     <form @submit.prevent="handleSave" class="flex flex-col gap-10">
-      <div class="flex">
+      <div class="flex flex-col portrait:md:flex-row landscape:md:flex-row xl:flex-row">
         <div class="flex-1 flex flex-col gap-4">
           <div class="flex flex-col gap-2">
             <label for="nickname" class="font-semibold text-sm">Display Name</label>
@@ -191,7 +190,7 @@ const handleSave = async () => {
           </div>
         </div>
         <div class="flex-auto flex flex-col gap-2 portrait:md:ml-5">
-          <label for="bio" class="font-semibold text-sm">Bio</label>
+          <label for="bio" class="portrait:mt-3 font-semibold text-sm">Bio</label>
           <textarea
             v-model="bio"
             placeholder="Tell us about yourself..."
@@ -199,7 +198,7 @@ const handleSave = async () => {
           ></textarea>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary w-1/5 ml-auto" :disabled="disabledSave">
+      <button type="submit" class="btn btn-primary md:xl:w-1/5 ml-auto" :disabled="disabledSave">
         Save Changes
       </button>
     </form>

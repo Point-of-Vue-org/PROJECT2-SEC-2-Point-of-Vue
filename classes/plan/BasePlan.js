@@ -7,6 +7,8 @@ const defaultPlanData = {
     title: '',
     imageUrl: '',
     description: '',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
     dailyTasks: [],
     isDone: false,
 }

@@ -1,4 +1,5 @@
 const defaultUserData = {
+    id: undefined,
     hasSetup: false,
     username: '',
     nickname: '',
@@ -9,8 +10,8 @@ const defaultUserData = {
         bannerUrl: ''
     },
     bio: '',
-    upVotedPosts: [],
-    downVotedPosts: [],
+    upVotedPlans: [],
+    downVotedPlans: [],
     upVotedComments: [],
     downVotedComments: [],
 }

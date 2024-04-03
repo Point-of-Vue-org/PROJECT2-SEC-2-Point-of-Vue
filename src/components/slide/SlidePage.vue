@@ -21,7 +21,7 @@ const props = defineProps({
       'scale-0': currentPage !== page && transitionType === 'scale',
       'scale-100': currentPage === page && transitionType === 'scale',
     }"
-    class="flex-shrink-0 w-screen h-full flex flex-col items-center justify-center transform transition-all duration-1000"
+    class="flex-shrink-0 w-screen h-full flex flex-col item-start sm:items-center justify-start sm:justify-center transform transition-all duration-1000"
   >
     <slot></slot>
   </div>

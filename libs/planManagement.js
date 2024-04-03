@@ -96,28 +96,34 @@ export async function updatePlanData(id, updateData, type) {
 // }
 
 export async function toggleUpVote(userData, postPlanData) {
-    let upVoted = userData.upVotedPosts.includes(postPlanData.id)
+    let upVoted = userData.upVotedPlans.includes(postPlanData.id)
 
-    const updatedPlan = await updatePlanData(postPlanData.id, { upVote: postPlanData.upVote + (upVoted ? -1 : 1) }, 'post')
+    const updatedPlan = await updatePlanData(postPlanData.id, {
+        upVote: postPlanData.upVote + (upVoted ? -1 : 1),
+        upVotedUserIds: upVoted ? postPlanData.upVotedUserIds.filter(userId => userId !== userData.id) : [...postPlanData.upVotedUserIds, userData.id]
+    }, 'post')
     if (updatedPlan) postPlanData.upVote += upVoted ? -1 : 1
 
-    if (!upVoted) userData.upVotedPosts.push(postPlanData.id)
-    else userData.upVotedPosts.splice(userData.upVotedPosts.indexOf(postPlanData.id), 1)
-    const updatedUser = await updateUserData(userData.id, { upVotedPosts: userData.upVotedPosts })
+    if (!upVoted) userData.upVotedPlans.push(postPlanData.id)
+    else userData.upVotedPlans.splice(userData.upVotedPlans.indexOf(postPlanData.id), 1)
+    const updatedUser = await updateUserData(userData.id, { upVotedPlans: userData.upVotedPlans })
     if (updatedUser) upVoted = !upVoted
 
     return upVoted
 }
 
 export async function toggleDownVote(userData, postPlanData) {
-    let downVoted = userData.downVotedPosts.includes(postPlanData.id)
+    let downVoted = userData.downVotedPlans.includes(postPlanData.id)
 
-    const updatedPlan = await updatePlanData(postPlanData.id, { downVote: postPlanData.downVote + (downVoted ? -1 : 1) }, 'post')
+    const updatedPlan = await updatePlanData(postPlanData.id, {
+        downVote: postPlanData.downVote + (downVoted ? -1 : 1),
+        downVotedUserIds: downVoted ? postPlanData.downVotedUserIds.filter(userId => userId !== userData.id) : [...postPlanData.downVotedUserIds, userData.id]
+    }, 'post')
     if (updatedPlan) postPlanData.downVote += downVoted ? -1 : 1
 
-    if (!downVoted) userData.downVotedPosts.push(postPlanData.id)
-    else userData.downVotedPosts.splice(userData.downVotedPosts.indexOf(postPlanData.id), 1)
-    const updatedUser = await updateUserData(userData.id, { downVotedPosts: userData.downVotedPosts })
+    if (!downVoted) userData.downVotedPlans.push(postPlanData.id)
+    else userData.downVotedPlans.splice(userData.downVotedPlans.indexOf(postPlanData.id), 1)
+    const updatedUser = await updateUserData(userData.id, { downVotedPlans: userData.downVotedPlans })
     if (updatedUser) downVoted = !downVoted
 
     return downVoted

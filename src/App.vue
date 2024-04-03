@@ -4,6 +4,8 @@ import BaseToast from '@/components/BaseToast.vue'
 </script>
 
 <template>
-  <BaseToast />
-  <RouterView />
+  <main class="h-svh sm:h-screen">
+    <BaseToast />
+    <RouterView />
+  </main>
 </template>

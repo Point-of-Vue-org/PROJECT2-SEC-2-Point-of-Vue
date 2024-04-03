@@ -1,7 +1,13 @@
 <script setup>
 defineProps({
-  color: String,
-  bgcolor: String,
+  color: {
+    type: String,
+    default: '#f50'
+  },
+  bgcolor: {
+    type: String,
+    default: '#fff'
+  },
   size: String
 })
 </script>

@@ -14,7 +14,7 @@ const handleSidebarBtnClick = () => {
   emits('sidebarBtnClick')
 }
 
-const handleSumbitSearch = (value) => {
+const handleSubmitSearch = (value) => {
   console.log('[Search 🔎]', value);
   emits('submitSearch', value)
 }
@@ -33,8 +33,8 @@ const handleSumbitSearch = (value) => {
         <span class="text-lg font-bold">Plannet</span>
       </RouterLink>
     </div>
-    <div class="gap-2 hidden lg:flex justify-center">
-      <SearchBox @sumbitSearch="handleSumbitSearch" />
+    <div class="gap-2 hidden lg:flex justify-center w-96">
+      <SearchBox @submitSearch="handleSubmitSearch" />
     </div>
     <div v-if="userStore.userData.id" class="dropdown dropdown-end">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
