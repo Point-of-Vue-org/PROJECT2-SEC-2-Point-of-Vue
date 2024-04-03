@@ -8,7 +8,7 @@
 <img src = "./src/assets/readme/Poster Read me project 2.png" style = "border-radius:10px">
 </div>
 
-<h1 align = "center">Team Member</h1>
+<h1 align="center">Team Member</h1>
 
 <div align="center">
 <table>
@@ -32,13 +32,17 @@
   <li>Forgot pasword UI</li>
   <li>Poster Design</li>
   <li>Change preference system</li>
-
+  <li>UI search by id</li>
   <li>Forgot password system</li>
+  <li>README</li>
+  <li>How to use plannet</li>
+  <li>Clip</li>
+  <li>Flow chart</li>
   
   </ul>
 </td>
 <td>
-  0%
+  17%
 </td>
 <td><img src="./src/assets/readme/avatar/mook.jpg"></td>
 </tr>
@@ -50,15 +54,19 @@
 <li>Responsive UI design</li>
 <li>Search system</li>
 <li>UI design</li>
+<li>UX design</li>
 <li>Data structure design</li>
 <li>Upload image system</li>
 <li>Component design</li>
 <li>sort post system</li>
 <li>Time in post</li>
+<li>Project manager</li>
+<li>Project director</li>
+
 
 </ul>
 </td>
-<td>0%</td>
+<td>37%</td>
 <td><img src="./src/assets/readme/avatar/mink.jpg"></td>
 </tr>
 <tr>
@@ -72,13 +80,17 @@
 <li>Change preference system</li>
 <li>Password change validation</li>
 <li>user management</li>
-<li>Ui draft plan demo</li>
+<li>UI draft plan demo</li>
 <li>Security peference</li>
+<li>README</li>
+<li>How to use plannet</li>
+<li>Clip</li>
+<li>Flow chart</li>
 
 </ul>
 </td>
 <td>
-  0%
+  17%
 </td>
 <td><img src="./src/assets/readme/avatar/title.jpg"></td>
 </tr>
@@ -88,13 +100,15 @@
 <td>
 <ul>
 <li>Responsive design</li>
+<li>UX design</li>
+<li>UI design</li>
 <li>Setup account page</li>
 <li>Plan to draft</li>
 <li>Password change validation</li>
 <li>Change preference system</li>
 </ul>
 </td>
-<td>0%</td>
+<td>17%</td>
 <td><img src="./src/assets/readme/avatar/goko.jpg"></td>
 </tr>
 <tr>
@@ -108,10 +122,11 @@
 <li>Change password</li>
 <li>Ui draft plan demo</li>
 <li>Security peference</li>
- <li>Forgot password system</li>
+<li>Forgot password system</li>
+<li>How to use plannet</li>
 </ul>
 </td>
-<td>0%</td>
+<td>12%</td>
 <td><img src="./src/assets/readme/avatar/tae.jpg"></td>
 </tr>
 </tbody>
@@ -133,7 +148,6 @@
 <td><img src="./src/assets/readme/feature/10.png"></td>
 <td><img src="./src/assets/readme/feature/11.png"></td>
 <td><img src="./src/assets/readme/feature/12.png"></td>
-
 # Responsive design
 
 
