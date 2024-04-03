@@ -173,6 +173,7 @@
 
 # How to use ?
 - **[Guide line Plannet](https://plannetguide.super.site/)**
+- [Plannet Feature Video](https://drive.google.com/file/d/1QP2SH8aQy5zI3E07NhvfYFf6LJL8mUnW/view?usp=sharing)
 
 
 # References
