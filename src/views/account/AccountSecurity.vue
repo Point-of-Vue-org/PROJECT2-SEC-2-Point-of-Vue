@@ -11,6 +11,7 @@ import { useRouter } from 'vue-router';
 import { logout } from '../../../libs/userManagement';
 import { deletePlan, getPlansBy } from '../../../libs/planManagement';
 import Modal from '@/components/Modal.vue';
+import { User } from '../../../classes/User';
 
 const toastStore = useToastStore()
 const userStore = useUserStore()
@@ -107,8 +108,9 @@ async function handleDeleteAccount(){
     console.log(res);
   })
 
-  logout(userStore.userData.id)
-  deleteUser(userStore.userData.id)
+  localStorage.removeItem('plannet_token')
+  await deleteUser(userStore.userData.id)
+  userStore.userData = new User()
   
   toastStore.addToast('Delete account successfully', 'error')
   router.push('/')
@@ -146,7 +148,7 @@ function handleSetOpenDeleteModal(state) {
       </div>
       <div class="flex flex-col gap-3 max-w-sm">
         <input v-model="email" placeholder="Type your new email" type="email" class="input input-bordered"/>
-        <button class="btn bg-primary text-base-100 w-fit" @click="handleSaveNewEmail" :disabled="disabledChangeEmail">Change</button>
+        <button class="btn btn-primary text-base-100 w-fit" @click="handleSaveNewEmail" :disabled="disabledChangeEmail">Change</button>
       </div>
     </div>
     

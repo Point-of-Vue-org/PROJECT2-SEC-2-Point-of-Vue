@@ -79,6 +79,7 @@ const handleConfirmEmail = async () => {
   }
   const user = await getUserBy("email", email.value)
   if(user){
+    errorMsg.value = ''
     securityQuestions.value = user.securityQuestions
     userId.value = user.id
     page.value++
@@ -131,34 +132,39 @@ const handleSubmitNewPassword = async() => {
   <main class="w-full h-svh sm:h-screen overflow-hidden relative">
     <SlideShow :pageAmount="3" :currentPage="page">
       <SlidePage :page="1" :currentPage="page" translate="scale" class="gap-2">
-        <p class="opacity-75 text-2xl">Please enter your Email</p>
-        <div class="text-error">{{ errorMsg }}</div>
-        <input
-          type="email"
-          v-model="email"
-          class="input input-bordered w-full max-w-xs"
-        />
-        <button class="btn bg-primary text-neutral font-bold" @click="handleConfirmEmail">Confirm</button>
+        <div class="flex flex-col items-center justify-center gap-7 bg-base-200 w-full h-full max-w-[35rem] sm:h-auto sm:py-[6rem] rounded-2xl relative">
+          <div class="text-primary flex gap-2 items-center absolute top-5 left-5">
+            <Logo size="1.5rem" color="currentColor" />
+            <div class="text-base-content">Plannet</div>
+          </div>
+          <div class="text-2xl font-bold">Recover your <span class="text-primary">account</span></div>
+          <div class="flex flex-col items-center w-full">
+            <div class="text-error">{{ errorMsg }}</div>
+            <input
+              type="email"
+              v-model="email"
+              class="input input-bordered w-[90%] max-w-sm"
+              placeholder="Enter your email"
+            />
+          </div>
+          <div class="flex gap-4 absolute bottom-6 left-6 right-6 justify-between">
+            <RouterLink to="/login" class="btn btn-link text-secondary">Back to login</RouterLink>
+            <button class="btn btn-primary text-neutral font-bold" @click="handleConfirmEmail" :disabled="email.length === 0">Confirm</button>
+          </div>
+        </div>
       </SlidePage>
         <SlidePage :page="2" :currentPage="page" translate="scale">
-          <div
-            class="flex flex-col gap-5 justify-center items-center bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative"
-          >
+          <div class="flex flex-col gap-5 justify-center items-center bg-base-200 w-full h-full max-w-[45rem] sm:h-auto sm:py-[6rem] relative">
             <div class="text-primary flex gap-2 items-center absolute top-5 left-5">
               <Logo size="1.5rem" color="currentColor" />
               <div class="text-base-content">Plannet</div>
             </div>
             <div class="flex flex-col items-center gap-4">
               <Icon iconName="key-fill" scale="5" class="mb-4" />
-              <div class="text-3xl font-bold">Security Questions</div>
+              <div class="text-3xl font-bold">Security Answers</div>
               <div class="flex flex-col items-center gap-1 text-sm">
                 <div>
-                  Please answer
-                  <span class="text-primary">3 security questions</span> and provide
-                  the answer
-                </div>
-                <div>
-                  This will help you to reset your password if you forget it
+                  Please answer <span class="text-primary">3 security questions</span> to verify your identity
                 </div>
               </div>
             </div>
@@ -198,12 +204,10 @@ const handleSubmitNewPassword = async() => {
                     v-model="answers.q3"
                   />
                 </div>
-                <p class="text-red-500 pt-3 text-xs" v-show="showError">Something went wrong try again later</p>
+                <div class="text-red-500 pt-3 text-xs" v-show="showError">Your answer is incorrect</div>
               </div>
             </div>
-            <div
-              class="flex gap-4 absolute bottom-6 left-6 right-6 justify-between"
-            >
+            <div class="flex gap-4 absolute bottom-6 left-6 right-6 justify-between">
               <button
                 type="btn"
                 class="btn btn-neutral"
@@ -226,18 +230,25 @@ const handleSubmitNewPassword = async() => {
           </div>
         </SlidePage>
         <SlidePage :page="3" :currentPage="page" translate="scale">
-          <div class="flex flex-col justify-center items-center gap-7 bg-base-200 w-[90%] max-w-[45rem] py-[6rem] rounded-2xl relative">
+          <div class="flex flex-col gap-5 justify-center items-center bg-base-200 w-full h-full max-w-[45rem] sm:h-auto sm:py-[6rem] relative">
             <div class="text-primary flex gap-2 items-center absolute top-5 left-5">
               <Logo size="1.5rem" color="currentColor" />
               <div class="text-base-content">Plannet</div>
             </div>
-            <div>New password</div>
-            <input v-model="password" type="password" class="input input-bordered" @input="checkPassword(password)">
-            <div>Confirm new password</div>
-            <input v-model="confirmPassword" type="password" autocomplete="new-password" title="Confirm password" required class="input input-bordered" />
+            <div class="text-2xl font-bold">Setting your <span class="text-primary">new password</span></div>
+            <div class="w-full flex flex-col gap-4 items-center">
+              <div class="max-w-sm w-[90%]">
+                <div>New password</div>
+                <input v-model="password" type="password" class="input input-bordered w-full" @input="checkPassword(password)">
+              </div>
+              <div class="max-w-sm w-[90%]">
+                <div>Confirm new password</div>
+                <input v-model="confirmPassword" type="password" autocomplete="new-password" title="Confirm password" required class="input input-bordered w-full" />
+              </div>
+            </div>
             <div class="text-xs text-orange-400">{{ errorMsg }}</div>
-            <ul class="text-xs flex cursor-defaul">
-              <div class="flex flex-col gap-2">
+            <ul class="text-xs w-[90%] max-w-sm flex cursor-default">
+              <div class="flex-1 flex flex-col gap-2">
                 <li :class="passwordStatus.status.isLengthValid && passwordStatus.status.isMaxLengthValid ? 'text-green-300' : 'text-red-400'"
                   class="flex gap-2 items-center">
                   <Icon iconName="check"
@@ -275,7 +286,9 @@ const handleSubmitNewPassword = async() => {
                 </li>
               </div>
             </ul>
-            <button @click="handleSubmitNewPassword" :class="{ 'btn-disabled': passwordStatus.warning.length > 0 || password !== confirmPassword }" class="btn btn-primary">Submit</button>
+            <div class="flex gap-4 absolute bottom-6 left-6 right-6 justify-center">
+              <button @click="handleSubmitNewPassword" :class="{ 'btn-disabled': passwordStatus.warning.length > 0 || password !== confirmPassword }" class="btn btn-primary">Submit</button>
+            </div>
           </div>
         </SlidePage>
     </SlideShow>

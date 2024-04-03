@@ -236,7 +236,7 @@ export async function validateToken(){
     isTokenValid: false,
     userId: null
   }
-  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('todo_token')))
+  const decryptedLocalToken = JSON.parse(decrypt(localStorage.getItem('plannet_token')))
   const actualToken = await fetchTokenById(decryptedLocalToken?.id)
 
   if (!decryptedLocalToken || !actualToken) {

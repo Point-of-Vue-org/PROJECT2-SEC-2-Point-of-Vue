@@ -43,11 +43,11 @@ const handleSubmitSearch = (value) => {
           <span class="whitespace-nowrap">Write your plan</span>
         </RouterLink>
         <div class="divider m-0"></div>
-        <RouterLink to="/" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+        <RouterLink to="/" class="btn justify-start flex-nowrap" exact-active-class="btn-accent text-base-100">
           <Icon iconName="globe" />
           <span class="whitespace-nowrap">Plannet feed</span>
         </RouterLink>
-        <RouterLink to="/active-plan" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+        <RouterLink to="/active-plan" class="btn justify-start flex-nowrap" exact-active-class="btn-accent text-base-100">
           <Icon iconName="check2-square" />
           <span class="whitespace-nowrap">My Active Plans ({{ activePlanCount }})</span>
         </RouterLink>

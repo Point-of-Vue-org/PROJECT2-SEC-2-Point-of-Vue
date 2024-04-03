@@ -7,19 +7,27 @@ import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'
 import Icon from '@/components/Icon.vue'
 import Modal from './Modal.vue'
+import { useToastStore } from '@/stores/toast'
+import { User } from '../../classes/User'
 
+const toastStore = useToastStore()
 const router = useRouter()
 const userStore = useUserStore()
 const sidebarOpenState = ref(false)
 const logoutModalOpenState = ref(false)
 
 const handleLogout = async () => {
-  await logout(userStore.userData.id)
-  localStorage.removeItem('todo_token')
-  router.replace('/login')
+  console.log('logout success')
+  // userStore.userData.id = undefined
+  localStorage.removeItem('plannet_token')
+  toastStore.addToast('Logout success', 'success')
+  logoutModalOpenState.value = false
+  userStore.userData = new User()
+  router.push('/')
 }
 
 const handleSubmitSearch = (value) =>{
+  sidebarOpenState.value = false
   router.push({
     name:'home',
     query: {
@@ -35,7 +43,7 @@ const setLogoutModalOpenState = (value) => {
 </script>
 
 <template>
-  <Modal :show="logoutModalOpenState">
+  <Modal :show="logoutModalOpenState" @bgClick="setLogoutModalOpenState(false)">
     <div class="flex flex-col gap-6 items-center">
       <div class="text-2xl md:text-4xl font-bold">Are you sure you want to <span class="text-primary font-helvetica">logout</span></div> 
       <div class="flex flex-row gap-5">
@@ -46,7 +54,7 @@ const setLogoutModalOpenState = (value) => {
   </Modal>
   <div
     :class="{
-      'bg-[#0009]': sidebarOpenState,
+      'bg-[#0009] lg:bg-[#0000]': sidebarOpenState,
       'pointer-events-auto': sidebarOpenState,
     }"
     @click="sidebarOpenState = false"
@@ -60,7 +68,12 @@ const setLogoutModalOpenState = (value) => {
     </template>
   </Header>
   <main class="flex">
-    <PlannetSidebar @closeSidebarBtnClick="sidebarOpenState = false" :openState="sidebarOpenState" class="flex-none">
+    <PlannetSidebar
+      @submitSearch="handleSubmitSearch"
+      @closeSidebarBtnClick="sidebarOpenState = false"
+      :openState="sidebarOpenState"
+      class="flex-none"
+    >
       <slot name="menu"></slot>
     </PlannetSidebar>
     <section class="flex-auto relative flex justify-center">

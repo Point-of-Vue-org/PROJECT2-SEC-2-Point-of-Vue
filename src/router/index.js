@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useToastStore } from '@/stores/toast'
-import { isUserIdExist, isUsernameExist, validateToken } from '../../libs/userManagement'
+import { getUserBy, isUserIdExist, isUsernameExist, validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user'
 import { createOrUpdatePlan, getPlanBy, isPlanExist } from '../../libs/planManagement'
 import BasePlan from '../../classes/plan/BasePlan'
@@ -15,6 +15,10 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/home',
+      redirect: { name: 'home' }
     },
     {
       path: '/login',
@@ -101,12 +105,32 @@ const router = createRouter({
     {
       path: '/archive',
       name: 'draft-plan-lists',
-      component: () => import('../views/ArchiveView.vue')
+      component: () => import('../views/ArchiveView.vue'),
+      beforeEnter: async (to, from, next) => {
+        const userStore = useUserStore()
+        const toastStore = useToastStore()
+        if (userStore.userData.id) {
+          next()
+        } else {
+          toastStore.addToast('You must be logged in to use archive feature', 'error')
+          next(false)
+        }
+      }
     },
     {
       path: '/active-plan',
       name: 'active-plan-lists',
-      component: () => import('../views/MyActivePlansView.vue')
+      component: () => import('../views/MyActivePlansView.vue'),
+      beforeEnter: async (to, from, next) => {
+        const userStore = useUserStore()
+        const toastStore = useToastStore()
+        if (userStore.userData.id) {
+          next()
+        } else {
+          toastStore.addToast('You must be logged in to use active plan feature', 'error')
+          next(false)
+        }
+      }
     },
     {
       path: '/active-plan/:id',
@@ -143,23 +167,16 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const { isTokenValid, userId } = await validateToken()
   const userStore = useUserStore()
-  if (isTokenValid) await userStore.loadUserData(userId)
+  console.log(isTokenValid, userId);
+  if (isTokenValid) {
+    const userData = await getUserBy('id', userId)
+    userStore.userData = userData
+  }
   console.log(userStore.userData)
 
   if (to.name !== 'setup' && userStore.userData.hasSetup === false && isTokenValid) { 
     next('/new-user/setup')
   } else next()
-
-  // if(from.name === 'login' && to.name === 'home'){
-  //   if(userStore.userData.nickname === ''){
-  //     next('/new-user/setup')
-  //   } else next()
-  // } else next()
-  // if(!['login', 'register', 'setup'].includes(to.name)){
-  //   if(!userStore.userData.nickname){
-  //     next('/new-user/setup')
-  //   } else next()
-  // } else next()
 })
 
 export default router

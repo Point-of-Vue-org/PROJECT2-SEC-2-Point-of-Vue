@@ -30,6 +30,7 @@ const activeProgressMax = ref(0)
 onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.planData?.authorId)
+		if (author.value === null) author.value = { nickname: '[Deleted user]' }
 		upVoted.value = props.planData?.upVotedUserIds?.includes(userStore.userData.id) || false
 		if (props.planData?.type === 'post') {
 			await props.planData?.loadComments()
@@ -63,6 +64,14 @@ const handleToggleUpVote = async () => {
   upVoted.value = await toggleUpVote(userStore.userData, props.planData)
 }
 
+const handleProfileClick = () => {
+	if (!author.value.id) {
+		toastStore.addToast('This user is not available', 'error')
+		return
+	}
+	router.push(`/profile/${author.value.id}`)
+}
+
 </script>
 
 <template>
@@ -70,7 +79,7 @@ const handleToggleUpVote = async () => {
 		<div class="portrait:md:w-[15em] w-[16em] h-[24em] bg-neutral rounded-2xl p-[1em] flex flex-col gap-[0.5em] text-accent shadow-postcard">
 			<div class="flex-none flex flex-col gap-[1em]">
 				<div class="flex gap-[1em] items-center tracking-wider">
-					<div class=" w-[2.5em] h-[2.5em] bg-black rounded-full overflow-hidden">
+					<div @click="handleProfileClick" class="cursor-pointer w-[2.5em] h-[2.5em] bg-black rounded-full overflow-hidden">
 						<img
 							v-if="author?.setting?.avatarUrl"
 							:src="author?.setting?.avatarUrl"
@@ -86,8 +95,8 @@ const handleToggleUpVote = async () => {
 						</div>
 					</div>
 					<div>
-						<div class="text-[0.875em] font-bold">{{ author?.nickname || 'Display name' }}</div>
-						<div class="text-[0.75em] opacity-70">{{ '@' + author?.username || 'Username' }}</div>
+						<div @click="handleProfileClick" class="cursor-pointer hover:underline text-[0.875em] font-bold">{{ author?.nickname || 'Display name' }}</div>
+						<div @click="handleProfileClick" v-show="author?.username" class="cursor-pointer text-[0.75em] opacity-70">{{ '@' + author?.username || 'Username' }}</div>
 					</div>
 				</div>
 				<div @click="handlePlanClick" class="text-[1.25em] font-bold hover:underline cursor-pointer">{{ planData?.title || 'Untitled plan' }}</div>

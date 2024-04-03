@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { getUserBy } from '../../libs/userManagement'
 import { getPlansBy } from '../../libs/planManagement'
@@ -9,13 +9,17 @@ import { User } from '../../classes/User'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
 import PlannetLayout from '@/components/PlannetLayout.vue'
 import SortMethodSelector from '@/components/SortMethodSelector.vue'
+import { sortObject } from '../../libs/utils'
 
 const route = useRoute()
 const user = ref(new User())
 const postPlans = ref([])
 const postCount = ref(0)
 const upVoteCount = ref(0)
-// const sortBy = ref('latest')
+const sortPostBy = ref(['postDate', 'desc'])
+const sortablePostPlans = computed(() => {
+  return sortObject(postPlans.value, sortPostBy.value[0], sortPostBy.value[1])
+})
 
 async function fetchProfile() {
   user.value = await getUserBy('id', route.params.id)
@@ -103,18 +107,20 @@ watch(route, () => {
         <button class="btn btn-sm border border-neutral">{{ user.nickname }} 's post</button>
         <SortMethodSelector
           :sortOptions="[
-            ['Latest', 'latest', 'desc'],
-            ['Oldest', 'oldest', 'asc'],
-            ['Most upvoted', 'upvote', 'desc'],
-            ['Least upvoted', 'upvote', 'asc']
+            ['Latest', 'postDate', 'desc'],
+            ['Oldest', 'postDate', 'asc'],
+            ['Most upvoted', 'upVote', 'desc'],
+            ['Least upvoted', 'upVote', 'asc'],
+            ['Name A-Z', 'title', 'asc'],
+            ['Name Z-A', 'title', 'desc']
           ]"
-          @sortOptionSelect="sortBy = $event"
+          @sortOptionSelect="sortPostBy = $event"
         />
       </nav>
       <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex justify-center md:items-center">
         <PlanContainer v-if="postPlans.length > 0" pageName="profileview">
           <PlanCard
-            v-for="plan in postPlans"
+            v-for="plan in sortablePostPlans"
             :key="plan.id"
             :planData="plan"
           />

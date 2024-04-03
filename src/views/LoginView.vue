@@ -17,7 +17,7 @@ const handleSubmitLogin = async () => {
   if (token) {
     router.replace('/')
     toastStore.msg = 'Login success'
-    localStorage.setItem('todo_token', encrypt(JSON.stringify(token)))
+    localStorage.setItem('plannet_token', encrypt(JSON.stringify(token)))
   } else {
     errorMsg.value = 'Invalid username or password'
   }

@@ -1,27 +1,34 @@
 <script setup>
 import { ref, onMounted, computed, watch, reactive, h} from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy } from '../../libs/userManagement'
-import { getPlanBy, createOrUpdatePlan } from '../../libs/planManagement.js'
+import { getPlanBy, createOrUpdatePlan, deletePlan } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import ListItem from '@/components/ListItem.vue'
 import { formatDate } from '../../libs/utils'
 import PlannetLayout from '@/components/PlannetLayout.vue'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
 import ActivePlan from '../../classes/plan/ActivePlan';
+import Modal from '@/components/Modal.vue'
+import { useUserStore } from '@/stores/user'
+import Icon from '@/components/Icon.vue'
 
+const router = useRouter()
+const userStore = useUserStore()
 const isLoading = ref(false)
 const route = useRoute()
 const toastStore = useToastStore()
 const activePlan = ref(new ActivePlan())
 const author = ref({})
+const confirmDeleteOpenState = ref(false)
 
 async function fetchData() {
   isLoading.value = true
   try {
     activePlan.value = await getPlanBy('id', route.params.id, 'active')
     author.value = await getUserBy('id', activePlan.value.authorId)
+    if (author.value === null) author.value = { nickname: '[Deleted user]' }
 
   } catch (error) {
     console.error('error', error)
@@ -65,11 +72,51 @@ const handleCheckTodo = (isChecked, todo, hourlyTask, dailyTask) => {
   activePlan.value.isDone = activePlan.value.dailyTasks.every(dailyTask => dailyTask.isDone)
   save()
 }
+
+const handleSetOpenDeleteModal = (openState) => {
+  confirmDeleteOpenState.value = openState
+}
+
+const handleDeactivateDraft = async () => {
+  const res = await deletePlan(activePlan.value.id, 'active')
+  if (res) {
+    toastStore.addToast('Plan deactivated', 'success')
+    router.push('/active-plan')
+    return
+  }
+}
+
 </script>
 
 <template>
+  <Modal :show="confirmDeleteOpenState" @bgClick="handleSetOpenDeleteModal(false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-96 rounded-2xl justify-center bg-base-100 gap-2">
+      <div class="text-2xl">Do you want to <span class="text-primary">deactivate</span> this plan?</div>
+      <div class="flex flex-col justify-center gap-5 pt-5 min-w-52 w-[70%]">
+        <div class="flex flex-col gap-2">
+          <button class="btn btn-sm btn-error btn-outline border-2 text-[0.9] font-helvetica" @click="handleDeactivateDraft">Confirm deactivate</button>
+          <button class="btn btn-sm btn-secondary text-[0.9rem] font-helvetica" @click="handleSetOpenDeleteModal(false)">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </Modal>
   <PlannetLayout>
     <div class="w-[85%] mt-12">
+      <div class="flex justify-end">
+        <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4">
+          <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
+            <Icon iconName="three-dots" :scale="1.5" />
+          </div>
+          <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-base-300 border mr-4">
+            <li v-if="activePlan?.userId === userStore.userData.id" @click="handleSetOpenDeleteModal(true)">
+              <div class="flex justify-start gap-2 btn btn-error btn-outline btn-sm">
+                <Icon iconName="trash-fill" />
+                <div>Deactivate this plan</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
       <div class="relative overflow-hidden rounded-2xl">
         <div v-if="!isLoading && activePlan?.imageUrl">
           <div class="bg-[#0008] absolute w-full h-full"></div>
@@ -173,14 +220,12 @@ const handleCheckTodo = (isChecked, todo, hourlyTask, dailyTask) => {
           <div class="flex flex-col gap-0.5">
             <div v-if="!isLoading && author.nickname" class="font-helvetica font-semibold">{{ author.nickname }}</div>
             <div v-else class="skeleton h-6 w-20"></div>
-            <div v-if="!isLoading && author.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
-            <div v-else class="skeleton h-4 w-20"></div>
-            <div class="text-xs opacity-75 my-2">
-              {{ formatDate(activePlan?.postDate) }}
-            </div>
+            <div v-if="!isLoading && author?.username" class="text-sm font-helvetica opacity-60">{{ '@' + author.username }}</div>
+            <div v-else-if="isLoading" class="skeleton h-4 w-20"></div>
           </div>
         </div>
       </div>
+      <div class="h-16"></div>
     </div>
   </PlannetLayout>
 </template>
