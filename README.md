@@ -127,6 +127,7 @@
 <td><img src="./src/assets/readme/feature/5.png"></td>
 <td><img src="./src/assets/readme/feature/6.png"></td>
 <td><img src="./src/assets/readme/feature/7.png"></td>
+<td><img src="./src/assets/readme/feature/13.png"></td>
 <td><img src="./src/assets/readme/feature/8.png"></td>
 <td><img src="./src/assets/readme/feature/9.png"></td>
 <td><img src="./src/assets/readme/feature/10.png"></td>
@@ -152,6 +153,9 @@
       </tr>
     </tbody>
   </table>
+
+# Flow chart
+<td><img src="./src/assets/readme/Flowchart.png"></td>
 
 # How to use ?
 
