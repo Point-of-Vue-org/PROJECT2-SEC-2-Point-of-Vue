@@ -158,6 +158,7 @@
 <td><img src="./src/assets/readme/Flowchart.png"></td>
 
 # How to use ?
+- **[Guide line Plannet](https://plannetguide.super.site/)**
 
 
 # References
