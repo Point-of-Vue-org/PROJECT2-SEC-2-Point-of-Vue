@@ -77,7 +77,7 @@ onMounted(
             @sortOptionSelect="sortPostPlansBy = $event"
           />
         </div>
-        <PlanContainer>
+        <PlanContainer pageName="homeview">
           <PlanCard v-for="plan in page === 'draft' ? sortAbleDraftPlans : sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
       </div>
