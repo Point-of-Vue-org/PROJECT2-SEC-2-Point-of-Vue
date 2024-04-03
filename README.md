@@ -121,6 +121,17 @@
 <hr>
 
 # Features
+<td><img src="./src/assets/readme/feature/2.png"></td>
+<td><img src="./src/assets/readme/feature/3.png"></td>
+<td><img src="./src/assets/readme/feature/4.png"></td>
+<td><img src="./src/assets/readme/feature/5.png"></td>
+<td><img src="./src/assets/readme/feature/6.png"></td>
+<td><img src="./src/assets/readme/feature/7.png"></td>
+<td><img src="./src/assets/readme/feature/8.png"></td>
+<td><img src="./src/assets/readme/feature/9.png"></td>
+<td><img src="./src/assets/readme/feature/10.png"></td>
+<td><img src="./src/assets/readme/feature/11.png"></td>
+<td><img src="./src/assets/readme/feature/12.png"></td>
 
 # How to use ?
 
