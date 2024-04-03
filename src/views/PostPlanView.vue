@@ -339,7 +339,7 @@ const handleDeletePost = async (safeDelete = false) => {
         </div>
         <textarea
           v-model="newComment"
-          class="flex-1 w-full h-24 p-4 text-neutral rounded-2xl placeholder:text-neutral placeholder:opacity-50 focus:outline-none focus:placeholder:opacity-25 bg-transparent resize-none"
+          class="flex-1 w-full h-24 p-4 text-neutral rounded-2xl placeholder:text-neutral placeholder:opacity-60 focus:outline-none focus:placeholder:opacity-25 bg-transparent resize-none"
           placeholder="Write a comment..."
         ></textarea>
         <button @click="handleAddComment" class="flex-none btn btn-sm btn-primary text-neutral" :disabled="newComment.length === 0">Comment</button>
