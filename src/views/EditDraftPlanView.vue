@@ -314,7 +314,7 @@ const handleDeletePostImage = async () => {
             class="w-full h-52 flex flex-col items-center justify-center bg-neutral"
           >
             <div class="flex items-center pointer-events-none">
-              <Icon iconName="upload" scale="2" class="w-16 h-12 grid place-items-center" />
+              <Icon iconName="upload" scale="2" size="3rem" />
               <div class="text-2xl">Upload post image</div>
             </div>
             <div class="pointer-events-none">WIP: right now we recommend you to upload image that has 1:1 ratio (square) or close to it</div>
