@@ -11,6 +11,10 @@ const props = defineProps({
   scale: {
     type: [Number, String],
     default: 1
+  },
+  size: {
+    type: [Number, String],
+    default: '1rem'
   }
 })
 
@@ -23,5 +27,16 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-html="icon" :style="{ color, transform: `scale(${scale})` }"></div>
+  <div
+    :style="{ width: size, height: size }"
+    class="grid place-items-center"
+  >
+    <div
+      v-html="icon"
+      :style="{
+        color,
+        transform: `scale(${scale})`
+      }"
+    ></div>
+  </div>
 </template>

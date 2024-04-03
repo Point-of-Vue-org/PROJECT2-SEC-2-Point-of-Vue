@@ -9,6 +9,13 @@ defineProps({
     type: Boolean
   }
 })
+
+const emits = defineEmits(['submitSearch'])
+
+const handleSubmitSearch = (value) => {
+  emits('submitSearch', value)
+}
+
 </script>
 
 <template>
@@ -16,7 +23,9 @@ defineProps({
     <template #menu>
       <!-- Sidbar content here -->
       <slot>
-        <!-- <SearchBox @sumbitSearch="handleSumbitSearch" class="block lg:hidden" /> -->
+        <div class="block lg:hidden">
+          <SearchBox @submitSearch="handleSubmitSearch" />
+        </div>
         <div class="divider m-0 lg:hidden"></div>
         <RouterLink to="/plan/create" class="btn btn-outline flex-nowrap">
           <Icon iconName="pen-fill" />
@@ -24,12 +33,17 @@ defineProps({
         </RouterLink>
         <div class="divider m-0"></div>
         <RouterLink to="/" class="btn justify-start" exact-active-class="btn-accent text-base-100">
-          <Icon iconName="calendar-week-fill" />
-          <span class="whitespace-nowrap">Plan feeds</span>
+          <Icon iconName="globe" />
+          <span class="whitespace-nowrap">Plannet feed</span>
         </RouterLink>
-        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+        <RouterLink to="/active-plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="journal-bookmark-fill" />
-          <span class="whitespace-nowrap">My Drafts</span>
+          <span class="whitespace-nowrap">My Active Plans</span>
+        </RouterLink>
+        <div class="divider m-0"></div>
+        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+          <Icon iconName="archive-fill" />
+          <span class="whitespace-nowrap">Archive</span>
         </RouterLink>
       </slot>
     </template>

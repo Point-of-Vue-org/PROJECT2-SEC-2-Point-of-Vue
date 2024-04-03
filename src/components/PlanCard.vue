@@ -10,6 +10,7 @@ import BasePlan from '../../classes/plan/BasePlan';
 import { formatDate } from '../../libs/utils';
 import { useRouter } from 'vue-router';
 import Logo from './Logo.vue';
+import { DailyTask } from '../../classes/DailyTask';
 
 const props = defineProps({
 	planData: {
@@ -24,6 +25,8 @@ const toastStore = useToastStore()
 const author = ref({})
 const upVoted = ref(false)
 const commentsCount = ref(0)
+const activeProgress = ref(0)
+const activeProgressMax = ref(0)
 
 onMounted(
 	async () => {
@@ -32,13 +35,24 @@ onMounted(
 		if (props.planData.type === 'post') {
 			await props.planData?.loadComments()
 			commentsCount.value = props.planData?.comments?.length || 0
+		} 
+		if (props.planData.type === 'active') {
+			for (const dailyTask of props.planData.dailyTasks) {
+				for (const hourlyTask of dailyTask.hourlyTasks) {
+					for (const todo of hourlyTask.todos) {
+						if (todo.isDone) activeProgress.value++
+						activeProgressMax.value++
+					}
+				}
+			}
 		}
 	}
 )
 
 const handlePlanClick = () => {
 	if (props.planData.type === 'post') router.push(`/post/${props.planData.id}`)
-	else router.push(`/plan/edit/${props.planData.id}`)
+	else if (props.planData.type === 'draft') router.push(`/plan/edit/${props.planData.id}`)
+	else router.push(`/active-plans/${props.planData.id}`)
 }
 
 const handleToggleUpVote = async () => {
@@ -105,6 +119,9 @@ const handleToggleUpVote = async () => {
 					<div class="font-bold">{{ commentsCount || '0' }}</div>
 				</div>
 				<!-- <Icon iconName="paper-clip" /> -->
+			</div>
+			<div v-else-if="planData?.type === 'active'">
+				<progress class="progress progress-primary w-56" :value="activeProgress" :max="activeProgressMax"></progress>
 			</div>
 		</div>
 	</div>

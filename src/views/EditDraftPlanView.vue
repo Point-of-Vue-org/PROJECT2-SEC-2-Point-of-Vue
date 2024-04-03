@@ -17,36 +17,51 @@ import { useToastStore } from "@/stores/toast";
 import Modal from "@/components/Modal.vue";
 import { upload } from "../../libs/imageManagement";
 import LoadingModal from "@/components/LoadingModal.vue";
+import { validatePlanToPostOrActive } from "../../libs/validationUtils";
+import AutoResizeTextarea from "@/components/AutoResizeTextarea.vue";
 
 const isLoading = ref(false)
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const toastStore = useToastStore()
-const saveState = reactive({
+const saveState = ref({
   saving: false,
-  saved: false,
+  saved: true,
   saveFail: false
 })
 const draftPlan = ref(new BasePlan())
-const confirmOpenState = ref(false)
+const confirmPostOpenState = ref(false)
+const confirmActiveOpenState = ref(false)
 
+let saveLock = false
+let saveTimeout = null
 watch(draftPlan, async (newValue, oldValue) => {
-  saveState.saved = true
   if (oldValue.id === undefined) return
-  saveState.saving = true
-  console.log(newValue);
-  try {
-    newValue.updatedAt = Date.now()
-    await createOrUpdatePlan(newValue, 'draft')
-    saveState.saving = false
-    saveState.saveFail = false
-    saveState.saved = true
-  } catch (e) {
-    saveState.saving = false
-    saveState.saved = false
-    saveState.saveFail = true
-  }
+  if (saveLock) return
+  saveState.value.saving = true
+  saveState.value.saved = false
+  saveState.value.saveFail = false
+  saveLock = true
+  clearTimeout(saveTimeout)
+  saveTimeout = setTimeout(async () => {
+    console.log('saving');
+    try {
+      newValue.updatedAt = Date.now()
+      await createOrUpdatePlan(newValue, 'draft')
+      saveState.value.saving = false
+      saveState.value.saved = true
+      saveState.value.saveFail = false
+      console.log('saved');
+    } catch (error) {
+      console.error(error)
+      saveState.value.saving = false
+      saveState.value.saved = false
+      saveState.value.saveFail = true
+    } finally {
+      saveLock = false
+    }
+  }, 1000)
 }, { deep: true })
 
 onMounted(async () => {
@@ -54,13 +69,13 @@ onMounted(async () => {
   draftPlan.value = await getPlanBy('id', id, 'draft')
 })
 
-function handleAddDailyTask() {
+const handleAddDailyTask = () => {
   const newDailyTask = new DailyTask();
   newDailyTask.hourlyTasks = []; // Initialize dailyTasks as an empty array
   draftPlan.value.dailyTasks.push(newDailyTask);
 }
 
-function handleAddHourlyTask(index) {
+const handleAddHourlyTask = (index) => {
   const newHourlyTask = new HourlyTask();
   draftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask);
 }
@@ -72,15 +87,14 @@ function handleAddHourlyTask(index) {
  * @param {String} hourlyTask.description
  * @param {InputEvent} e 
  */
-const handleHourlyTaskDescriptionInput = (hourlyTask, e) => {
-  hourlyTask.description = e.target.value
-
+const handleHourlyTaskDescriptionInput = (hourlyTask, value) => {
+  hourlyTask.description = value
   if (hourlyTask.description.length > 750) {
     hourlyTask.description = hourlyTask.description.slice(0, 750)
   }
 }
 
-function addTodo(dailyIndex, hourlyIndex) {
+const handleAddTodo = (dailyIndex, hourlyIndex) => {
   const newTodo = new Todo()
   newTodo.id = (Math.random() + 1).toString(36).substring(7);
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
@@ -88,17 +102,17 @@ function addTodo(dailyIndex, hourlyIndex) {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
-function handleDeleteDailyTask(dailyIndex) {
+const handleDeleteDailyTask = (dailyIndex) => {
   let dailyTasks = [...draftPlan.value.dailyTasks]
   dailyTasks.splice(dailyIndex, 1)
   draftPlan.value.dailyTasks = dailyTasks
 }
 
-function handleDeleteHourlyTask(dailyIndex, hourlyIndex) {
+const handleDeleteHourlyTask = (dailyIndex, hourlyIndex) => {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks.splice(hourlyIndex, 1)
 }
 
-function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
+const handleDeleteTodo = (dailyIndex, hourlyIndex, todoId) => {
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
   const index = todos.findIndex(todo => todo.id === todoId)
 
@@ -106,87 +120,49 @@ function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
-function handlePopUpPublish(){
-  confirmOpenState.value = !confirmOpenState.value
+const handleSetModelState = (name, openState) => {
+  if (name === 'active') confirmActiveOpenState.value = openState
+  else if (name === 'post') confirmPostOpenState.value = openState
 }
 
-async function handlePublishNow(){
-  if(draftPlan.value.title.length < 1){
-    toastStore.addToast('Please enter title', 'error')
-    return 
-  }
-  if(draftPlan.value.description.length < 1){
-    toastStore.addToast('Please enter description', 'error')
-    return
-  }
-  if(draftPlan.value.dailyTasks.length < 1){
-    toastStore.addToast('Please add daily tasks', 'error')
-    return
-  }
-  for(let dailyTask of draftPlan.value.dailyTasks){
-    if(dailyTask.title.length < 1){
-      toastStore.addToast('Please enter daily task title', 'error')
-      return
-    }
-    if(dailyTask.hourlyTasks.length < 1){
-      toastStore.addToast('Please add hourly tasks', 'error')
-      return
-    }
-    for(let hourlyTask of dailyTask.hourlyTasks){
-      if(hourlyTask.header.length < 1){
-        toastStore.addToast('Please enter hourly task header', 'error')
-        return
-      }
-      if (hourlyTask.start === '' || hourlyTask.end === '') {
-        toastStore.addToast('Please enter start and end time', 'error')
-        return
-      }
-      if(hourlyTask.description.length < 1 && hourlyTask.todos.length < 1){
-        toastStore.addToast('Please enter hourly task description or add todos', 'error')
-        return
-      }
-    }
-  }
+const handlePublish = async () => {
+  const errorMsg = validatePlanToPostOrActive(draftPlan.value)
 
-  const isPostPlanExist = await isPlanExist(draftPlan.value.id, 'post')
-  if(isPostPlanExist){
-    if(window.confirm('This plan is already published. Do you want to override it?') === false) return
-    const newPostPlan = new PostPlan(draftPlan.value)
-    newPostPlan.published = true
-    newPostPlan.postDate = Date.now()
-    const res = await createOrUpdatePlan(newPostPlan, 'post')
-    if(res){
-      for (const userId of newPostPlan.upVotedUserIds) {
-        const user = await getUserBy('id', userId)
-        const planIdIndex = user.upVotedPlans.indexOf(newPostPlan.id)
-        user.upVotedPlans.splice(planIdIndex, 1)
-        const updatedUser = await updateUserData(user, { upVotedPlans: user.upVotedPlans })
-        if (updatedUser) {
-          console.log(updatedUser);
-          userStore.userData.upVotedPlans.splice(planIdIndex, 1)
-        }
-      }
-      for (const userId of newPostPlan.downVotedUserIds) {
-        const user = await getUserBy('id', userId)
-        const planIdIndex = user.downVotedPlans.indexOf(newPostPlan.id)
-        user.downVotedPlans.splice(planIdIndex, 1)
-        const updatedUser = await updateUserData(user, { downVotedPlans: user.downVotedPlans })
-        if (updatedUser) {
-          userStore.userData.downVotedPlans.splice(planIdIndex, 1)
-        }
-      }
-      toastStore.addToast(`Plan ${newPostPlan.title}#${newPostPlan.id} published successfully`,'success')
-    }else{
-      toastStore.addToast(`Failed to publish plan ${newPostPlan.title}#${newPostPlan.id}`, 'error')
-    }
+  if (errorMsg) {
+    toastStore.addToast(errorMsg, 'error')
+    return
   }
-  confirmOpenState.value = false
+  
+  const newPostPlan = new PostPlan(draftPlan.value)
+  newPostPlan.id = undefined
+  newPostPlan.published = true
+  newPostPlan.postDate = Date.now()
+  const createdPlan = await createOrUpdatePlan(newPostPlan, 'post')
+  if(createdPlan){
+    toastStore.addToast(`Plan ${createdPlan.title}#${createdPlan.id} published successfully`,'success')
+  }else{
+    toastStore.addToast(`Failed to publish plan ${createdPlan.title}#${createdPlan.id}`, 'error')
+  }
+  confirmPostOpenState.value = false
 }
 
-onBeforeMount(async () => {
-  const { isTokenValid, userId } = await validateToken();
-  if (isTokenValid) userStore.loadUserData(userId);
-})
+const handleActive = async () => {
+  const errorMsg = validatePlanToPostOrActive(draftPlan.value)
+
+  if (errorMsg) {
+    toastStore.addToast(errorMsg, 'error')
+    return
+  }
+
+  const createdPlan = await createOrUpdatePlan(draftPlan.value, 'active')
+  if(createdPlan){
+    toastStore.addToast(`Plan ${createdPlan.title}#${createdPlan.id} activated successfully`,'success')
+  }else{
+    toastStore.addToast(`Failed to activate plan ${createdPlan.title}#${createdPlan.id}`, 'error')
+  }
+  
+  confirmActiveOpenState.value = false
+}
 
 const handleDeleteDraftPlan = async () => {
   const planName = draftPlan.value.title + '#' + draftPlan.value.id
@@ -242,18 +218,33 @@ const handleDeletePostImage = async () => {
     title="Upload post image"
   />
   <LoadingModal :show="isLoading" text="Uploading image..." />
-  <Modal :show="confirmOpenState">
-    <div class="flex items-center flex-col  h-1/2 w-full pt-10 justify-center">
-      <!-- <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/> -->
-      <div class="text-2xl">Do you want to <span class="text-primary">publish</span> this draft now ?</div>
+  <Modal :show="confirmActiveOpenState" @bgClick="handleSetModelState('active', false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-80 rounded-2xl justify-center bg-base-100">
+      <div class="text-2xl">Do you want to <span class="text-primary">active</span> this plan now?</div>
+      <Icon iconName="check2-square" scale="6" size="8rem" />
+      <div>if you active this plan, it will be shown in your <span class="text-primary">My Active Plans</span> page</div>
+      <div>and you can use it as your planner</div>
       <div class="flex gap-3 pt-5">
-        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublishNow">Publish Now</button>
-        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handlePopUpPublish">Cancel</button>
+        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handleActive">Active Now</button>
+        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handleSetModelState('active', false)">Cancel</button>
+      </div>
+    </div>
+  </Modal>
+  <Modal :show="confirmPostOpenState" @bgClick="handleSetModelState('post', false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-80 rounded-2xl justify-center bg-base-100">
+      <div class="text-2xl">Do you want to <span class="text-primary">post</span> this plan now?</div>
+      <Icon iconName="globe" scale="6" size="8rem" />
+      <div>if you post this plan, it will be shown in <span class="text-primary">Plannet Feed</span> page</div>
+      <div>and other users can see, vote and comment on it</div>
+      <div>if you want to edit posted plan this plan in your draft and re-post it (vote and comment will be reset)</div>
+      <div class="flex gap-3 pt-5">
+        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublish">Publish Now</button>
+        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handleSetModelState('post', false)">Cancel</button>
       </div>
     </div>
   </Modal>
   <PlannetLayout>
-    <div class="w-[85%] mt-12 flex flex-col gap-4 relative">
+    <div class="w-[90%] md:w-[80%] mt-12 flex flex-col gap-4 relative">
       <div class="flex items-center justify-between">
         <div>
           <div class="flex gap-3" v-show="saveState.saving">
@@ -270,15 +261,25 @@ const handleDeletePostImage = async () => {
           </div>
         </div>
         <div class="gap-2 hidden landscape:lg:flex">
-          <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="journal-bookmark-fill" /> Publish as post</button>
-          <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" /> Delete this draft</button>
+          <button class="btn btn-sm btn-success" @click="handleSetModelState('active', true)">
+            <Icon iconName="check2-square" />
+            <div>Use this plan</div>
+          </button>
+          <button class="btn btn-sm btn-neutral" @click="handleSetModelState('post', true)" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="journal-bookmark-fill" /> Publish as post</button>
+          <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" />Delete this draft</button>
         </div>
         <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4 absolute right-0 landscape:lg:hidden">
           <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
             <Icon iconName="three-dots" :scale="1.5" />
           </div>
           <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-accent border mr-4">
-            <li @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">
+            <li @click="handleSetModelState('active', true)" :disabled="userStore.userData.id !== draftPlan.authorId">
+              <button class="flex justify-start gap-2 btn btn-ghost">
+                <Icon iconName="journal-bookmark-fill" />
+                <div>Use this plan</div>
+              </button>
+            </li>
+            <li @click="handleSetModelState('post', true)" :disabled="userStore.userData.id !== draftPlan.authorId">
               <button class="flex justify-start gap-2 btn btn-ghost">
                 <Icon iconName="journal-bookmark-fill" />
                 <div>Publish as post</div>
@@ -345,18 +346,18 @@ const handleDeletePostImage = async () => {
           v-for="(dailyTask, dailyTaskIndex) in dailyTasks" 
           :key="dailyTaskIndex"
           width="100%"
-          contentHeight="auto"
           type="list"
+          extendBy="dropdown"
         >
           <template #title>
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-4 w-full">
                 <input type="checkbox" class="checkbox" disabled />
-                <div class="text-base w-12">Day {{ dailyTaskIndex + 1 }}</div>
+                <div class="text-xs text-nowrap md:text-base w-12">Day {{ dailyTaskIndex + 1 }}</div>
                 <input
                   type="text"
                   v-model="dailyTask.title"
-                  class="w-full bg-transparent outline-none focus:placeholder:opacity-50"
+                  class="text-sm md:text-base w-full bg-transparent outline-none focus:placeholder:opacity-50"
                   placeholder="Daily task title"
                 />
               </div>
@@ -380,22 +381,28 @@ const handleDeletePostImage = async () => {
                 v-for="(hourlyTask, hourlyTaskIndex) in hourlyTasks"
                 :key="hourlyTaskIndex"
                 width="100%"
-                contentHeight="10rem"
                 type="sublist"
+                extendBy="dropdown"
               >
                 <template #title>
-                  <div class="grid grid-cols-[1fr_2fr_13fr_1fr] gap-2 w-full place-items-center">
+                  <div class="flex gap-2 w-full place-items-center">
                     <input type="checkbox" class="checkbox" disabled />
-                    <div class="place-self-start flex gap-2">
+                    <div class="hidden md:flex gap-2">
                       <input type="time" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /> to <input type="time" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" />
                     </div>
-                    <div class="place-self-start w-full">
-                      <input
-                        type="text"
-                        v-model="hourlyTask.header"
-                        class="w-full bg-transparent focus:outline-none focus:placeholder:opacity-50"
-                        placeholder="Hourly task title"
-                      />
+                    <div class="flex-1 flex flex-col md:flex-row">
+                      <div class="sm:hidden flex flex-col text-sm">
+                        <span>Start<input type="time" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /></span>
+                        <span>End&nbsp;<input type="time" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" /></span>
+                      </div>
+                      <div class="w-full">
+                        <input
+                          type="text"
+                          v-model="hourlyTask.header"
+                          class="w-full bg-transparent focus:outline-none focus:placeholder:opacity-50"
+                          placeholder="Hourly task title"
+                        />
+                      </div>
                     </div>
                     <button @click="handleDeleteHourlyTask(dailyTaskIndex, hourlyTaskIndex)">
                       <Icon iconName="trash-fill" color="salmon" />
@@ -403,36 +410,28 @@ const handleDeletePostImage = async () => {
                   </div>
                 </template>
                 <template #content>
-                  <div class="flex h-full">
+                  <div class="flex flex-col h-full">
                     <div class="flex-1 flex flex-col">
-                      <textarea
-                        type="text"
-                        @paste="handleHourlyTaskDescriptionInput(hourlyTask, $event)"
-                        @input="handleHourlyTaskDescriptionInput(hourlyTask, $event)"
-                        class="scrollbar bg-transparent h-full w-full focus:outline-none placeholder:text-neutral focus:placeholder:opacity-50 resize-none"
-                        placeholder="What do you wanna do?"
-                        :value="hourlyTask.description"
-                      >
-                      </textarea>
+                      <AutoResizeTextarea :textareaValue="hourlyTask.description" @textareaInput="handleHourlyTaskDescriptionInput(hourlyTask, $event)" />
                       <div class="text-end">{{ hourlyTask.description.length }}/750</div>
                     </div>
-                    <div class="divider divider-horizontal divider-neutral w-1"></div>
+                    <div class="divider divider-neutral"></div>
                     <div class="flex-1 flex flex-col gap-2">
                       <div class="flex gap-2">
                         <div class="font-bold">To-do</div>
-                        <button class="btn btn-square btn-xs" @click="addTodo(dailyTaskIndex, hourlyTaskIndex)">
+                        <button class="btn btn-square btn-xs" @click="handleAddTodo(dailyTaskIndex, hourlyTaskIndex)">
                           <Icon iconName="plus" />
                         </button>
                       </div>
                       <ul class="flex flex-col gap-2 overflow-auto scrollbar">
-                        <li v-for="(todo, todoIndex) in hourlyTask.todos" :key="todoIndex" class="flex pb-1 items-center justify-between border-b-2 border-b-neutral w-full">
+                        <li v-for="(todo, todoIndex) in hourlyTask.todos" :key="todoIndex" class="flex pb-1 items-center justify-between border-b-2 border-b-base-100 w-full">
                           <div class="flex items-center gap-2 w-full">
                             <input type="checkbox" class="checkbox" disabled />
                             <input
                               type="text"
                               v-model="todo.description"
                               class="w-full bg-transparent placeholder:text-neutral focus:outline-none focus:placeholder:opacity-50"
-                              :placeholder="`Subtask ${todoIndex + 1}`"
+                              :placeholder="`To-do ${todoIndex + 1}`"
                             />
                           </div>
                           <button @click="handleDeleteTodo(dailyTaskIndex, hourlyTaskIndex, todo.id)" class="w-6 h-6">
@@ -448,11 +447,7 @@ const handleDeletePostImage = async () => {
           </template>
         </ListItem>
       </ListContainer>
-      <!-- <div v-else class="flex flex-col gap-2 mb-16">
-        <div class="skeleton h-16 w-full"></div>
-        <div class="skeleton h-16 w-full"></div>
-        <div class="skeleton h-16 w-full"></div>
-      </div> -->
+      <div class="h-16"></div>
     </div>
   </PlannetLayout>
 </template>
@@ -469,5 +464,23 @@ const handleDeletePostImage = async () => {
 }
 .scrollbar::-webkit-scrollbar-thumb:hover {
   @apply bg-neutral cursor-default;
+}
+
+/* Hide the arrow icon in Chrome and Safari */
+input[type="time"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+/* Hide the arrow icon in Firefox */
+input[type="time"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="time"]::-webkit-clear-button {
+  display: none;
+}
+input[type="time"]::-moz-clear {
+  display: none;
+}
+input[type="time"]::-moz-calendar-picker-indicator {
+  display: none;
 }
 </style>

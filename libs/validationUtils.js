@@ -75,3 +75,23 @@ export async function checkOldPassword(userId,oldPassword){
         return false
     } 
 }
+
+export const validatePlanToPostOrActive = (plan) => {
+
+    if (plan.title.length < 1) return 'Please enter title'
+    if (plan.description.length < 1) return 'Please enter description'
+    if (plan.dailyTasks.length < 1) return 'Please add daily tasks'
+
+    for(let dailyTask of plan.dailyTasks){
+        if (dailyTask.title.length < 1) return 'Please enter daily task title'
+        if (dailyTask.hourlyTasks.length < 1) return 'Please add hourly tasks'
+
+        for(let hourlyTask of dailyTask.hourlyTasks){
+            if (hourlyTask.header.length < 1) return 'Please enter hourly task header'
+            if (hourlyTask.start === '' || hourlyTask.end === '') return 'Please enter start and end time'
+            if (hourlyTask.todos.length < 1) return 'Please enter at least one todo in each hourly task'
+        }
+    }
+
+    return ''
+}
