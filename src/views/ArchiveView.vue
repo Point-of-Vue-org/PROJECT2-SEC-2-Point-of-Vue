@@ -42,7 +42,7 @@ onMounted(
           <Icon iconName="archive-fill" scale="2" size="2rem" />
           <div class="text-2xl font-bold">Archive</div>
         </div>
-        <div class="flex gap-4 mt-6iew">
+        <div class="flex gap-4 mt-4">
           <button @click="page = 'draft'" :class="{ 'bg-base-200': page === 'draft' }" class="btn">
             <Icon iconName="journal-bookmark-fill" />
             <div>My drafts ({{ draftPlans.length }})</div>
@@ -77,7 +77,7 @@ onMounted(
             @sortOptionSelect="sortPostPlansBy = $event"
           />
         </div>
-        <PlanContainer>
+        <PlanContainer pageName="homeview">
           <PlanCard v-for="plan in page === 'draft' ? sortAbleDraftPlans : sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
       </div>
