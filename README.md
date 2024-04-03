@@ -120,8 +120,22 @@
 
 <hr>
 
-<h2 align="center">Features</h2>
+# Features
 
-<ul>
-    <li>write your plan</li>
-</ul>
+# How to use ?
+
+
+# References
+
+- **Design**
+
+    - [Daily.dev (Ui design reference)](https://daily.dev/)
+    - [Github (Ui user perference reference)](https://github.com/)
+    - [Google (Ui setup account reference)](https://www.google.com/)
+    - [Facebook (Ui profile reference)](https://www.facebook.com/)
+    - [Pinterest (Ui sidebar reference)](https://www.pinterest.com/pin/1125968649043608/)
+    - [Skiff (Ui login page reference)](https://skiff.com/)
+    - [Notion (Ui edit post)](https://www.notion.so/) 
+
+<br>
+
