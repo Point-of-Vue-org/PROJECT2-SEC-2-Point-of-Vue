@@ -66,6 +66,28 @@ export function validateNickname(nickname) {
     }
 }
 
+export function validateUsername(username) {
+    const warningMsg = []
+
+    const isLengthValid = username.length >= 3
+    const isMaxLengthValid = username.length <= 20
+    const isCharacterValid = /^[a-z0-9_-]+$/.test(username) && username !== ''
+
+    if (!isLengthValid) warningMsg.push("Username must be at least 3 characters long")
+    if (!isCharacterValid) warningMsg.push("Username must contain only a-z, 0-9, _ , -")
+    if (!isMaxLengthValid) warningMsg.push("Username must be less than 20 characters long")
+
+    return {
+        isUsernameValid: isLengthValid && isCharacterValid && isMaxLengthValid,
+        warning: warningMsg,
+        status: {
+            isLengthValid,
+            isCharacterValid,
+            isMaxLengthValid
+        }
+    }
+}
+
 export async function checkOldPassword(userId,oldPassword){
     const user = await getUserBy('id', userId)
     console.log(user);

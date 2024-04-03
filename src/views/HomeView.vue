@@ -12,50 +12,55 @@ import Icon from '@/components/Icon.vue'
 import UserCard from '@/components/UserCard.vue'
 const route = useRoute()
 const router = useRouter()
-const planDatas = ref([])
-const sortBy = ref(['postDate', 'desc'])
-const users = ref([])
+const postPlans = ref([])
+const sortPostBy = ref(['postDate', 'desc'])
 const sortAblePostPlans = computed(() => {
-  return sortObject(planDatas.value, sortBy.value[0], sortBy.value[1])
+  return sortObject(postPlans.value, sortPostBy.value[0], sortPostBy.value[1])
 })
+const users = ref([])
+const sortUserBy = ref(['upVotes', 'desc'])
+const sortAbleUsers = computed(() => {
+  return sortObject(users.value, sortUserBy.value[0], sortUserBy.value[1])
+})
+
+const searchTerms = computed(() => route.query.search)
+const searchMode = computed(() => /^@/.test(searchTerms.value) ? 'user' : 'post')
 
 onMounted(
   async () => {
     // Fetch posts here
-    planDatas.value = await getPlans('post')
-    console.log(planDatas.value)
+    postPlans.value = await getPlans('post')
+    console.log(postPlans.value)
   }
 )
 
 watch(
-  () => route.query.search,
+  searchTerms,
   async (value) => {
     if(value){
-      if(/^@/.test(value)){
-        console.log(value.slice(1))
-        const allUsers = await getUsers(true)
+      if(searchMode.value === 'user'){
+        // console.log(value.slice(1))
+        const allUsers = await getUsers()
+        for (const foundedUser of allUsers){
+          await foundedUser.computeDerivedData()
+        }
+        console.log(allUsers)
         const searchPattern = new RegExp(value.slice(1), 'i')
-        users.value = allUsers.filter(user => {
-          const temp = searchPattern.test(user.username)
+        users.value = allUsers.filter(user => searchPattern.test(user.username))
+      } else if (searchMode.value === 'post'){
+        console.log("Hi");
+        const allPostPlans = await getPlans('post')
+        const searchPattern = new RegExp(route.query.search, 'i')
+        postPlans.value = allPostPlans.filter(planData => {
+        const temp = searchPattern.test(planData.title)
+          console.log(temp);
           return temp
         })
-        console.log(users.value)
       }
-      else{
-      console.log("Hi");
-      const allPostPlans = await getPlans('post')
-      const searchPattern = new RegExp(route.query.search, 'i')
-      planDatas.value = allPostPlans.filter(planData => {
-      const temp = searchPattern.test(planData.title)
-        console.log(temp);
-        return temp
-      })
-      }
-      
     } else {
       router.push('/')
       users.value = []
-      planDatas.value = await getPlans('post')
+      postPlans.value = await getPlans('post')
     }
   },
   { immediate: true }
@@ -65,7 +70,7 @@ watch(
 <template>
   <PlannetLayout>
     <div class="flex flex-col items-center w-full">
-      <div>
+      <div class="w-[90%]">
         <!-- Search: {{ route.query?.search }} -->
         <div class="h-16"></div>
         <div v-if="route.query.search" class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-10 rounded-2xl">
@@ -73,8 +78,9 @@ watch(
             <Icon iconName="search" scale="2" />
           </div>
           <div>
-            <div class="text-xl">Search keywords: "{{ route.query.search }}"</div>
-            <div class="text-secondary">{{ planDatas.length }} plan{{ planDatas.length > 1 ? 's' : '' }} found</div>
+            <div class="text-xl">Search <span class="text-primary">{{ searchMode }}</span> by keywords: "{{ route.query.search }}"</div>
+            <div v-show="searchMode === 'post'" class="text-secondary">{{ postPlans.length }} plan{{ postPlans.length > 1 ? 's' : '' }} found</div>
+            <div v-show="searchMode === 'user'" class="text-secondary">{{ users.length }} user{{ users.length > 1 ? 's' : '' }} found</div>
           </div>
         </div>
         <div v-else class="flex items-center gap-2">
@@ -84,6 +90,7 @@ watch(
         <div class="h-16 w-full flex justify-start items-center">
           <!-- <RouterLink to="/draft-plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           <SortMethodSelector
+            v-if="searchMode === 'post' && postPlans.length > 0"
             :sortOptions="[
               ['Latest', 'postDate', 'desc'],
               ['Oldest', 'postDate', 'asc'],
@@ -92,17 +99,33 @@ watch(
               ['Name A-Z', 'title', 'asc'],
               ['Name Z-A', 'title', 'desc']
             ]"
-            @sortOptionSelect="sortBy = $event"
+            @sortOptionSelect="sortPostBy = $event"
+          />
+          <SortMethodSelector
+            v-if="searchMode === 'user' && users.length > 0"
+            :sortOptions="[
+              ['Most upvoted', 'upVotes', 'desc'],
+              ['Least upvoted', 'upVotes', 'asc'],
+              ['Username A-Z', 'username', 'asc'],
+              ['Username Z-A', 'username', 'desc'],
+              ['Display name A-Z', 'nickname', 'asc'],
+              ['Display name Z-A', 'nickname', 'desc']
+            ]"
+            @sortOptionSelect="sortUserBy = $event"
           />
         </div>
-        <PlanContainer v-if="users.length === 0" pageName="homeview">
+        <PlanContainer v-if="searchMode === 'post' && postPlans.length > 0">
           <PlanCard v-for="plan in sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
-        <div v-else class="flex flex-col gap-4">
-          <UserCard v-for="user in users" :key="user.id" :userData="user" />
+        <div v-else-if="searchMode=== 'user' && users.length > 0" class="flex flex-col w-full gap-4">
+          <UserCard v-for="user in sortAbleUsers" :key="user.id" :userData="user" />
+        </div>
+        <div v-else class="flex flex-col items-center gap-4">
+          <div class="text-2xl font-bold">No <span class="text-primary">{{ searchMode }}</span> found</div>
+          <div class="text-secondary">Try another keyword</div>
         </div>
       </div>
+      <div class="h-16"></div>
     </div>
-    <div class="h-16"></div>
   </PlannetLayout>
 </template>

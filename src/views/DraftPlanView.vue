@@ -34,6 +34,9 @@ const saveState = ref({
 const draftPlan = ref(new BasePlan())
 const confirmPostOpenState = ref(false)
 const confirmActiveOpenState = ref(false)
+const confirmDeleteOpenState = ref(false)
+const deleteMessage = ref('')
+const lockDelete = computed(() => deleteMessage.value !== 'delete')
 
 let saveLock = false
 let saveTimeout = null
@@ -168,18 +171,6 @@ const handleActive = async () => {
   confirmActiveOpenState.value = false
 }
 
-const handleDeleteDraftPlan = async () => {
-  const planName = draftPlan.value.title + '#' + draftPlan.value.id
-  if(window.confirm('Do you want to delete this draft ?')){
-    const res = await deletePlan(draftPlan.value.id, 'draft')
-    if(res){
-      toastStore.addToast(`Delete draft plan (${planName})`, 'success')
-      router.replace('/archive')
-    } else { 
-      toastStore.addToast(`Error occured, Can't delete draft plan (${planName})`, 'error')
-    }
-  }
-}
 
 const handlePostImageFileChange = async (e) => {
   const file = e.target.files[0]
@@ -194,7 +185,7 @@ const handlePostImageFileChange = async (e) => {
     } finally {
       isLoading.value = false
     }
-
+    
     if (imageUrl) {
       draftPlan.value.imageUrl = imageUrl
     }
@@ -210,6 +201,37 @@ const handleDeletePostImage = async () => {
   }
 }
 
+const handleDeleteDraftPlan = async () => {
+  const planName = draftPlan.value.title + '#' + draftPlan.value.id
+  if(window.confirm('Do you want to delete this draft ?')){
+    const res = await deletePlan(draftPlan.value.id, 'draft')
+    if(res){
+      toastStore.addToast(`Delete draft plan (${planName})`, 'success')
+      router.replace('/archive')
+    } else { 
+      toastStore.addToast(`Error occured, Can't delete draft plan (${planName})`, 'error')
+    }
+  }
+}
+
+const handleSetOpenDeleteModal = (openState) => {
+  confirmDeleteOpenState.value = openState
+}
+
+const handleDeleteDraft = async () => {
+  if (deleteMessage.value !== 'delete') {
+    toastStore.addToast('Please type "delete" to confirm', 'error')
+    return
+  }
+
+  const res = await deletePlan(draftPlan.value.id, 'draft')
+  if (res) {
+    toastStore.addToast('Draft deleted', 'success')
+    router.push('/archive')
+    return
+  }
+}
+
 </script>
 
 <template>
@@ -221,6 +243,23 @@ const handleDeletePostImage = async () => {
     accept="image/jpeg, image/png"
     title="Upload post image"
   />
+  <Modal :show="confirmDeleteOpenState" @bgClick="handleSetOpenDeleteModal(false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-96 rounded-2xl justify-center bg-base-100 gap-2">
+      <div class="text-2xl">Do you want to <span class="text-primary">delete</span> this draft?</div>
+      <!-- <Icon iconName="globe" scale="6" size="8rem" /> -->
+      <div>Once you delete this post, it can't be undone.</div>
+      <div class="flex flex-col justify-center gap-5 pt-5 min-w-52 w-[70%]">
+        <div class="flex flex-col gap-1">
+          <div>Type "<span class="italic">delete</span>" to confirm</div>
+          <input v-model="deleteMessage" type="text" class="input input-bordered w-full placeholder:italic" placeholder="delete" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <button class="btn btn-sm btn-error btn-outline border-2 text-[0.9] font-helvetica" @click="handleDeleteDraft" :disabled="lockDelete">Confirm delete</button>
+          <button class="btn btn-sm btn-secondary text-[0.9rem] font-helvetica" @click="handleSetOpenDeleteModal(false)">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </Modal>
   <LoadingModal :show="isLoading" text="Uploading image..." />
   <Modal :show="confirmActiveOpenState" @bgClick="handleSetModelState('active', false)">
     <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-80 rounded-2xl justify-center bg-base-100">
@@ -274,7 +313,7 @@ const handleDeletePostImage = async () => {
             <div>Active this plan</div>
           </button>
           <button class="btn btn-sm btn-neutral" @click="handleSetModelState('post', true)" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="globe" />Publish as post</button>
-          <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" />Delete this draft</button>
+          <button class="btn btn-sm btn-error btn-outline" @click="handleSetOpenDeleteModal(true)"><Icon iconName="trash-fill" />Delete this draft</button>
         </div>
         <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4 absolute right-0 landscape:lg:hidden">
           <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
@@ -294,7 +333,7 @@ const handleDeletePostImage = async () => {
               </button>
             </li>
             <div class="divider my-0 mx-2"></div>
-            <li @click="handleDeleteDraftPlan">
+            <li @click="handleSetOpenDeleteModal(true)">
               <div class="flex justify-start gap-2 btn btn-error btn-outline btn-sm">
                 <Icon iconName="trash-fill" />
                 <div>Delete this draft</div>

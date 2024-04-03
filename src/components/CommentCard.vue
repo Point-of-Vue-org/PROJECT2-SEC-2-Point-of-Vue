@@ -7,6 +7,8 @@ import UserProfilePlaceholder from './UserProfilePlaceholder.vue';
 import { formatDate } from '../../libs/utils';
 import { useUserStore } from '@/stores/user';
 import { toggleUpVoteComment, updateCommentData } from '../../libs/commentManagement';
+import { useRouter } from 'vue-router';
+import { useToastStore } from '@/stores/toast';
 
 const props = defineProps({
   comment: {
@@ -15,6 +17,8 @@ const props = defineProps({
   }
 })
 
+const router = useRouter()
+const toastStore = useToastStore()
 const userStore = useUserStore()
 const author = ref({})
 const upVoted = ref(false)
@@ -24,7 +28,14 @@ onMounted(async () => {
     author.value = props.comment.author
     return
   }
-  author.value = await getUserBy('id', props.comment.authorId)
+  const authorObj = await getUserBy('id', props.comment.authorId)
+  if (authorObj !== null) {
+    author.value = authorObj
+  } else {
+    author.value = {
+      nickname: '[Deleted user]'
+    }
+  }
   upVoted.value = userStore.userData.upVotedComments?.includes(props.comment.id) || false
 })
 
@@ -32,16 +43,25 @@ const handleToggleUpVote = async () => {
   upVoted.value = await toggleUpVoteComment(userStore.userData, props.comment)
 }
 
+const handleClickAuthor = () => {
+  if (author.value.id === undefined) {
+    toastStore.addToast('This user is not available', 'error')
+    return
+  }
+  router.push(`/profile/${author.value.id}`)
+}
 </script>
 
 <template>
   <div class="rounded-2xl p-4 bg-neutral">
     <div class="flex gap-3 items-center">
-      <img v-if="author?.setting?.avatarUrl" :src="author?.setting?.avatarUrl" class="rounded-full w-8 h-8 object-cover" />
-      <UserProfilePlaceholder v-else size="2rem" color="#f50" bgcolor="white" class="rounded-full" />
+      <div class="cursor-pointer" @click="handleClickAuthor">
+        <img v-if="author?.setting?.avatarUrl" :src="author?.setting?.avatarUrl" class="rounded-full w-8 h-8 object-cover" />
+        <UserProfilePlaceholder v-else size="2rem" color="#f50" bgcolor="white" class="rounded-full" />
+      </div>
       <div class="flex flex-col">
-        <div class="font-semibold">{{ author.nickname }}</div>
-        <div class="text-xs opacity-70">{{ '@' + author.username }}</div>
+        <div class="font-semibold cursor-pointer hover:underline" @click="handleClickAuthor">{{ author.nickname }}</div>
+        <div v-show="author?.username" class="text-xs opacity-70 cursor-pointer" @click="handleClickAuthor">{{ '@' + author.username }}</div>
       </div>
     </div>
     <div class="text-xs my-1">{{ formatDate(comment.date) }}</div>

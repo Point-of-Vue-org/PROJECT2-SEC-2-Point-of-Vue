@@ -1,3 +1,5 @@
+import { getPlanBy, getPlansBy } from "../libs/planManagement"
+
 const defaultUserData = {
     id: undefined,
     hasSetup: false,
@@ -10,6 +12,8 @@ const defaultUserData = {
         bannerUrl: ''
     },
     bio: '',
+    upVotes: 0,
+    postCount: 0,
     upVotedPlans: [],
     downVotedPlans: [],
     upVotedComments: [],
@@ -60,5 +64,11 @@ export class User {
 
     setBanner(bannerUrl) {
         this.setting.bannerUrl = bannerUrl
+    }
+
+    async computeDerivedData() {
+        const posts = await getPlansBy('authorId', this.id, 'post')
+        this.postCount = posts.length
+        this.upVotes = posts.reduce((acc, post) => acc + post.upVote, 0)
     }
 }

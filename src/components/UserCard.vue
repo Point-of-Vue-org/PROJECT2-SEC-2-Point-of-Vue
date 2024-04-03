@@ -32,7 +32,7 @@ const handleUserClick = () => {
 </script>
 
 <template>
-    <div class="bg-neutral h-20 rounded-2xl flex justify-between items-center px-4">
+    <div class="w-full bg-neutral h-20 rounded-2xl flex justify-between items-center px-4">
       <div class="flex gap-4 items-center">
         <div @click="handleUserClick" class="w-16 h-16 rounded-full overflow-hidden  cursor-pointer hover:opacity-75">
           <img
