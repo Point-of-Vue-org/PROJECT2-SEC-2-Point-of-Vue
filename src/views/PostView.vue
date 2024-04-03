@@ -226,12 +226,12 @@ const handleSaveToDraft = async () => {
             class="flex items-center gap-2 border-2 p-1 w-fit rounded-2xl"
           >
             <button @click="handleToggleUpVote" class="btn btn-square btn-ghost">
-              <Icon v-show="!upVoted" iconName="up-vote-lg" />
-              <Icon v-show="upVoted" iconName="up-vote-fill-lg" class="text-green-400" />
+              <Icon v-show="!upVoted" iconName="up-vote-lg" size="2rem" />
+              <Icon v-show="upVoted" iconName="up-vote-fill-lg" class="text-green-400" size="2rem" />
             </button>
             <button @click="handleToggleDownVote" class="btn btn-square btn-ghost">
-              <Icon v-show="!downVoted" iconName="down-vote-lg" />
-              <Icon v-show="downVoted" iconName="down-vote-fill-lg" class="text-red-400" />
+              <Icon v-show="!downVoted" iconName="down-vote-lg" size="2rem" />
+              <Icon v-show="downVoted" iconName="down-vote-fill-lg" class="text-red-400" size="2rem" />
             </button>
           </div>
           <button class="btn btn-primary" @click="handleSaveToDraft">

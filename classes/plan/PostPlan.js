@@ -15,27 +15,6 @@ export default class PostPlan extends BasePlan {
         this.type = 'post'
     }
 
-    publish() {
-        // if (this.postDate === '') this.postDate = Date.now()
-        this.published = true
-        createOrUpdatePlan(this, 'post')
-    }
-
-    archive() {
-        this.published = false
-        createOrUpdatePlan(this, 'post')
-    }
-
-    upVote() {
-        this.upVote++
-        createOrUpdatePlan(this, 'post')
-    }
-
-    downVote() {
-        this.downVote++
-        createOrUpdatePlan(this, 'post')
-    }
-
     async loadComments() {
         const comments = await getCommentsBy('postId', this.id)
         this.comments = comments

@@ -35,7 +35,7 @@ onMounted(
             <Icon iconName="journal-bookmark-fill" scale="2" />
           </div>
           <div>
-            <div class="text-2xl font-bold">My Drafts</div>
+            <div class="text-2xl font-bold">Active Plans</div>
           </div>
         </div>
         <div class="h-16 w-full flex justify-start items-center">

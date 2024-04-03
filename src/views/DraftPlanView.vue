@@ -9,11 +9,17 @@ import Icon from '@/components/Icon.vue'
 import SortMethodSelector from '@/components/SortMethodSelector.vue'
 import { sortObject } from '../../libs/utils'
 
+const page = ref('draft')
 const userStore = useUserStore()
 const draftPlans = ref([])
-const sortBy = ref(['updatedAt', 'desc'])
+const sortDraftPlansBy = ref(['updatedAt', 'desc'])
 const sortAbleDraftPlans = computed(() => {
-  return sortObject(draftPlans.value, sortBy.value[0], sortBy.value[1])
+  return sortObject(draftPlans.value, sortDraftPlansBy.value[0], sortDraftPlansBy.value[1])
+})
+const postPlans = ref([])
+const sortPostPlansBy = ref(['postDate', 'desc'])
+const sortAblePostPlans = computed(() => {
+  return sortObject(postPlans.value, sortPostPlansBy.value[0], sortPostPlansBy.value[1])
 })
 
 onMounted(
@@ -21,6 +27,8 @@ onMounted(
     // Fetch posts here
     draftPlans.value = await getPlansBy('userId', userStore.userData.id, 'draft')
     console.log(draftPlans.value)
+    postPlans.value = await getPlansBy('authorId', userStore.userData.id, 'post')
+    console.log(postPlans.value)
   }
 )
 </script>
@@ -30,17 +38,20 @@ onMounted(
     <div class="flex flex-col items-center w-full">
       <div class="w-[90%]">
         <div class="h-16"></div>
-        <div class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-8 rounded-2xl">
-          <div class="w-14 grid place-items-center">
-            <Icon iconName="journal-bookmark-fill" scale="2" />
-          </div>
-          <div>
-            <div class="text-2xl font-bold">My Drafts</div>
-          </div>
+        <div class="flex gap-4">
+          <button @click="page = 'draft'" :class="{ 'bg-base-200': page === 'draft' }" class="btn">
+            <Icon iconName="journal-bookmark-fill" />
+            <div>My drafts ({{ draftPlans.length }})</div>
+          </button>
+          <button @click="page = 'post'" :class="{ 'bg-base-200': page === 'draft' }" class="btn">
+            <Icon iconName="journal-bookmark-fill" />
+            <div>My post ({{ postPlans.length }})</div>
+          </button>
         </div>
         <div class="h-16 w-full flex justify-start items-center">
           <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           <SortMethodSelector
+            v-show="page === 'draft'"
             :sortOptions="[
               ['Latest update', 'updatedAt', 'desc'],
               ['Oldest update', 'updatedAt', 'asc'],
@@ -49,11 +60,21 @@ onMounted(
               ['Name A-Z', 'title', 'asc'],
               ['Name Z-A', 'title', 'desc']
             ]"
-            @sortOptionSelect="sortBy = $event"
+            @sortOptionSelect="sortDraftPlansBy = $event"
+          />
+          <SortMethodSelector
+            v-show="page === 'post'"
+            :sortOptions="[
+              ['Latest post', 'postDate', 'desc'],
+              ['Oldest post', 'postDate', 'asc'],
+              ['Name A-Z', 'title', 'asc'],
+              ['Name Z-A', 'title', 'desc']
+            ]"
+            @sortOptionSelect="sortPostPlansBy = $event"
           />
         </div>
         <PlanContainer>
-          <PlanCard v-for="plan in sortAbleDraftPlans" :key="plan.id" :planData="plan" />
+          <PlanCard v-for="plan in page === 'draft' ? sortAbleDraftPlans : sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
       </div>
     </div>

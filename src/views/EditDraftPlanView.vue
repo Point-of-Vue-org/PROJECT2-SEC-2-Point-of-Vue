@@ -29,7 +29,8 @@ const saveState = reactive({
   saveFail: false
 })
 const draftPlan = ref(new BasePlan())
-const confirmOpenState = ref(false)
+const confirmPostOpenState = ref(false)
+const confirmActiveOpenState = ref(false)
 
 watch(draftPlan, async (newValue, oldValue) => {
   saveState.saved = true
@@ -54,13 +55,13 @@ onMounted(async () => {
   draftPlan.value = await getPlanBy('id', id, 'draft')
 })
 
-function handleAddDailyTask() {
+const handleAddDailyTask = () => {
   const newDailyTask = new DailyTask();
   newDailyTask.hourlyTasks = []; // Initialize dailyTasks as an empty array
   draftPlan.value.dailyTasks.push(newDailyTask);
 }
 
-function handleAddHourlyTask(index) {
+const handleAddHourlyTask = (index) => {
   const newHourlyTask = new HourlyTask();
   draftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask);
 }
@@ -74,13 +75,12 @@ function handleAddHourlyTask(index) {
  */
 const handleHourlyTaskDescriptionInput = (hourlyTask, e) => {
   hourlyTask.description = e.target.value
-
   if (hourlyTask.description.length > 750) {
     hourlyTask.description = hourlyTask.description.slice(0, 750)
   }
 }
 
-function addTodo(dailyIndex, hourlyIndex) {
+const handleAddTodo = (dailyIndex, hourlyIndex) => {
   const newTodo = new Todo()
   newTodo.id = (Math.random() + 1).toString(36).substring(7);
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
@@ -88,17 +88,17 @@ function addTodo(dailyIndex, hourlyIndex) {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
-function handleDeleteDailyTask(dailyIndex) {
+const handleDeleteDailyTask = (dailyIndex) => {
   let dailyTasks = [...draftPlan.value.dailyTasks]
   dailyTasks.splice(dailyIndex, 1)
   draftPlan.value.dailyTasks = dailyTasks
 }
 
-function handleDeleteHourlyTask(dailyIndex, hourlyIndex) {
+const handleDeleteHourlyTask = (dailyIndex, hourlyIndex) => {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks.splice(hourlyIndex, 1)
 }
 
-function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
+const handleDeleteTodo = (dailyIndex, hourlyIndex, todoId) => {
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
   const index = todos.findIndex(todo => todo.id === todoId)
 
@@ -106,11 +106,12 @@ function handleDeleteTodo(dailyIndex, hourlyIndex, todoId) {
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
 }
 
-function handlePopUpPublish(){
-  confirmOpenState.value = !confirmOpenState.value
+const handleSetModelState = (name, openState) => {
+  if (name === 'active') confirmActiveOpenState.value = openState
+  else if (name === 'post') confirmPostOpenState.value = openState
 }
 
-async function handlePublishNow(){
+const handlePublish = async () => {
   if(draftPlan.value.title.length < 1){
     toastStore.addToast('Please enter title', 'error')
     return 
@@ -180,13 +181,8 @@ async function handlePublishNow(){
       toastStore.addToast(`Failed to publish plan ${newPostPlan.title}#${newPostPlan.id}`, 'error')
     }
   }
-  confirmOpenState.value = false
+  confirmPostOpenState.value = false
 }
-
-onBeforeMount(async () => {
-  const { isTokenValid, userId } = await validateToken();
-  if (isTokenValid) userStore.loadUserData(userId);
-})
 
 const handleDeleteDraftPlan = async () => {
   const planName = draftPlan.value.title + '#' + draftPlan.value.id
@@ -242,13 +238,28 @@ const handleDeletePostImage = async () => {
     title="Upload post image"
   />
   <LoadingModal :show="isLoading" text="Uploading image..." />
-  <Modal :show="confirmOpenState">
-    <div class="flex items-center flex-col  h-1/2 w-full pt-10 justify-center">
-      <!-- <img src="https://sv1.img.in.th/ayTIgP.png" width="80px" height="80px" class="rounded"/> -->
-      <div class="text-2xl">Do you want to <span class="text-primary">publish</span> this draft now ?</div>
+  <Modal :show="confirmActiveOpenState" @bgClick="handleSetModelState('active', false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-80 rounded-2xl justify-center bg-base-100">
+      <div class="text-2xl">Do you want to <span class="text-primary">active</span> this plan now?</div>
+      <Icon iconName="check2-square" scale="6" size="8rem" />
+      <div>if you active this plan, it will be shown in your <span class="text-primary">My Active Plans</span> page</div>
+      <div>and you can use it as your planner</div>
       <div class="flex gap-3 pt-5">
-        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublishNow">Publish Now</button>
-        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handlePopUpPublish">Cancel</button>
+        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublish">Active Now</button>
+        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handleSetModelState('active', false)">Cancel</button>
+      </div>
+    </div>
+  </Modal>
+  <Modal :show="confirmPostOpenState" @bgClick="handleSetModelState('post', false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-80 rounded-2xl justify-center bg-base-100">
+      <div class="text-2xl">Do you want to <span class="text-primary">post</span> this plan now?</div>
+      <Icon iconName="globe" scale="6" size="8rem" />
+      <div>if you post this plan, it will be shown in <span class="text-primary">Plannet Feed</span> page</div>
+      <div>and other users can see, vote and comment on it</div>
+      <div>if you want to edit posted plan this plan in your draft and re-post it (vote and comment will be reset)</div>
+      <div class="flex gap-3 pt-5">
+        <button class="btn border-2 text-base-200 font-bold bg-primary w-40 text-[0.9] font-helvetica hover:bg-orange-800" @click="handlePublish">Active Now</button>
+        <button class="btn text-accent font-bold text-[0.9rem] font-helvetica" @click="handleSetModelState('post', false)">Cancel</button>
       </div>
     </div>
   </Modal>
@@ -270,15 +281,25 @@ const handleDeletePostImage = async () => {
           </div>
         </div>
         <div class="gap-2 hidden landscape:lg:flex">
-          <button class="btn btn-sm btn-neutral" @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="journal-bookmark-fill" /> Publish as post</button>
-          <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" /> Delete this draft</button>
+          <button class="btn btn-sm btn-success" @click="handleSetModelState('active', true)">
+            <Icon iconName="check2-square" />
+            <div>Use this plan</div>
+          </button>
+          <button class="btn btn-sm btn-neutral" @click="handleSetModelState('post', true)" :disabled="userStore.userData.id !== draftPlan.authorId"><Icon iconName="journal-bookmark-fill" /> Publish as post</button>
+          <button class="btn btn-sm btn-error btn-outline" @click="handleDeleteDraftPlan"><Icon iconName="trash-fill" />Delete this draft</button>
         </div>
         <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4 absolute right-0 landscape:lg:hidden">
           <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
             <Icon iconName="three-dots" :scale="1.5" />
           </div>
           <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-accent border mr-4">
-            <li @click="handlePopUpPublish" :disabled="userStore.userData.id !== draftPlan.authorId">
+            <li @click="handleSetModelState('active', true)" :disabled="userStore.userData.id !== draftPlan.authorId">
+              <button class="flex justify-start gap-2 btn btn-ghost">
+                <Icon iconName="journal-bookmark-fill" />
+                <div>Use this plan</div>
+              </button>
+            </li>
+            <li @click="handleSetModelState('post', true)" :disabled="userStore.userData.id !== draftPlan.authorId">
               <button class="flex justify-start gap-2 btn btn-ghost">
                 <Icon iconName="journal-bookmark-fill" />
                 <div>Publish as post</div>
@@ -422,7 +443,7 @@ const handleDeletePostImage = async () => {
                     <div class="flex-1 flex flex-col gap-2">
                       <div class="flex gap-2">
                         <div class="font-bold">To-do</div>
-                        <button class="btn btn-square btn-xs" @click="addTodo(dailyTaskIndex, hourlyTaskIndex)">
+                        <button class="btn btn-square btn-xs" @click="handleAddTodo(dailyTaskIndex, hourlyTaskIndex)">
                           <Icon iconName="plus" />
                         </button>
                       </div>
