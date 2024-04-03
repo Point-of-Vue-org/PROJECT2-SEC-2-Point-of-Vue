@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted, computed} from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy, logout, updateUserData, validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
-import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan, updatePlanData } from '../../libs/planManagement.js'
+import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan, updatePlanData, deletePlan } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
 import PostPlan from '../../classes/plan/PostPlan'
@@ -14,8 +14,10 @@ import { Comment } from '../../classes/Comment'
 import { formatDate, sortObject } from '../../libs/utils'
 import PlannetLayout from '@/components/PlannetLayout.vue'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
+import Modal from '@/components/Modal.vue';
 
 const isLoading = ref(false)
+const router = useRouter()
 const route = useRoute()
 const toastStore = useToastStore()
 const userStore = useUserStore()
@@ -29,6 +31,9 @@ const sortAbleComments = computed(() => {
   return sortObject(comments.value, 'date', 'desc')
 })
 const newComment = ref('')
+const confirmDeleteOpenState = ref(false)
+const deleteMessage = ref('')
+const lockDelete = computed(() => deleteMessage.value !== 'delete')
 
 async function fetchData() {
   isLoading.value = true
@@ -90,21 +95,106 @@ const handleToggleDownVote = async () => {
   downVoted.value = await toggleDownVote(userStore.userData, postPlan.value)
 }
 
-const handleSaveToDraft = async () => {
+const handleSaveToDraft = async (silent = false, titleTail = '') => {
   const draftPlan = postPlan.value.getDraft()
+  draftPlan.id = undefined
+  draftPlan.title += titleTail
   draftPlan.userId = userStore.userData.id
+  draftPlan.updatedAt = Date.now()
   const res = await createOrUpdatePlan(draftPlan, 'draft')
   if(res){
-    toastStore.addToast('Save draft successfully', 'success')
+    if (silent) toastStore.addToast('Save draft successfully', 'success')
+    return true
   } else {
-    toastStore.addToast('Error occured, Draft can\'t save', 'error')
+    if (silent) toastStore.addToast('Error occured, Draft can\'t save', 'error')
+    return false
+  }
+}
+
+const handleSetOpenDeleteModal = (openState) => {
+  confirmDeleteOpenState.value = openState
+}
+
+const handleDeletePost = async (safeDelete = false) => {
+  if (deleteMessage.value !== 'delete') {
+    toastStore.addToast('Please type "delete" to confirm', 'error')
+    return
+  }
+
+  // if (safeDelete) saveStatus = await handleSaveToDraft(true, ' (backup)')
+  // if (safeDelete && !saveStatus) {
+  //   toastStore.addToast('Error occured, Post can\'t delete', 'error')
+  //   return
+  // } 
+  if (safeDelete) {
+    const saveStatus = await handleSaveToDraft(true, ' (backup)')
+    if (!saveStatus) {
+      toastStore.addToast('Error occured, Post can\'t delete', 'error')
+      return
+    }
+
+    const res = await deletePlan(postPlan.value.id, 'post')
+    if (res) {
+      toastStore.addToast('Post deleted and backup to draft', 'success')
+      router.push('/')
+      return
+    }
+  }
+
+  if (!safeDelete) {
+    const res = await deletePlan(postPlan.value.id, 'post')
+    if (res) {
+      toastStore.addToast('Post deleted', 'success')
+      router.push('/')
+      return
+    }
   }
 }
 </script>
 
 <template>
+  <Modal v-if="postPlan.authorId === userStore.userData.id" :show="confirmDeleteOpenState" @bgClick="handleSetModelState('post', false)">
+    <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-96 rounded-2xl justify-center bg-base-100 gap-2">
+      <div class="text-2xl">Do you want to <span class="text-primary">delete</span> this post?</div>
+      <!-- <Icon iconName="globe" scale="6" size="8rem" /> -->
+      <div>Once you delete this post, it can't be undone.</div>
+      <div class="flex flex-col justify-center gap-5 pt-5 min-w-52 w-[70%]">
+        <div class="flex flex-col gap-1">
+          <div>Type "<span class="italic">delete</span>" to confirm</div>
+          <input v-model="deleteMessage" type="text" class="input input-bordered w-full placeholder:italic" placeholder="delete" />
+        </div>
+        <div class="flex flex-col gap-2">
+          <button class="btn btn-sm btn-error btn-outline border-2 text-[0.9] font-helvetica" @click="handleDeletePost(true)" :disabled="lockDelete">Backup to my draft and Delete</button>
+          <button class="btn btn-sm btn-error btn-outline border-2 text-[0.9] font-helvetica" @click="handleDeletePost(false)" :disabled="lockDelete">Delete without backup</button>
+          <button class="btn btn-sm btn-secondary text-[0.9rem] font-helvetica" @click="handleSetOpenDeleteModal(false)">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </Modal>
   <PlannetLayout>
     <div class="w-[85%] mt-12">
+      <div class="flex justify-end">
+        <div class="dropdown dropdown-bottom dropdown-end portrait:md:flex gap-4">
+          <div tabindex="0" role="button" class="btn btn-ghost m-1 right-3 top-3 font-bold">
+            <Icon iconName="three-dots" :scale="1.5" />
+          </div>
+          <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-base-300 border mr-4">
+            <li @click="handleSaveToDraft">
+              <div class="flex justify-start gap-2 btn btn-sm btn-secondary" @click="handleSaveToDraft">
+                <Icon iconName="save" />
+                <span>Save to my draft</span>
+              </div>
+            </li>
+            <div v-if="postPlan.authorId === userStore.userData.id" class="divider m-0"></div>
+            <li v-if="postPlan.authorId === userStore.userData.id" @click="handleSetOpenDeleteModal(true)">
+              <div class="flex justify-start gap-2 btn btn-error btn-outline btn-sm">
+                <Icon iconName="trash-fill" />
+                <div>Delete this post</div>
+              </div>
+            </li>
+          </ul>
+      </div>
+      </div>
       <div class="relative overflow-hidden rounded-2xl">
         <div v-if="!isLoading && postPlan.imageUrl">
           <div class="bg-[#0008] absolute w-full h-full"></div>
@@ -136,7 +226,6 @@ const handleSaveToDraft = async () => {
           v-for="(item, index) in items"
           :key="index"
           width="100%"
-          contentHeight="auto"
           type="list"
         >
           <template #title>
@@ -152,7 +241,6 @@ const handleSaveToDraft = async () => {
                 v-for="(hourlyTask, index) in items"
                 :key="index"
                 width="100%"
-                contentHeight="10rem"
                 type="sublist"
               >
                 <template #title>
@@ -234,7 +322,7 @@ const handleSaveToDraft = async () => {
               <Icon v-show="downVoted" iconName="down-vote-fill-lg" class="text-red-400" size="2rem" />
             </button>
           </div>
-          <button class="btn btn-primary" @click="handleSaveToDraft">
+          <button class="btn btn-secondary" @click="handleSaveToDraft">
             <Icon iconName="save" />
             <span>Save to my draft</span>
           </button>

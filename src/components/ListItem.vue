@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue'
 import Icon from './Icon.vue';
 
 const props = defineProps({
@@ -9,7 +9,7 @@ const props = defineProps({
   },
   contentHeight: {
     type: String,
-    default: '20rem'
+    default: 'auto'
   },
   type: {
     type: String,
@@ -32,20 +32,19 @@ const handleClickToOpen = (eventSource) => {
   }
   console.log(openState.value)
 }
-
 </script>
 
 <template>
   <li
     :style="{ width: width }"
     class="flex flex-col items-center"
-    >
+  >
     <div
-    :class="{
-        'h-14': type === 'list',
-        'h-10': type === 'sublist'
+      :class="{
+        'min-h-14': type === 'list',
+        'min-h-10': type === 'sublist'
       }"
-      class="w-full cursor-pointer"
+      class="w-full cursor-pointer h-auto"
       @click="handleClickToOpen('fullbar')"
     >
       <div
@@ -74,17 +73,17 @@ const handleClickToOpen = (eventSource) => {
       </div>
     </div>
     <div
-      :style="{ height: openState ? contentHeight : '0' }"
+      :style="{ height: openState ? contentHeight : '0px' }"
       :class="{
         'bg-neutral': type === 'list',
         'bg-accent shadow-lg text-base-100': type === 'sublist'
       }"
-      class="w-[calc(100%-2rem)] overflow-hidden transition-[height] rounded-b-2xl"
+      class="w-[calc(100%-1rem)] overflow-hidden transition-[height] rounded-b-2xl"
     >
       <div
         :class="{
-          'p-2': type === 'list',
-          'px-4 py-2': type === 'sublist'
+          'p-1': type === 'list',
+          'px-4 py-1': type === 'sublist'
         }"
         class="w-full h-full"
       >

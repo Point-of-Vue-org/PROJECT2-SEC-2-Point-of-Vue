@@ -77,13 +77,9 @@ watch(
             <div class="text-secondary">{{ planDatas.length }} plan{{ planDatas.length > 1 ? 's' : '' }} found</div>
           </div>
         </div>
-        <div v-else class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-8 rounded-2xl">
-          <div class="w-14 grid place-items-center">
-            <Icon iconName="calendar-week-fill" scale="2" />
-          </div>
-          <div>
-            <div class="text-2xl font-bold">Plan feeds</div>
-          </div>
+        <div v-else class="flex items-center gap-2">
+          <Icon iconName="globe" scale="2" size="2rem" />
+          <div class="text-2xl font-bold">Plannet feeds</div>
         </div>
         <div class="h-16 w-full flex justify-start items-center">
           <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->

@@ -107,7 +107,6 @@ const handleCheckTodo = (isChecked, todo, hourlyTask, dailyTask) => {
           v-for="(dailyTask, index) in dailyTasks"
           :key="index"
           width="100%"
-          contentHeight="auto"
           type="list"
         >
           <template #title>
@@ -123,7 +122,6 @@ const handleCheckTodo = (isChecked, todo, hourlyTask, dailyTask) => {
                 v-for="(hourlyTask, index) in hourlyTasks"
                 :key="index"
                 width="100%"
-                contentHeight="10rem"
                 type="sublist"
               >
                 <template #title>

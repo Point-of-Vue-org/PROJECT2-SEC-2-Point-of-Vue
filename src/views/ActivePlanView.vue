@@ -30,13 +30,9 @@ onMounted(
     <div class="flex flex-col items-center w-full">
       <div class="w-[90%]">
         <div class="h-16"></div>
-        <div class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-8 rounded-2xl">
-          <div class="w-14 grid place-items-center">
-            <Icon iconName="journal-bookmark-fill" scale="2" />
-          </div>
-          <div>
-            <div class="text-2xl font-bold">Active Plans</div>
-          </div>
+        <div class="flex items-center gap-2">
+          <Icon iconName="globe" scale="2" size="2rem" />
+          <div class="text-2xl font-bold">Plannet feeds</div>
         </div>
         <div class="h-16 w-full flex justify-start items-center">
           <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
