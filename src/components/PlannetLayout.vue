@@ -6,13 +6,14 @@ import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'
 import Icon from '@/components/Icon.vue'
+import Modal from './Modal.vue'
 
 const router = useRouter()
 const userStore = useUserStore()
 const sidebarOpenState = ref(false)
+const logoutModalOpenState = ref(false)
 
 const handleLogout = async () => {
-  if (window.confirm('Are you sure you want to logout?') === false) return
   await logout(userStore.userData.id)
   localStorage.removeItem('todo_token')
   router.replace('/login')
@@ -27,9 +28,20 @@ const handleSubmitSearch = (value) =>{
   })
 }
 
+const setLogoutModalOpenState = (value) => {
+  logoutModalOpenState.value = value
+}
+
 </script>
 
 <template>
+  <Modal :show="logoutModalOpenState">
+    <div class="flex flex-col">
+      <div class="text-4xl">Are you sure you want to logout</div>
+      <button class="btn btn-primary w-20">Confirm</button>
+      <button @click="setLogoutModalOpenState(false) "class="btn w-20">Cancel</button>
+    </div>
+  </Modal>
   <div
     :class="{
       'bg-[#0009]': sidebarOpenState,
@@ -42,7 +54,7 @@ const handleSubmitSearch = (value) =>{
     <template #menu>
       <li><RouterLink :to="`/profile/${userStore.userData.id}`" class="text-lg"><Icon iconName="person-fill" />Profile</RouterLink></li>
       <li><RouterLink to="/account/profile" class="text-lg"><Icon iconName="gear-fill" />Account Details</RouterLink></li>
-      <li><a class="text-lg" @click="handleLogout"><Icon iconName="box-arrow-left" />Logout</a></li>
+      <li><a class="text-lg" @click="setLogoutModalOpenState(true)"><Icon iconName="box-arrow-left" />Logout</a></li>
     </template>
   </Header>
   <main class="flex">

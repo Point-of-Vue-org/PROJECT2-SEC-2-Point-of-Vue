@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useToastStore } from '@/stores/toast'
-import { validateToken } from '../../libs/userManagement'
+import { isUserIdExist, isUsernameExist, validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user'
-import { createOrUpdatePlan } from '../../libs/planManagement'
+import { createOrUpdatePlan, getPlanBy, isPlanExist } from '../../libs/planManagement'
 import BasePlan from '../../classes/plan/BasePlan'
 
 // const toastStore = useToastStore()
@@ -32,32 +32,44 @@ const router = createRouter({
       component: () => import('../views/AccountView.vue')
     },
     {
-      path: '/post/:id',
+      path: '/post-plan/:id',
       name: 'post',
-      component: () => import('../views/PostView.vue'),
+      component: () => import('../views/PostPlanView.vue'),
       beforeEnter: (to, from, next) => {
         if (to.query.edit) {
-          next({ name: 'edit-post', params: { id: to.params.id } })
+          next({ name: 'edit-draft-plan', params: { id: to.params.id } })
         } else {
           next()
         }
       }
     },
     {
-      path: '/plan/edit/:id',
-      name: 'edit-post',
-      component: () => import('../views/EditDraftPlanView.vue')
-    },
-    {
-      path: '/plan/create',
-      name: 'create-post',
-      // component: () => import('../views/CreateDraftPlanView.vue'),
+      path: '/draft-plan/edit/:id',
+      name: 'edit-draft-plan',
+      component: () => import('../views/DraftPlanView.vue'),
       beforeEnter: async (to, from, next) => {
         const userStore = useUserStore()
         const toastStore = useToastStore()
-        // if(to.name === 'forgot-password') {
-        //   next('/forgot-password')
-        // }
+        if (!userStore.userData.id) {
+          toastStore.addToast('You must be logged in to edit a post', 'error')
+          next('/')
+        } else {
+          if (from.name === 'create-draft') next()
+          const { userId } = await getPlanBy('id', to.params.id, 'draft')
+          if (userStore.userData.id === userId) {
+            next()
+          } else {
+            next({ name: 'not-found' })
+          }
+        }
+      }
+    },
+    {
+      path: '/draft-plan/create',
+      name: 'create-draft',
+      beforeEnter: async (to, from, next) => {
+        const userStore = useUserStore()
+        const toastStore = useToastStore()
         if (!userStore.userData.id) {
           toastStore.addToast('You must be logged in to create a post', 'error')
           next(false)
@@ -66,45 +78,65 @@ const router = createRouter({
           draftPlan.userId = userStore.userData.id
           draftPlan.authorId = await userStore.userData.id
           const { id: planId } = await createOrUpdatePlan(draftPlan, 'draft')
-          next(`/plan/edit/${planId}`)
+          next(`/draft-plan/edit/${planId}`)
         }
       }
     },
     {
       path: '/profile/:id',
       name: 'profile',
-      component: () => import('../views/ProfileView.vue')
+      component: () => import('../views/ProfileView.vue'),
+      beforeEnter: async (to, from, next) => {
+        if (to.params.id) {
+          if (await isUserIdExist(to.params.id)) {
+            next()
+          } else {
+            next({ name: 'not-found' })
+          }
+        } else {
+          next({ name: 'not-found' })
+        }
+      }
     },
     {
-      path: '/plans',
-      name: 'draft plan lists',
-      component: () => import('../views/DraftPlanView.vue')
+      path: '/archive',
+      name: 'draft-plan-lists',
+      component: () => import('../views/ArchiveView.vue')
     },
     {
-      path: '/active-plans',
-      name: 'active plan lists',
-      component: () => import('../views/ActivePlanView.vue')
+      path: '/active-plan',
+      name: 'active-plan-lists',
+      component: () => import('../views/MyActivePlansView.vue')
     },
     {
-      path: '/active-plans/:id',
-      name: 'active plan',
-      component: () => import('../views/UseActivePlanView.vue')
+      path: '/active-plan/:id',
+      name: 'active-plan',
+      component: () => import('../views/ActivePlanView.vue'),
+      beforeEnter: async (to, from, next) => {
+        const userStore = useUserStore()
+        const { userId } = await getPlanBy('id', to.params.id, 'active')
+        if (userId === userStore.userData.id) {
+          next()
+        } else {
+          next({ name: 'not-found' })
+        }
+      }
     },
     {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: () => import('../views/NotFoundView.vue')
-    },
-    {
-      path: '/newuser/setup',
+      path: '/new-user/setup',
       name: 'setup',
       component: () => import('../views/SetupView.vue')
     },
     {
       path: '/forgot-password',
       name: 'forgot-password',
-      component: () => import('../views/ForgotPassword.vue')
-    }
+      component: () => import('../views/ForgotPasswordView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue')
+    },
   ]
 })
 
@@ -115,17 +147,17 @@ router.beforeEach(async (to, from, next) => {
   console.log(userStore.userData)
 
   if (to.name !== 'setup' && userStore.userData.hasSetup === false && isTokenValid) { 
-    next('/newuser/setup')
+    next('/new-user/setup')
   } else next()
 
   // if(from.name === 'login' && to.name === 'home'){
   //   if(userStore.userData.nickname === ''){
-  //     next('/newuser/setup')
+  //     next('/new-user/setup')
   //   } else next()
   // } else next()
   // if(!['login', 'register', 'setup'].includes(to.name)){
   //   if(!userStore.userData.nickname){
-  //     next('/newuser/setup')
+  //     next('/new-user/setup')
   //   } else next()
   // } else next()
 })

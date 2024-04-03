@@ -13,6 +13,7 @@ import { validateNickname } from '../../libs/validationUtils';
 import Icon from '@/components/Icon.vue';
 import { upload } from '../../libs/imageManagement';
 import { hash } from '../../libs/plannetEncrypt';
+import LoadingModal from '@/components/LoadingModal.vue';
 
 const isLoading = ref(false)
 const router = useRouter()

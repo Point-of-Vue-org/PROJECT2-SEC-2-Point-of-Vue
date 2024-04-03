@@ -26,18 +26,18 @@ const props = defineProps({
 const openState = ref(false)
 
 const handleClickToOpen = (eventSource) => {
-  if (props.extendBy === 'fullbar') openState.value = !openState.value
-  else if (props.extendBy === 'dropdown' && eventSource === 'dropdown') {
+  if (props.extendBy === 'dropdown' && eventSource === 'dropdown') {
+    openState.value = !openState.value
+  } else if (props.extendBy === 'fullbar' && eventSource === 'fullbar') {
     openState.value = !openState.value
   }
-  console.log(openState.value)
 }
 </script>
 
 <template>
   <li
     :style="{ width: width }"
-    class="flex flex-col items-center"
+    class="flex flex-col items-center my-1"
   >
     <div
       :class="{
@@ -83,7 +83,7 @@ const handleClickToOpen = (eventSource) => {
       <div
         :class="{
           'p-1': type === 'list',
-          'px-4 py-1': type === 'sublist'
+          'px-4 py-4': type === 'sublist'
         }"
         class="w-full h-full"
       >

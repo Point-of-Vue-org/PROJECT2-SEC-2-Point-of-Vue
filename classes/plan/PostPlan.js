@@ -1,5 +1,4 @@
 import { createComment, getCommentsBy } from '../../libs/commentManagement'
-import { createOrUpdatePlan } from '../../libs/planManagement'
 import BasePlan from './BasePlan.js'
 
 export default class PostPlan extends BasePlan {

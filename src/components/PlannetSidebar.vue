@@ -27,7 +27,7 @@ const handleSubmitSearch = (value) => {
           <SearchBox @submitSearch="handleSubmitSearch" />
         </div>
         <div class="divider m-0 lg:hidden"></div>
-        <RouterLink to="/plan/create" class="btn btn-outline flex-nowrap">
+        <RouterLink to="/draft-plan/create" class="btn btn-outline flex-nowrap">
           <Icon iconName="pen-fill" />
           <span class="whitespace-nowrap">Write your plan</span>
         </RouterLink>
@@ -36,12 +36,12 @@ const handleSubmitSearch = (value) => {
           <Icon iconName="globe" />
           <span class="whitespace-nowrap">Plannet feed</span>
         </RouterLink>
-        <RouterLink to="/active-plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+        <RouterLink to="/active-plan" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="check2-square" />
           <span class="whitespace-nowrap">My Active Plans</span>
         </RouterLink>
         <div class="divider m-0"></div>
-        <RouterLink to="/plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
+        <RouterLink to="/archive" class="btn justify-start" exact-active-class="btn-accent text-base-100">
           <Icon iconName="archive-fill" />
           <span class="whitespace-nowrap">Archive</span>
         </RouterLink>

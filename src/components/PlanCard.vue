@@ -2,15 +2,14 @@
 import Icon from './Icon.vue'
 import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
 import { ref, onMounted } from 'vue'
-import { getUserBy, updateUserData } from '../../libs/userManagement'
-import { useUserStore } from '@/stores/user';
-import { toggleDownVote, toggleUpVote, updatePlanData } from '../../libs/planManagement';
-import { useToastStore } from '@/stores/toast';
-import BasePlan from '../../classes/plan/BasePlan';
-import { formatDate } from '../../libs/utils';
-import { useRouter } from 'vue-router';
-import Logo from './Logo.vue';
-import { DailyTask } from '../../classes/DailyTask';
+import { getUserBy } from '../../libs/userManagement'
+import { useUserStore } from '@/stores/user'
+import { toggleDownVote, toggleUpVote } from '../../libs/planManagement'
+import { useToastStore } from '@/stores/toast'
+import BasePlan from '../../classes/plan/BasePlan'
+import { formatDate } from '../../libs/utils'
+import { useRouter } from 'vue-router'
+import Logo from './Logo.vue'
 
 const props = defineProps({
 	planData: {
@@ -50,9 +49,9 @@ onMounted(
 )
 
 const handlePlanClick = () => {
-	if (props.planData.type === 'post') router.push(`/post/${props.planData.id}`)
-	else if (props.planData.type === 'draft') router.push(`/plan/edit/${props.planData.id}`)
-	else router.push(`/active-plans/${props.planData.id}`)
+	if (props.planData.type === 'post') router.push(`/post-plan/${props.planData.id}`)
+	else if (props.planData.type === 'draft') router.push(`/draft-plan/edit/${props.planData.id}`)
+	else router.push(`/active-plan/${props.planData.id}`)
 }
 
 const handleToggleUpVote = async () => {
@@ -93,8 +92,30 @@ const handleToggleUpVote = async () => {
 				</div>
 				<div @click="handlePlanClick" class="text-[1.25em] font-bold hover:underline cursor-pointer">{{ planData?.title || 'Untitled plan' }}</div>
 				<div>
-					<div v-show="planData?.type === 'draft'" class="text-[0.7em]">Last updated at {{ formatDate(planData?.updatedAt) }}</div>
-					<div class="text-[0.6em]" :class="{ 'font-bold': planData?.type === 'post' }">{{ (planData?.type === 'draft' ? 'Create at ' : '') + formatDate(planData?.type === 'post' ? planData?.postDate : planData?.createdAt ) }}</div>
+					<div
+						v-show="planData?.type === 'draft'"
+						class="text-[0.7em] font-semibold"
+					>
+						Last updated at {{ formatDate(planData?.updatedAt) }}
+					</div>
+					<div
+						v-show="planData?.type === 'draft'"
+						class="text-[0.6em]"
+					>
+						{{ 'Create at ' + formatDate(planData?.createdAt) }}
+					</div>
+					<div
+						v-show="planData?.type === 'post'"
+						class="text-[0.6em] font-semibold"
+					>
+						{{ formatDate(planData?.postDate) }}
+					</div>
+					<div
+						v-show="planData?.type === 'active'"
+						class="text-[0.6em] font-semibold"
+					>
+						{{ 'Start at ' + formatDate(planData?.startDate) }}
+					</div>
 				</div>
 			</div>
 			<div @click="handlePlanClick" class="flex-1 w-full h-[11em] bg-base-100 rounded-[0.6em] overflow-hidden cursor-pointer">

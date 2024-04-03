@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <ul class="flex flex-col gap-1 w-full">
+  <ul class="flex flex-col w-full">
     <slot :items="items"></slot>
   </ul>
 </template>

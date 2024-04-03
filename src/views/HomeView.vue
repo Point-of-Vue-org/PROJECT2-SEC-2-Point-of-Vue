@@ -82,7 +82,7 @@ watch(
           <div class="text-2xl font-bold">Plannet feeds</div>
         </div>
         <div class="h-16 w-full flex justify-start items-center">
-          <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
+          <!-- <RouterLink to="/draft-plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
           <SortMethodSelector
             :sortOptions="[
               ['Latest', 'postDate', 'desc'],

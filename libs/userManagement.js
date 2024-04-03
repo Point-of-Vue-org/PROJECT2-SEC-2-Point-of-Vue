@@ -48,7 +48,6 @@ export async function getUserBy(key, value) {
   return data[0]
 }
 
-
 export async function updateUserData(id, updateData) {
   console.log(updateData);
   const response = await fetch(`${JSON_SERVER_URI}/users/${id}`, {
@@ -71,6 +70,11 @@ export async function updateUserData(id, updateData) {
  */
 export async function isUsernameExist(username) {
   const user = await getUserBy('username', username)
+  return user ? true : false
+}
+
+export async function isUserIdExist(userId) {
+  const user = await getUserBy('id', userId)
   return user ? true : false
 }
 
@@ -203,8 +207,8 @@ export async function register(username, email, password) {
     },
     body: JSON.stringify(new User({ username, email, password: hash(password) })),
   })
-  const newUser = await response.json()
-  return newUser
+  const newuser = await response.json()
+  return newuser
 }
 
 /**
