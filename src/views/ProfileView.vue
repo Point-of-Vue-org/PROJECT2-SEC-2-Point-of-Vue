@@ -41,8 +41,8 @@ watch(route, () => {
 
 <template>
   <PlannetLayout>
-    <div class="flex flex-col w-[80%] gap-4 my-10">
-      <div class="bg-base-200 rounded-2xl border border-neutral w-full h-80 overflow-hidden flex flex-col">
+    <div class="flex flex-col w-[90%] md:w-[80%] gap-4 my-10">
+      <div class="overflow-hidden hidden md:flex flex-col bg-base-200 rounded-2xl border border-neutral w-full h-80">
         <img
           v-if="user?.setting?.avatarUrl"
           :src="user.setting.avatarUrl"
@@ -70,6 +70,35 @@ watch(route, () => {
           </div>
         </div>
       </div>
+
+      <div class="flex flex-col md:hidden bg-base-200 rounded-2xl border border-neutral w-full h-[23rem]">
+        <img
+          v-if="user?.setting?.avatarUrl"
+          :src="user.setting.avatarUrl"
+          alt="avatar"
+          class="absolute rounded-full h-[10rem] w-[10rem] object-cover border-8 border-base-200 translate-x-4 translate-y-24"
+        />
+        <UserProfilePlaceholder v-else color="#ff5500" bgcolor="white" class="absolute rounded-full h-[10rem] w-[10rem] object-cover border-8 border-base-200 translate-x-4 translate-y-24"/>
+        <div class="h-[10.75rem]">
+          <img
+            v-if="user?.setting?.bannerUrl"
+            :src="user.setting.bannerUrl"
+            alt="avatar"
+            class="w-full h-full object-cover rounded-t-2xl"
+          />
+          <div v-else class="bg-neutral w-full h-full object-cover rounded-t-2xl"></div>
+        </div>
+        <div class="h-[5rem] bg-base-200 w-fit flex flex-col gap-3 absolute top-[19rem] left-12">
+          <div class="flex flex-col">
+            <div class="text-xl font-bold">{{ user.nickname }}</div>
+            <div class=" opacity-50 text-sm">{{ '@' + user.username }}</div>
+          </div>
+          <div class="flex gap-2">
+            <div class="text-sm"><span class="font-bold">{{ postCount }}</span> Posts</div>
+            <div class="text-sm"><span class="font-bold text-primary">{{ upVoteCount }}</span> Upvotes</div>
+          </div>
+        </div>
+      </div>
       <nav class="flex items-center gap-4">
         <button class="btn btn-sm border border-neutral">{{ user.nickname }} 's post</button>
         <SortMethodSelector
@@ -82,16 +111,16 @@ watch(route, () => {
           @sortOptionSelect="sortBy = $event"
         />
       </nav>
-      <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex items-center">
-        <PlanContainer v-if="postPlans.length > 0" class="w-fit flex gap-36 landscape:md:gap-16 mx-4">
+      <div class="bg-base-200 rounded-2xl border border-neutral w-full min-h-[32rem] h-auto overflow-hidden flex justify-center md:items-center">
+        <PlanContainer v-if="postPlans.length > 0" pageName="profileview">
           <PlanCard
             v-for="plan in postPlans"
             :key="plan.id"
-            :postPlan="plan"
+            :planData="plan"
           />
         </PlanContainer>
-        <div v-else class="flex flex-col items-center gap-4">
-          <div class="text-2xl font-bold">No post</div>
+        <div v-else class="flex flex-col items-center text-sm w-[65%] mt-14 md:flex-col md:items-center gap-4">
+          <div class="text-xl font-bold md:text-2xl">No post</div>
           <div>It seems like <span class="text-primary">{{ user.nickname }}</span> has not posted anything yet</div>
         </div>
       </div>

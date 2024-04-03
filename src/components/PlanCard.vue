@@ -32,7 +32,7 @@ onMounted(
 	async () => {
 		author.value = await getUserBy('id', props.planData?.authorId)
 		upVoted.value = props.planData?.upVotedUserIds?.includes(userStore.userData.id) || false
-		if (props.planData.type === 'post') {
+		if (props.planData?.type === 'post') {
 			await props.planData?.loadComments()
 			commentsCount.value = props.planData?.comments?.length || 0
 		} 
@@ -68,7 +68,7 @@ const handleToggleUpVote = async () => {
 
 <template>
 	<div class="text-[1.25rem] sm:text-[1rem]">
-		<div class="w-[16em] h-[24em] bg-neutral rounded-2xl p-[1em] flex flex-col gap-[0.5em] text-accent shadow-postcard">
+		<div class="portrait:md:w-[15em] w-[16em] h-[24em] bg-neutral rounded-2xl p-[1em] flex flex-col gap-[0.5em] text-accent shadow-postcard">
 			<div class="flex-none flex flex-col gap-[1em]">
 				<div class="flex gap-[1em] items-center tracking-wider">
 					<div class=" w-[2.5em] h-[2.5em] bg-black rounded-full overflow-hidden">
@@ -93,8 +93,8 @@ const handleToggleUpVote = async () => {
 				</div>
 				<div @click="handlePlanClick" class="text-[1.25em] font-bold hover:underline cursor-pointer">{{ planData?.title || 'Untitled plan' }}</div>
 				<div>
-					<div v-show="planData.type === 'draft'" class="text-[0.7em]">Last updated at {{ formatDate(planData?.updatedAt) }}</div>
-					<div class="text-[0.6em]" :class="{ 'font-bold': planData.type === 'post' }">{{ (planData.type === 'draft' ? 'Create at ' : '') + formatDate(planData.type === 'post' ? planData?.postDate : planData?.createdAt ) }}</div>
+					<div v-show="planData?.type === 'draft'" class="text-[0.7em]">Last updated at {{ formatDate(planData?.updatedAt) }}</div>
+					<div class="text-[0.6em]" :class="{ 'font-bold': planData?.type === 'post' }">{{ (planData?.type === 'draft' ? 'Create at ' : '') + formatDate(planData?.type === 'post' ? planData?.postDate : planData?.createdAt ) }}</div>
 				</div>
 			</div>
 			<div @click="handlePlanClick" class="flex-1 w-full h-[11em] bg-base-100 rounded-[0.6em] overflow-hidden cursor-pointer">

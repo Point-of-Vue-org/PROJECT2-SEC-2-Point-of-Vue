@@ -65,7 +65,7 @@ watch(
 <template>
   <PlannetLayout>
     <div class="flex flex-col items-center w-full">
-      <div class="w-[90%]">
+      <div>
         <!-- Search: {{ route.query?.search }} -->
         <div class="h-16"></div>
         <div v-if="route.query.search" class="flex items-center bg-base-200 w-fit py-4 pl-3 pr-10 rounded-2xl">
@@ -95,7 +95,7 @@ watch(
             @sortOptionSelect="sortBy = $event"
           />
         </div>
-        <PlanContainer v-if="users.length === 0">
+        <PlanContainer v-if="users.length === 0" pageName="homeview">
           <PlanCard v-for="plan in sortAblePostPlans" :key="plan.id" :planData="plan" />
         </PlanContainer>
         <div v-else class="flex flex-col gap-4">
