@@ -42,7 +42,7 @@ onMounted(
           <Icon iconName="archive-fill" scale="2" size="2rem" />
           <div class="text-2xl font-bold">Archive</div>
         </div>
-        <div class="flex gap-4 mt-4">
+        <div class="flex gap-4 mt-6">
           <button @click="page = 'draft'" :class="{ 'bg-base-200': page === 'draft' }" class="btn">
             <Icon iconName="journal-bookmark-fill" />
             <div>My drafts ({{ draftPlans.length }})</div>

@@ -3,20 +3,30 @@ import { isEmail } from './utils'
 import { decrypt, hash } from './plannetEncrypt.js'
 
 const JSON_SERVER_URI = import.meta.env.VITE_SERVER_URI || 'http://localhost:5000'
-export async function getUsers(isSafeMode){
+
+/**
+ * Fetches all users from the JSON server API
+ * @param {boolean} computeDerivedData - A boolean that indicates if the derived data should be computed
+ * @returns {Promise<User[]>} A promise that resolves to an array of User objects
+ * @example
+ * const users = await getUsers()
+ * console.log(users) // [User, User, User, ...]
+ */
+export async function getUsers(computeDerivedData = false){
   const response = await fetch(`${JSON_SERVER_URI}/users`)
   const data = await response.json()
-  // if(isSafeMode){
-  //   return data.map(user => {
-  //     const safeUser = new User(user)
-  //     delete safeUser.password
-  //     delete safeUser.securityQuestions
-  //     console.log(safeUser);
-  //     return safeUser
-    
-  //   })
-  // }
-  return data.map(user => new User(user))
+  const users = data.map(userData => {
+    const user = new User(userData)
+    return user
+  })
+
+  if (computeDerivedData) {
+    for (const user of users) {
+      await user.computeDerivedData()
+    }
+  }
+
+  return users
 }
 
 /**

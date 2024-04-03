@@ -121,11 +121,6 @@ const handleDeletePost = async (safeDelete = false) => {
     return
   }
 
-  // if (safeDelete) saveStatus = await handleSaveToDraft(true, ' (backup)')
-  // if (safeDelete && !saveStatus) {
-  //   toastStore.addToast('Error occured, Post can\'t delete', 'error')
-  //   return
-  // } 
   if (safeDelete) {
     const saveStatus = await handleSaveToDraft(true, ' (backup)')
     if (!saveStatus) {
@@ -153,7 +148,7 @@ const handleDeletePost = async (safeDelete = false) => {
 </script>
 
 <template>
-  <Modal v-if="postPlan.authorId === userStore.userData.id" :show="confirmDeleteOpenState" @bgClick="handleSetModelState('post', false)">
+  <Modal v-if="postPlan.authorId === userStore.userData.id" :show="confirmDeleteOpenState" @bgClick="handleSetOpenDeleteModal(false)">
     <div class="flex items-center flex-col w-11/12 max-w-[34rem] h-96 rounded-2xl justify-center bg-base-100 gap-2">
       <div class="text-2xl">Do you want to <span class="text-primary">delete</span> this post?</div>
       <!-- <Icon iconName="globe" scale="6" size="8rem" /> -->
@@ -180,7 +175,7 @@ const handleDeletePost = async (safeDelete = false) => {
           </div>
           <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 border-base-300 border mr-4">
             <li @click="handleSaveToDraft">
-              <div class="flex justify-start gap-2 btn btn-sm btn-secondary" @click="handleSaveToDraft">
+              <div class="flex justify-start gap-2 btn btn-sm btn-secondary">
                 <Icon iconName="save" />
                 <span>Save to my draft</span>
               </div>
