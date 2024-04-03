@@ -37,7 +37,7 @@ const handleSubmitSearch = (value) => {
           <span class="whitespace-nowrap">Plannet feed</span>
         </RouterLink>
         <RouterLink to="/active-plans" class="btn justify-start" exact-active-class="btn-accent text-base-100">
-          <Icon iconName="journal-bookmark-fill" />
+          <Icon iconName="check2-square" />
           <span class="whitespace-nowrap">My Active Plans</span>
         </RouterLink>
         <div class="divider m-0"></div>

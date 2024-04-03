@@ -1,7 +1,9 @@
 <script setup>
 const props = defineProps({
-  pageName:{
-    validator(value, props){
+  pageName: {
+    type: String,
+    default: 'homeview',
+    validator: (value, props) => {
       return ['homeview', 'profileview'].includes(value)
     }
   }

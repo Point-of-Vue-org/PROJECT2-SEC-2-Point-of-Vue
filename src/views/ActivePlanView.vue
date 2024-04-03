@@ -31,8 +31,8 @@ onMounted(
       <div class="w-[90%]">
         <div class="h-16"></div>
         <div class="flex items-center gap-2">
-          <Icon iconName="globe" scale="2" size="2rem" />
-          <div class="text-2xl font-bold">Plannet feeds</div>
+          <Icon iconName="check2-square" scale="2" size="2rem" />
+          <div class="text-2xl font-bold">My Active Plans</div>
         </div>
         <div class="h-16 w-full flex justify-start items-center">
           <!-- <RouterLink to="/plan/create" class="btn btn-outline">Add your plan</RouterLink> -->
