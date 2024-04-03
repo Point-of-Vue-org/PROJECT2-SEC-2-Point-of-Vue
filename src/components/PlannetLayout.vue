@@ -36,10 +36,12 @@ const setLogoutModalOpenState = (value) => {
 
 <template>
   <Modal :show="logoutModalOpenState">
-    <div class="flex flex-col">
-      <div class="text-4xl">Are you sure you want to logout</div>
-      <button class="btn btn-primary w-20">Confirm</button>
-      <button @click="setLogoutModalOpenState(false) "class="btn w-20">Cancel</button>
+    <div class="flex flex-col gap-6 items-center">
+      <div class="text-2xl md:text-4xl font-bold">Are you sure you want to <span class="text-primary font-helvetica">logout</span></div> 
+      <div class="flex flex-row gap-5">
+        <button @click="handleLogout" class="btn btn-primary w-20">Confirm</button>
+        <button @click="setLogoutModalOpenState(false) "class="btn w-20">Cancel</button>
+      </div> 
     </div>
   </Modal>
   <div
