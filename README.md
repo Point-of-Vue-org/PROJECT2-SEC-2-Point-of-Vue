@@ -169,7 +169,7 @@
   </table>
 
 # Flow chart
-<td><img src="./src/assets/readme/Flowchart.png"></td>
+<td><img src="./src/assets/readme/Flowchartfix.png"></td>
 
 # How to use ?
 - **[Guide line Plannet](https://plannetguide.super.site/)**
