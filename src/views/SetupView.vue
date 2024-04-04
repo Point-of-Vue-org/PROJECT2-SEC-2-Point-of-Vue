@@ -67,7 +67,6 @@ const handleProfileFileChange = (e) => {
 }
 
 const handleSecurityQuestionSelect = (question, value) => {
-	console.log(question, value)
 	securityQuestions[question].question = value
 }
 

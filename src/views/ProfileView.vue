@@ -24,15 +24,12 @@ const sortablePostPlans = computed(() => {
 async function fetchProfile() {
   user.value = await getUserBy('id', route.params.id)
   postPlans.value = await getPlansBy('authorId', user.value.id, 'post')
-  console.log(postPlans.value)
   postCount.value = postPlans.value.length
   upVoteCount.value = postPlans.value.reduce((acc, plan) => acc + plan.upVote, 0)
 }
 
 onMounted(
   async () => {
-    // Fetch posts here
-    console.log('%cOn mounted', 'color: #f00')
     fetchProfile()
   }
 )
