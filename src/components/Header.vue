@@ -15,7 +15,6 @@ const handleSidebarBtnClick = () => {
 }
 
 const handleSubmitSearch = (value) => {
-  console.log('[Search 🔎]', value);
   emits('submitSearch', value)
 }
 </script>

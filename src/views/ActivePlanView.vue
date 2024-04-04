@@ -31,7 +31,6 @@ async function fetchData() {
     if (author.value === null) author.value = { nickname: '[Deleted user]' }
 
   } catch (error) {
-    console.error('error', error)
     toastStore.type = 'error'
     toastStore.msg = 'An error occurred'
   } finally {
@@ -54,7 +53,6 @@ async function save() {
   try {
     activePlan.value.updatedAt = Date.now()
     const updatedData = await createOrUpdatePlan(activePlan.value, 'active')
-    console.log(updatedData);
     saveState.saving = false
     saveState.saveFail = false
     saveState.saved = true

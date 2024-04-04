@@ -47,7 +47,6 @@ async function fetchData() {
     upVoted.value = userStore.userData.upVotedPlans?.includes(postPlan.value.id) || false
     downVoted.value = userStore.userData.downVotedPlans?.includes(postPlan.value.id) || false
   } catch (error) {
-    console.error('error', error)
     toastStore.type = 'error'
     toastStore.msg = 'An error occured'
   } finally {
@@ -64,7 +63,6 @@ const handleAddComment = async () => {
     content: newComment.value,
     date: Date.now(),
   })
-  console.log(comment);
 
   const addedComment = await postPlan.value.addComment(comment)
   if (addedComment) {

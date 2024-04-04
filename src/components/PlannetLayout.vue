@@ -17,8 +17,6 @@ const sidebarOpenState = ref(false)
 const logoutModalOpenState = ref(false)
 
 const handleLogout = async () => {
-  console.log('logout success')
-  // userStore.userData.id = undefined
   localStorage.removeItem('plannet_token')
   toastStore.addToast('Logout success', 'success')
   logoutModalOpenState.value = false

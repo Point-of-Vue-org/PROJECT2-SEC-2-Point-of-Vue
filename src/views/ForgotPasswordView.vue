@@ -58,11 +58,9 @@ const presetQuestion = ref([
 
 async function handleNext() {
   const user = await getUserBy("email", email.value)
-  console.log(user)
   if (user) {
     showError.value = false
     securityQuestions.value = user.securityQuestions
-    console.log(securityQuestions.value)
     page.value++
   } else {
     showError.value = true
@@ -123,7 +121,6 @@ const handleSubmitNewPassword = async() => {
       router.push('/login')
     }
   } catch (error) {
-      console.error(error)
       toastStore.addToast('Error occured', 'error')
   }
 }

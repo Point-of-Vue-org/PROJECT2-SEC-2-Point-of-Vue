@@ -20,10 +20,7 @@ const upVotes = computed(() => {
 })
 
 onMounted(async () => {
-  console.log('user', props.userData)
-  console.log(props.userData.id)
   posts.value = await getPlansBy('authorId', props.userData.id, 'post')
-  console.log(posts)
 })
 
 const handleUserClick = () => {

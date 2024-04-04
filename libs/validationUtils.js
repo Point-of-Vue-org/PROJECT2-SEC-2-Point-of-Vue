@@ -90,7 +90,6 @@ export function validateUsername(username) {
 
 export async function checkOldPassword(userId,oldPassword){
     const user = await getUserBy('id', userId)
-    console.log(user);
     if (user.password ===  hash(oldPassword)) {
         return true
     } else {

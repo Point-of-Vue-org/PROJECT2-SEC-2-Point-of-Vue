@@ -22,16 +22,12 @@ export async function createComment(commentObject) {
   })
 
   const data = await res.json()
-  console.log('data', data);
 
   if (data) {
-    // console.log(data.postId);
     const postPlan = await getPlanBy('id', data.postId, 'post')
-    console.log(postPlan);
     const res = await updatePlanData(postPlan.id, { commentsCount: postPlan.commentsCount + 1 }, 'post')
     if (!res) throw new Error('Error updating post plan comments count')
   } else {
-    // console.error('Error creating comment:', res)
     throw new Error('Error creating comment')
   }
 

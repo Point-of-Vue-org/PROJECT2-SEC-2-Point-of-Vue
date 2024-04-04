@@ -28,9 +28,7 @@ const searchMode = computed(() => /^@/.test(searchTerms.value) ? 'user' : 'post'
 
 onMounted(
   async () => {
-    // Fetch posts here
     postPlans.value = await getPlans('post')
-    console.log(postPlans.value)
   }
 )
 
@@ -39,21 +37,17 @@ watch(
   async (value) => {
     if(value){
       if(searchMode.value === 'user'){
-        // console.log(value.slice(1))
         const allUsers = await getUsers()
         for (const foundedUser of allUsers){
           await foundedUser.computeDerivedData()
         }
-        console.log(allUsers)
         const searchPattern = new RegExp(value.slice(1), 'i')
         users.value = allUsers.filter(user => searchPattern.test(user.username))
       } else if (searchMode.value === 'post'){
-        console.log("Hi");
         const allPostPlans = await getPlans('post')
         const searchPattern = new RegExp(route.query.search, 'i')
         postPlans.value = allPostPlans.filter(planData => {
         const temp = searchPattern.test(planData.title)
-          console.log(temp);
           return temp
         })
       }

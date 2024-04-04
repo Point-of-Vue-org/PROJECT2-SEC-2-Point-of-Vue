@@ -167,12 +167,10 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const { isTokenValid, userId } = await validateToken()
   const userStore = useUserStore()
-  console.log(isTokenValid, userId);
   if (isTokenValid) {
     const userData = await getUserBy('id', userId)
     userStore.userData = userData
   }
-  console.log(userStore.userData)
 
   if (to.name !== 'setup' && userStore.userData.hasSetup === false && isTokenValid) { 
     next('/new-user/setup')

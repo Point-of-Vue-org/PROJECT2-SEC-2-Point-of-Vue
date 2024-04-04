@@ -26,9 +26,7 @@ onMounted(
   async () => {
     // Fetch posts here
     draftPlans.value = await getPlansBy('userId', userStore.userData.id, 'draft')
-    console.log(draftPlans.value)
     postPlans.value = await getPlansBy('authorId', userStore.userData.id, 'post')
-    console.log(postPlans.value)
   }
 )
 </script>

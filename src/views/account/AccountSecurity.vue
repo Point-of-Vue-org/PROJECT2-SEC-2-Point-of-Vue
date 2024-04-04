@@ -82,7 +82,6 @@ const handleSaveNewEmail = async () => {
     }
   }
   catch(e){
-    console.log(e)
     toastStore.addToast('Email is invalid', 'error')
   }
 }
@@ -95,17 +94,14 @@ async function handleDeleteAccount(){
 
   postPlans.forEach(async plan => {
     const res = await deletePlan(plan.id, 'post')
-    console.log(res);
   })
 
   draftPlans.forEach(async plan => {
     const res = await deletePlan(plan.id, 'draft')
-    console.log(res);
   })
 
   activePlans.forEach(async plan => {
     const res = await deletePlan(plan.id, 'active')
-    console.log(res);
   })
 
   localStorage.removeItem('plannet_token')

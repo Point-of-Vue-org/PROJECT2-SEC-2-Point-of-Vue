@@ -18,9 +18,7 @@ const sortAbleDraftPlans = computed(() => {
 
 onMounted(
   async () => {
-    // Fetch posts here
     activePlans.value = await getPlansBy('userId', userStore.userData.id, 'active')
-    console.log(activePlans.value)
   }
 )
 </script>

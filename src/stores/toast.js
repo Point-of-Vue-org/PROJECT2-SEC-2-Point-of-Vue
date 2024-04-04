@@ -40,7 +40,6 @@ export const useToastStore = defineStore('toast', () => {
           }, 2000)
         }, 4000)
       }
-      console.log(toasts.value)
     }
   )
 

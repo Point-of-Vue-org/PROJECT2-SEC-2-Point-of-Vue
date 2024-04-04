@@ -49,16 +49,13 @@ watch(draftPlan, async (newValue, oldValue) => {
   saveLock = true
   clearTimeout(saveTimeout)
   saveTimeout = setTimeout(async () => {
-    console.log('saving');
     try {
       newValue.updatedAt = Date.now()
       await createOrUpdatePlan(newValue, 'draft')
       saveState.value.saving = false
       saveState.value.saved = true
       saveState.value.saveFail = false
-      console.log('saved');
     } catch (error) {
-      console.error(error)
       saveState.value.saving = false
       saveState.value.saved = false
       saveState.value.saveFail = true
@@ -180,7 +177,6 @@ const handlePostImageFileChange = async (e) => {
       isLoading.value = true
       imageUrl = await upload(file)
     } catch (error) {
-      console.error(error)
       toastStore.addToast(error.message, 'error')
     } finally {
       isLoading.value = false

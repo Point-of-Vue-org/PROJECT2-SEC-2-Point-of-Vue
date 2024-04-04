@@ -50,7 +50,6 @@ export async function getPlansBy(key, value, type) {
 
 export async function getPlanBy(key, value, type) {
     const plans = await getPlansBy(key, value, type)
-    console.log('plans', plans);
     return plans[0]
 }
 

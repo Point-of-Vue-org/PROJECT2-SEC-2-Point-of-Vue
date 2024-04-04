@@ -29,7 +29,6 @@ const securityQuestions = [
 ];
 
 const handleQuestionSelect = (value) => {
-    console.log(value)
     emits('questionSelect', value)
 }
 
