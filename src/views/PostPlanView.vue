@@ -2,7 +2,7 @@
 import { ref, onMounted, computed} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { getUserBy, logout, updateUserData, validateToken } from '../../libs/userManagement'
+import { getUserBy } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
 import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan, updatePlanData, deletePlan } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'

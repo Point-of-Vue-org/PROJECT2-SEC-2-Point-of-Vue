@@ -1,11 +1,10 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, watch, reactive, computed } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getUserBy, getUsers, updateUserData, validateToken } from "../../libs/userManagement";
 import { useUserStore } from "@/stores/user";
 import Icon from "@/components/Icon.vue";
 import { DailyTask } from "../../classes/DailyTask";
-import { createOrUpdatePlan, getPlanBy, isPlanExist, deletePlan, updatePlanData } from "../../libs/planManagement";
+import { createOrUpdatePlan, getPlanBy, deletePlan, updatePlanData } from "../../libs/planManagement";
 import { HourlyTask } from "../../classes/HourlyTask";
 import { Todo } from "../../classes/Todo";
 import BasePlan from "../../classes/plan/BasePlan";

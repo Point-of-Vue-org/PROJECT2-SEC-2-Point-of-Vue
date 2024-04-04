@@ -8,11 +8,6 @@ const props = defineProps({
 
 const emits = defineEmits(['bgClick'])
 
-// const handleClick = (e) => {
-//   if (e.target === e.currentTarget) {
-//     emits('bgClick')
-//   }
-// }
 </script>
 
 <template>

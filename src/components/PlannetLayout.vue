@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
-import { logout } from '../../libs/userManagement'
 import Header from '@/components/Header.vue'
 import { useUserStore } from '@/stores/user'
 import PlannetSidebar from '@/components/PlannetSidebar.vue'

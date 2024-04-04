@@ -14,7 +14,6 @@ const defaultCommentData = {
 export class Comment {
     constructor(commentData = {}) {
         for (let key in defaultCommentData) {
-            // if (defaultCommentData[key] === undefined) continue
             this[key] = commentData[key] || defaultCommentData[key]
         }
     }

@@ -1,9 +1,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { validateToken } from '../../libs/userManagement'
 import { useUserStore } from '@/stores/user';
-import { onBeforeMount } from 'vue'
 import AccountProfile from './account/AccountProfile.vue'
 import AccountSecurity from './account/AccountSecurity.vue';
 import PlannetLayout from '@/components/PlannetLayout.vue';

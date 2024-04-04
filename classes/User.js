@@ -1,4 +1,4 @@
-import { getPlanBy, getPlansBy } from "../libs/planManagement"
+import { getPlansBy } from "../libs/planManagement"
 
 const defaultUserData = {
     id: undefined,
