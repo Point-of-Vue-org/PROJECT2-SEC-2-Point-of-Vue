@@ -1,6 +1,6 @@
 <script setup>
 import Logo from '@/components/Logo.vue'
-import { compute, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
 import { isEmailExist, isUsernameExist, register } from '../../libs/userManagement';
 import { useRouter } from 'vue-router'
