@@ -1,13 +1,11 @@
 name: plannet
 services:
   frontend:
-    image: plannet-frontend:latest
     build: ./FE.Dockerfile
     ports:
       - "3188:80"
 
   backend:
-    image: plannet-backend:latest
     build: ./BE.Dockerfile
     ports:
       - "5000:5000"
