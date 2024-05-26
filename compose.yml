@@ -1,11 +1,15 @@
 name: plannet
 services:
   frontend:
-    build: ./FE.Dockerfile
+    build:
+      context: .
+      dockerfile: FE.Dockerfile
     ports:
       - "3188:80"
 
   backend:
-    build: ./BE.Dockerfile
+    build:
+      context: .
+      dockerfile: BE.Dockerfile
     ports:
       - "5000:5000"
