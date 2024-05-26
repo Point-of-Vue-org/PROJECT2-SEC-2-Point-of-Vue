@@ -42,5 +42,8 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
-          docker pull zyxma/plannet:latest
-          docker compose up -d
+          git clone https://${{ GITHUB_TOKEN }}@github.com/6MA-606/PROJECT2-SEC-2-Point-of-Vue plannet
+          cd ./plannet
+          git fetch
+          git pull
+          docker compose up -d --build
