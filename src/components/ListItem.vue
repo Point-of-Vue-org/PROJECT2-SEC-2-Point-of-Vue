@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch, watchEffect } from 'vue'
-import Icon from './Icon.vue';
+import Icon from './Icon.vue'
 
 const props = defineProps({
   width: {

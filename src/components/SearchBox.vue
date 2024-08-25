@@ -1,19 +1,19 @@
 <script setup>
-import { ref } from 'vue';
-import Icon from './Icon.vue';
-import Modal from './Modal.vue';
+import { ref } from 'vue'
+import Icon from './Icon.vue'
+import Modal from './Modal.vue'
 
-const emits = defineEmits(['submitSearch']);
+const emits = defineEmits(['submitSearch'])
 
-const openState = ref(false);
-const searchTerms = ref('');
+const openState = ref(false)
+const searchTerms = ref('')
 
 const handleOpen = () => {
-  openState.value = true;
+  openState.value = true
 }
 
 const handleClose = () => {
-  openState.value = false;
+  openState.value = false
 }
 
 const handleSubmitSearch = () => {

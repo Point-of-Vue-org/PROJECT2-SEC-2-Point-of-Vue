@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue';
-import Icon from './Icon.vue';
+import { ref } from 'vue'
+import Icon from './Icon.vue'
 
 const props = defineProps({
   sortOptions: {

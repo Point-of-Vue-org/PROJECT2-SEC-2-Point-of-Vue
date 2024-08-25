@@ -1,24 +1,24 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useUserStore } from "@/stores/user";
-import Icon from "@/components/Icon.vue";
-import { DailyTask } from "../../classes/DailyTask";
-import { createOrUpdatePlan, getPlanBy, deletePlan, updatePlanData } from "../../libs/planManagement";
-import { HourlyTask } from "../../classes/HourlyTask";
-import { Todo } from "../../classes/Todo";
-import BasePlan from "../../classes/plan/BasePlan";
-import ListContainer from "@/components/ListContainer.vue";
-import ListItem from "@/components/ListItem.vue";
-import PlannetLayout from "@/components/PlannetLayout.vue";
-import PostPlan from "../../classes/plan/PostPlan";
-import { useToastStore } from "@/stores/toast";
-import Modal from "@/components/Modal.vue";
-import { upload } from "../../libs/imageManagement";
-import LoadingModal from "@/components/LoadingModal.vue";
-import { validatePlanToPostOrActive } from "../../libs/validationUtils";
-import AutoResizeTextarea from "@/components/AutoResizeTextarea.vue";
-import ActivePlan from "../../classes/plan/ActivePlan";
+import { ref, onMounted, watch, computed } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { useUserStore } from "@/stores/user"
+import Icon from "@/components/Icon.vue"
+import { DailyTask } from "../../classes/DailyTask"
+import { createOrUpdatePlan, getPlanBy, deletePlan, updatePlanData } from "../../libs/planManagement"
+import { HourlyTask } from "../../classes/HourlyTask"
+import { Todo } from "../../classes/Todo"
+import BasePlan from "../../classes/plan/BasePlan"
+import ListContainer from "@/components/ListContainer.vue"
+import ListItem from "@/components/ListItem.vue"
+import PlannetLayout from "@/components/PlannetLayout.vue"
+import PostPlan from "../../classes/plan/PostPlan"
+import { useToastStore } from "@/stores/toast"
+import Modal from "@/components/Modal.vue"
+import { upload } from "../../libs/imageManagement"
+import LoadingModal from "@/components/LoadingModal.vue"
+import { validatePlanToPostOrActive } from "../../libs/validationUtils"
+import AutoResizeTextarea from "@/components/AutoResizeTextarea.vue"
+import ActivePlan from "../../classes/plan/ActivePlan"
 
 const isLoading = ref(false)
 const route = useRoute()
@@ -65,19 +65,19 @@ watch(draftPlan, async (newValue, oldValue) => {
 }, { deep: true })
 
 onMounted(async () => {
-  let id = route.params.id;
+  let id = route.params.id
   draftPlan.value = await getPlanBy('id', id, 'draft')
 })
 
 const handleAddDailyTask = () => {
-  const newDailyTask = new DailyTask();
-  newDailyTask.hourlyTasks = []; // Initialize dailyTasks as an empty array
-  draftPlan.value.dailyTasks.push(newDailyTask);
+  const newDailyTask = new DailyTask()
+  newDailyTask.hourlyTasks = [] // Initialize dailyTasks as an empty array
+  draftPlan.value.dailyTasks.push(newDailyTask)
 }
 
 const handleAddHourlyTask = (index) => {
-  const newHourlyTask = new HourlyTask();
-  draftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask);
+  const newHourlyTask = new HourlyTask()
+  draftPlan.value.dailyTasks[index].hourlyTasks.push(newHourlyTask)
 }
 
 /**
@@ -96,7 +96,7 @@ const handleHourlyTaskDescriptionInput = (hourlyTask, value) => {
 
 const handleAddTodo = (dailyIndex, hourlyIndex) => {
   const newTodo = new Todo()
-  newTodo.id = (Math.random() + 1).toString(36).substring(7);
+  newTodo.id = (Math.random() + 1).toString(36).substring(7)
   const todos = [...draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos]
   todos.push(newTodo)
   draftPlan.value.dailyTasks[dailyIndex].hourlyTasks[hourlyIndex].todos = todos
@@ -435,7 +435,7 @@ const handleDeleteDraft = async () => {
                     <div class="flex-1 flex flex-col md:flex-row">
                       <div class="sm:hidden flex flex-col text-sm">
                         <span>Start<input type="time" v-model="hourlyTask.start" class="bg-transparent focus:outline-none" /></span>
-                        <span>End&nbsp;<input type="time" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" /></span>
+                        <span>End&nbsp<input type="time" v-model="hourlyTask.end" class="bg-transparent focus:outline-none" /></span>
                       </div>
                       <div class="w-full">
                         <input
@@ -496,33 +496,33 @@ const handleDeleteDraft = async () => {
 
 <style scoped>
 .scrollbar::-webkit-scrollbar {
-  @apply w-2;
+  @apply w-2
 }
 .scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-base-100 rounded-full;
+  @apply bg-base-100 rounded-full
 }
 .scrollbar::-webkit-scrollbar-track {
-  @apply bg-neutral-content rounded-full;
+  @apply bg-neutral-content rounded-full
 }
 .scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-neutral cursor-default;
+  @apply bg-neutral cursor-default
 }
 
 /* Hide the arrow icon in Chrome and Safari */
 input[type="time"]::-webkit-calendar-picker-indicator {
-  display: none;
+  display: none
 }
 /* Hide the arrow icon in Firefox */
 input[type="time"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
+  -webkit-appearance: none
 }
 input[type="time"]::-webkit-clear-button {
-  display: none;
+  display: none
 }
 input[type="time"]::-moz-clear {
-  display: none;
+  display: none
 }
 input[type="time"]::-moz-calendar-picker-indicator {
-  display: none;
+  display: none
 }
 </style>

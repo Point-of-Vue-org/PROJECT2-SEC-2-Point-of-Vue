@@ -3,7 +3,7 @@ import { ref, onMounted, computed} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import { getUserBy } from '../../libs/userManagement'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
 import { getPlanBy, toggleUpVote, toggleDownVote, createOrUpdatePlan, updatePlanData, deletePlan } from '../../libs/planManagement.js'
 import ListContainer from '@/components/ListContainer.vue'
 import Icon from '@/components/Icon.vue'
@@ -13,8 +13,8 @@ import ListItem from '@/components/ListItem.vue'
 import { Comment } from '../../classes/Comment'
 import { formatDate, sortObject } from '../../libs/utils'
 import PlannetLayout from '@/components/PlannetLayout.vue'
-import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
-import Modal from '@/components/Modal.vue';
+import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
+import Modal from '@/components/Modal.vue'
 
 const isLoading = ref(false)
 const router = useRouter()

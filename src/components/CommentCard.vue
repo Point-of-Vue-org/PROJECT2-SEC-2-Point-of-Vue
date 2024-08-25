@@ -1,14 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getUserBy } from '../../libs/userManagement';
-import Icon from './Icon.vue';
-import { Comment } from '../../classes/Comment';
-import UserProfilePlaceholder from './UserProfilePlaceholder.vue';
-import { formatDate } from '../../libs/utils';
-import { useUserStore } from '@/stores/user';
-import { toggleUpVoteComment } from '../../libs/commentManagement';
-import { useRouter } from 'vue-router';
-import { useToastStore } from '@/stores/toast';
+import { getUserBy } from '../../libs/userManagement'
+import Icon from './Icon.vue'
+import { Comment } from '../../classes/Comment'
+import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
+import { formatDate } from '../../libs/utils'
+import { useUserStore } from '@/stores/user'
+import { toggleUpVoteComment } from '../../libs/commentManagement'
+import { useRouter } from 'vue-router'
+import { useToastStore } from '@/stores/toast'
 
 const props = defineProps({
   comment: {

@@ -1,11 +1,11 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
-import { useUserStore } from '@/stores/user';
+import { useUserStore } from '@/stores/user'
 import AccountProfile from './account/AccountProfile.vue'
-import AccountSecurity from './account/AccountSecurity.vue';
-import PlannetLayout from '@/components/PlannetLayout.vue';
-import Icon from '@/components/Icon.vue';
+import AccountSecurity from './account/AccountSecurity.vue'
+import PlannetLayout from '@/components/PlannetLayout.vue'
+import Icon from '@/components/Icon.vue'
 
 const router = useRouter()
 const route = useRoute()
