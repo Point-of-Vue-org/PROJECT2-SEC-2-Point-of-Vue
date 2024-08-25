@@ -78,6 +78,7 @@ const handleFinish = async () => {
 			profileUrl = await upload(profileImageFile.value)
 		} catch (error) {
 			toastStore.addToast('Error occured while uploading profile image', 'error')
+			isLoading.value = false
 			return
 		}
 	}
