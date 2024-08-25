@@ -1,0 +1,25 @@
+name: plannet
+services:
+  plannet-frontend:
+    build:
+      context: .
+      dockerfile: FE.Dockerfile
+    networks:
+      - proxy-net
+    ports:
+      - "3188:80"
+
+  plannet-backend:
+    build:
+      context: .
+      dockerfile: BE.Dockerfile
+    volumes:
+      - ./data_server:/app/data
+    networks:
+      - proxy-net
+    ports:
+      - "5000:5000"
+
+networks:
+  proxy-net:
+    external: true
