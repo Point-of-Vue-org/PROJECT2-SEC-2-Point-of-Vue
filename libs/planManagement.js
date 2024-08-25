@@ -18,7 +18,7 @@ function mapPlanObject(planData, type) {
 
 export async function getPlans(type, start, amount) {
 
-    if (!['post', 'active', 'draft'].includes(type)) throw new Error('Type must be "post", "active", or "draft"');
+    if (!['post', 'active', 'draft'].includes(type)) throw new Error('Type must be "post", "active", or "draft"')
 
     const url = `${JSON_SERVER_URI}/${type}Plans`
     const res = await fetch(url)
@@ -34,7 +34,7 @@ export async function isPlanExist(id, type) {
     if(id=== undefined){
         return false
     }
-    if (!['post', 'active', 'draft'].includes(type)) throw new Error('Type must be "post", "active", or "draft"');
+    if (!['post', 'active', 'draft'].includes(type)) throw new Error('Type must be "post", "active", or "draft"')
 
     const url = `${JSON_SERVER_URI}/${type}Plans/${id}`
     const res = await fetch(url)

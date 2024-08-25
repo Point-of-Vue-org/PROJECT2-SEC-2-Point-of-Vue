@@ -1,11 +1,11 @@
 <script setup>
-import { RouterLink } from 'vue-router';
-import BaseSidebar from './BaseSidebar.vue';
-import Icon from './Icon.vue';
-import SearchBox from './SearchBox.vue';
-import { getPlansBy } from '../../libs/planManagement';
-import { useUserStore } from '@/stores/user';
-import { onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router'
+import BaseSidebar from './BaseSidebar.vue'
+import Icon from './Icon.vue'
+import SearchBox from './SearchBox.vue'
+import { getPlansBy } from '../../libs/planManagement'
+import { useUserStore } from '@/stores/user'
+import { onMounted, ref } from 'vue'
 
 defineProps({
   openState: {

@@ -2,7 +2,7 @@
 import Logo from '@/components/Logo.vue'
 import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
 import { useUserStore } from '@/stores/user'
-import Icon from './Icon.vue';
+import Icon from './Icon.vue'
 import SearchBox from './SearchBox.vue'
 
 const emits = defineEmits(['sidebarBtnClick', 'submitSearch'])

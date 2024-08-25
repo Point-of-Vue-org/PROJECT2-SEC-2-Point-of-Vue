@@ -1,12 +1,12 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
-import { upload } from '../../../libs/imageManagement';
-import { useUserStore } from '@/stores/user';
-import { useToastStore } from '@/stores/toast';
-import { updateUserData } from '../../../libs/userManagement';
-import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
-import { validateNickname } from '../../../libs/validationUtils';
-import LoadingModal from '@/components/LoadingModal.vue';
+import { upload } from '../../../libs/imageManagement'
+import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/toast'
+import { updateUserData } from '../../../libs/userManagement'
+import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
+import { validateNickname } from '../../../libs/validationUtils'
+import LoadingModal from '@/components/LoadingModal.vue'
 
 const isLoading = ref(false)
 const userStore = useUserStore()

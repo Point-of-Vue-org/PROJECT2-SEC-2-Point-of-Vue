@@ -1,8 +1,8 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import UserProfilePlaceholder from './UserProfilePlaceholder.vue';
-import { getPlansBy } from '../../libs/planManagement';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, ref } from 'vue'
+import UserProfilePlaceholder from './UserProfilePlaceholder.vue'
+import { getPlansBy } from '../../libs/planManagement'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   userData: {

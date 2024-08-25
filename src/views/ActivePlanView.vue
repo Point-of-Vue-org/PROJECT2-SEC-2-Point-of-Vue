@@ -8,8 +8,8 @@ import ListContainer from '@/components/ListContainer.vue'
 import ListItem from '@/components/ListItem.vue'
 import { formatDate } from '../../libs/utils'
 import PlannetLayout from '@/components/PlannetLayout.vue'
-import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
-import ActivePlan from '../../classes/plan/ActivePlan';
+import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
+import ActivePlan from '../../classes/plan/ActivePlan'
 import Modal from '@/components/Modal.vue'
 import { useUserStore } from '@/stores/user'
 import Icon from '@/components/Icon.vue'

@@ -1,19 +1,19 @@
 <script setup>
-import { useUserStore } from '@/stores/user';
-import { updateUserData } from '../../libs/userManagement';
-import { useToastStore } from '@/stores/toast';
-import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user'
+import { updateUserData } from '../../libs/userManagement'
+import { useToastStore } from '@/stores/toast'
+import { useRouter } from 'vue-router'
 import ResetPasswordQuestionList from '../components/ResetPasswordQuestionList.vue'
-import { computed, reactive, ref } from 'vue';
-import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue';
-import SlideShow from '@/components/slide/SlideShow.vue';
-import SlidePage from '@/components/slide/SlidePage.vue';
-import Logo from '@/components/Logo.vue';
-import { validateNickname } from '../../libs/validationUtils';
-import Icon from '@/components/Icon.vue';
-import { upload } from '../../libs/imageManagement';
-import { hash } from '../../libs/plannetEncrypt';
-import LoadingModal from '@/components/LoadingModal.vue';
+import { computed, reactive, ref } from 'vue'
+import UserProfilePlaceholder from '@/components/UserProfilePlaceholder.vue'
+import SlideShow from '@/components/slide/SlideShow.vue'
+import SlidePage from '@/components/slide/SlidePage.vue'
+import Logo from '@/components/Logo.vue'
+import { validateNickname } from '../../libs/validationUtils'
+import Icon from '@/components/Icon.vue'
+import { upload } from '../../libs/imageManagement'
+import { hash } from '../../libs/plannetEncrypt'
+import LoadingModal from '@/components/LoadingModal.vue'
 
 const isLoading = ref(false)
 const router = useRouter()

@@ -2,11 +2,11 @@
 import Logo from '@/components/Logo.vue'
 import { computed, ref, watch } from 'vue'
 import { useToastStore } from '@/stores/toast'
-import { isEmailExist, isUsernameExist, register } from '../../libs/userManagement';
+import { isEmailExist, isUsernameExist, register } from '../../libs/userManagement'
 import { useRouter } from 'vue-router'
-import { checkPassword } from '../../libs/validationUtils';
-import Icon from '@/components/Icon.vue';
-import { validateUsername } from '../../libs/validationUtils';
+import { checkPassword } from '../../libs/validationUtils'
+import Icon from '@/components/Icon.vue'
+import { validateUsername } from '../../libs/validationUtils'
 
 const toastStore = useToastStore()
 const router = useRouter()

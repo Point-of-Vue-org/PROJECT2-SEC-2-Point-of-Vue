@@ -1,5 +1,5 @@
 <script setup>
-import BaseSelectOption from './BaseSelectOption.vue';
+import BaseSelectOption from './BaseSelectOption.vue'
 const emits = defineEmits(['questionSelect'])
 
 const props = defineProps({
@@ -26,7 +26,7 @@ const securityQuestions = [
     "What is your favorite food?",
     "What is the name of your favorite teacher?",
     "What is the name of the first company you worked for?"
-];
+]
 
 const handleQuestionSelect = (value) => {
     emits('questionSelect', value)

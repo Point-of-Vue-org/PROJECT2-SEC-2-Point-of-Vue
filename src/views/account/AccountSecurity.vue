@@ -1,17 +1,16 @@
 <script setup>
-import { computed, watch } from 'vue';
-import { checkOldPassword, checkPassword } from '../../../libs/validationUtils';
-import { ref } from 'vue';
-import { useUserStore } from '@/stores/user';
-import { hash } from '../../../libs/plannetEncrypt';
-import { useToastStore } from '@/stores/toast';
-import { deleteUser, updateUserData } from '../../../libs/userManagement';
-import Icon from '@/components/Icon.vue';
-import { useRouter } from 'vue-router';
-import { logout } from '../../../libs/userManagement';
-import { deletePlan, getPlansBy } from '../../../libs/planManagement';
-import Modal from '@/components/Modal.vue';
-import { User } from '../../../classes/User';
+import { computed, watch } from 'vue'
+import { checkOldPassword, checkPassword } from '../../../libs/validationUtils'
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { hash } from '../../../libs/plannetEncrypt'
+import { useToastStore } from '@/stores/toast'
+import { deleteUser, updateUserData } from '../../../libs/userManagement'
+import Icon from '@/components/Icon.vue'
+import { useRouter } from 'vue-router'
+import { deletePlan, getPlansBy } from '../../../libs/planManagement'
+import Modal from '@/components/Modal.vue'
+import { User } from '../../../classes/User'
 
 const toastStore = useToastStore()
 const userStore = useUserStore()
