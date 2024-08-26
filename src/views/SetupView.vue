@@ -125,7 +125,7 @@ const handleFinish = async () => {
 					<div class="text-2xl sm:text-3xl font-helvetica w-fit font-bold">Setup your <span class="text-primary">display name!</span></div>
 					<div class="flex flex-col items-center gap-2">
 						<div class="text-secondary items-center flex flex-wrap justify-center">
-							<div>Choose&nbsp;something&nbsp;that&nbsp;represents&nbsp;you&nbsp;and</div>
+							<div>Choose&nbsp;something&nbsp;that&nbsp;represents&nbsp;you&nbsp;and&emsp;</div>
 							<div>makes&nbsp;you&nbsp;easily&nbsp;recognizable!</div>
 						</div>
 						<div class="flex flex-col items-center gap-5 w-full">
@@ -166,7 +166,7 @@ const handleFinish = async () => {
 					<div class="flex flex-col items-center gap-4">
 						<div class="text-2xl sm:text-3xl font-helvetica w-fit font-bold">Show me <span class="text-primary">how your look!</span></div>
 						<div class="text-secondary flex justify-center flex-wrap">
-							<div>Upload&nbsp;your&nbsp;profile&nbsp;image&nbsp;to</div>
+							<div>Upload&nbsp;your&nbsp;profile&nbsp;image&nbsp;to&emsp;</div>
 							<div>make&nbsp;your&nbsp;account&nbsp;more&nbsp;personal</div>
 						</div>
 					</div>
